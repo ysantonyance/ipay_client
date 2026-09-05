@@ -1,7 +1,27 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/basic/Header.jsx';
+import Footer from './components/basic/Footer.jsx';
+import Home from "./pages/Home.jsx";
+import AmazonVideo from "./pages/AmazonVideo.jsx";
+import UserAmazon from "./pages/UserAmazon.jsx";
+import Coupons from "./pages/Coupons.jsx";
+import CustomerService from "./pages/CustomerService.jsx";
+import History from "./pages/History.jsx";
+import TodaysDeal from "./pages/TodaysDeal.jsx";
+import Registry from "./pages/Registry.jsx";
+import BuyAgain from "./pages/BuyAgain.jsx";
+import GiftCards from "./pages/GiftCards.jsx";
+import Sell from "./pages/Sell.jsx";
+import ProductDetails from "./pages/ProductDetails.jsx";
+import VideoDetails from "./pages/VideoDetails.jsx";
+import CustomerPreferences from "./pages/CustomerPreferences.jsx";
+import Account from "./pages/Account.jsx";
+import Orders from "./pages/Orders.jsx";
+import Cart from "./pages/Cart.jsx";
+import Register from "./pages/Register.jsx";
+import Login from "./pages/Login.jsx";
+import Admin from "./pages/Admin.jsx";
 
 function MainLayout() {
   return (
