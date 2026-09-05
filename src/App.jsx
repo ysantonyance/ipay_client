@@ -1,122 +1,63 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import './App.css';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function MainLayout() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <>
+        <Header />
+        <Outlet />
+        <Footer />
+      </>
+  );
+}
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+function CleanLayout() {
+  return (
+      <>
+        <Outlet />
+      </>
   )
 }
 
-export default App
+function App() {
+  return (
+      <div className="App">
+        <Header />
+        <main>
+          <Routes>
+            <Route element={<MainLayout />} >
+              <Route path="/" element={<Home />} />
+              <Route path="/amazon-video" element={<AmazonVideo />} />
+              <Route path="/yourstore/home" element={<UserAmazon />} />
+              <Route path="/coupons" element={<Coupons />} />
+              <Route path="/contact-us" element={<CustomerService />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/labordaysale" element={<TodaysDeal />} />
+              <Route path="/registries" element={<Registry />} />
+              <Route path="/buyagain" element={<BuyAgain />} />
+              <Route path="/gift-cards" element={<GiftCards />} />
+              <Route path="/sell" element={<Sell />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
+              <Route path="/video/:id" element={<VideoDetails />} />
+
+              <Route path="/customer-preferences" element={<CustomerPreferences />} />
+              <Route path="/your-account" element={<Account />} />
+              <Route path="/your-orders" element={<Orders />} />
+              <Route path="/cart" element={<Cart />} />
+            </Route>
+
+            <Route element={<CleanLayout />} >
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={<Admin />} />
+            </Route>
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+  );
+}
+
+export default App;
