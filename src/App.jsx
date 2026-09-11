@@ -1,7 +1,7 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
 import Header from './components/basic/Header.jsx';
-import Footer from './components/basic/Footer.jsx';
+/*import Footer from './components/basic/Footer.jsx';*/
 import Home from "./pages/Home.jsx";
 import AmazonVideo from "./pages/AmazonVideo.jsx";
 import UserAmazon from "./pages/UserAmazon.jsx";
@@ -28,7 +28,9 @@ function MainLayout() {
       <>
         <Header />
         <Outlet />
+{/*
         <Footer />
+*/}
       </>
   );
 }
@@ -44,11 +46,11 @@ function CleanLayout() {
 function App() {
   return (
       <div className="App">
-        <Header />
         <main>
           <Routes>
             <Route element={<MainLayout />} >
               <Route path="/" element={<Home />} />
+{/*
               <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/yourstore/home" element={<UserAmazon />} />
               <Route path="/coupons" element={<Coupons />} />
@@ -66,16 +68,18 @@ function App() {
               <Route path="/your-account" element={<Account />} />
               <Route path="/your-orders" element={<Orders />} />
               <Route path="/cart" element={<Cart />} />
+*/}
             </Route>
 
             <Route element={<CleanLayout />} >
+{/*
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
+*/}
             </Route>
           </Routes>
         </main>
-        <Footer />
       </div>
   );
 }
