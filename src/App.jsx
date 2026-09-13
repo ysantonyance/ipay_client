@@ -1,7 +1,7 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
 import Header from './components/basic/Header.jsx';
-/*import Footer from './components/basic/Footer.jsx';*/
+import Footer from './components/basic/Footer.jsx';
 import Home from "./pages/Home.jsx";
 import AmazonVideo from "./pages/AmazonVideo.jsx";
 import UserAmazon from "./pages/UserAmazon.jsx";
@@ -28,9 +28,8 @@ function MainLayout() {
       <>
         <Header />
         <Outlet />
-{/*
         <Footer />
-*/}
+
       </>
   );
 }
