@@ -4,7 +4,7 @@ import api from './api.js'
 export const categoriesApi = {
     getAll: () => api.get('/categories'),
     getById: (id) => api.get(`/categories/${id}`),
-    // Body: { id, name, quantity, productIds }
+    // Body: { name, quantity, productIds }
     create: (categoryData) => api.post('/categories', categoryData),
     update: (id, categoryData) => api.put(`/categories/${id}`, categoryData),
     delete: (id) => api.delete(`/categories/${id}`),
