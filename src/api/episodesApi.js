@@ -1,9 +1,11 @@
 import api from './api.js'
 
+// Backend: api/episodes  (episodes are filtered by series with ?seriesId=)
 export const episodesApi = {
-    getAll: (seriesId, params) => api.get(`/amazon-video/series/${seriesId}/episodes`, { params }),
-    getById: (seriesId, id) => api.get(`/amazon-video/series/${seriesId}/episodes/${id}`),
-    create: (seriesId, productData) => api.post(`/amazon-video/series/${seriesId}/episodes`, productData),
-    update: (seriesId, id, productData) => api.put(`/amazon-video/series/${seriesId}/episodes/${id}`, productData),
-    delete: (seriesId, id) => api.delete(`/amazon-video/series/${seriesId}/episodes/${id}`)
+    getAll: () => api.get('/episodes'),
+    getBySeries: (seriesId) => api.get('/episodes', { params: { seriesId } }),
+    getById: (id) => api.get(`/episodes/${id}`),
+    create: (episodeData) => api.post('/episodes', episodeData),
+    update: (id, episodeData) => api.put(`/episodes/${id}`, episodeData),
+    delete: (id) => api.delete(`/episodes/${id}`)
 };

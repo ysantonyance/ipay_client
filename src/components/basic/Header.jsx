@@ -60,6 +60,13 @@ function Header() {
 
                     <Link
                         className='border border-transparent hover:border-white cursor-pointer py-2 px-1'
+                        to='/products'
+                    >
+                        Products
+                    </Link>
+
+                    <Link
+                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1'
                         to='/amazon-video'
                     >
                         Prime Video
