@@ -1,9 +1,13 @@
 import api from './api.js'
 
+// Backend: api/categories
 export const categoriesApi = {
-    getAll: (params) => api.get('/categories', { params }),
+    getAll: () => api.get('/categories'),
     getById: (id) => api.get(`/categories/${id}`),
-    create: (productData) => api.post('/categories', productData),
-    update: (id, productData) => api.put(`/categories/${id}`, productData),
-    delete: (id) => api.delete(`/categories/${id}`)
+    // Body: { name, quantity, productIds }
+    create: (categoryData) => api.post('/categories', categoryData),
+    update: (id, categoryData) => api.put(`/categories/${id}`, categoryData),
+    delete: (id) => api.delete(`/categories/${id}`),
+    addProduct: (id, productId) => api.put(`/categories/${id}/products/${productId}`),
+    removeProduct: (id, productId) => api.delete(`/categories/${id}/products/${productId}`)
 };

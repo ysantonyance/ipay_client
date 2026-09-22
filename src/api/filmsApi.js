@@ -1,9 +1,9 @@
 import api from './api.js'
 
+// Backend: api/films - a read-only proxy to OMDb (no create/update/delete).
 export const filmsApi = {
-    getAll: (params) => api.get('/amazon-video/films', { params }),
-    getById: (id) => api.get(`/amazon-video/films/${id}`),
-    create: (productData) => api.post('/amazon-video/films', productData),
-    update: (id, productData) => api.put(`/amazon-video/films/${id}`, productData),
-    delete: (id) => api.delete(`/amazon-video/films/${id}`)
+    // GET /films/search?query=batman&page=1
+    search: (query, page = 1) => api.get('/films/search', { params: { query, page } }),
+    // GET /films/{imdbId}, e.g. "tt0372784"
+    getByImdbId: (imdbId) => api.get(`/films/${imdbId}`)
 };
