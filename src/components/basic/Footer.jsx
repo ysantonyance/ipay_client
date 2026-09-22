@@ -3,8 +3,13 @@ import {Link} from "react-router-dom";
 function Footer() {
     return (
         <>
-            <div className='bg-[#37475A] text-white text-[14px] flex justify-center hover:bg-[#48576A] cursor-pointer p-3'>
-                <button className='cursor-pointer'>Back to top</button>
+            <div
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className='bg-[#37475A] text-white text-[14px] flex justify-center hover:bg-[#48576A] cursor-pointer p-3'>
+                <button
+                    className='cursor-pointer'>
+                    Back to top
+                </button>
             </div>
 
             <div className='bg-[#232F3E]'>

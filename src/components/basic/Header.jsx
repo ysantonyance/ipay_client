@@ -1,6 +1,8 @@
 import {Link} from "react-router-dom";
+import {useSearch} from "../../context/SearchContext.jsx";
 
 function Header() {
+    const {search, setSearch} = useSearch();
     return (
         <>
 
@@ -17,8 +19,10 @@ function Header() {
                     </div>
 
                     <input
-                        className='w-[1000px] h-[40px] bg-white my-3 rounded-xl'
+                        className='w-[1000px] h-[40px] bg-white my-3 rounded-xl text-black px-3'
                         type="text"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
 
                     <div className='h-[50px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
@@ -26,10 +30,12 @@ function Header() {
                         EN
                     </div>
 
-                    <div className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer'>
+                    <Link
+                        to='/register'
+                        className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer'>
                         <p>Hello, sign in</p>
                         <b>Accounts & Lists</b>
-                    </div>
+                    </Link>
 
                     <div className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer'>
                         <p className='text-[#CCCCCC]'>Returns</p>

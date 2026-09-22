@@ -22,13 +22,16 @@ import Cart from "./pages/Cart.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import Admin from "./pages/Admin.jsx";
+import {SearchProvider} from "./context/SearchContext.jsx";
 
 function MainLayout() {
   return (
       <>
-        <Header />
-        <Outlet />
-        <Footer />
+          <SearchProvider>
+              <Header />
+              <Outlet />
+              <Footer />
+          </SearchProvider>
 
       </>
   );
@@ -71,11 +74,13 @@ function App() {
             </Route>
 
             <Route element={<CleanLayout />} >
-{/*
+
               <Route path="/register" element={<Register />} />
+{/*
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
 */}
+
             </Route>
           </Routes>
         </main>
