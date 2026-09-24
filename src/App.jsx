@@ -78,10 +78,12 @@ function App() {
             <Route element={<CleanLayout />} >
 
               <Route path="/register" element={<Register />} />
-{/*
+
               <Route path="/login" element={<Login />} />
+{/*
               <Route path="/admin" element={<Admin />} />
 */}
+
 
             </Route>
           </Routes>

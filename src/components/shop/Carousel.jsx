@@ -1,4 +1,4 @@
-import { Children, useRef, useState } from 'react';
+import { Children, useRef, useState, useEffect } from 'react';
 
 function Carousel({ children, visibleCount = 5 }) {
     const trackRef = useRef(null);
@@ -6,6 +6,12 @@ function Carousel({ children, visibleCount = 5 }) {
 
     const slides = Children.toArray(children);
     const maxIndex = Math.max(0, slides.length - visibleCount);
+
+    useEffect(() => {
+        if (index > maxIndex) {
+            scrollToIndex(maxIndex);
+        }
+    }, [visibleCount, maxIndex]);
 
     const scrollToIndex = (target) => {
         const clamped = Math.min(Math.max(target, 0), maxIndex);
@@ -21,11 +27,24 @@ function Carousel({ children, visibleCount = 5 }) {
         track.scrollTo({ left: clamped * step, behavior: 'smooth' });
     };
 
+    const gapRem = 0.75;
+    const totalGaps = visibleCount - 1;
+    const itemWidthStyle = {
+        flexBasis: `calc((100% - ${totalGaps * gapRem}rem) / ${visibleCount})`,
+    };
+
     return (
         <div className="relative">
-            <div ref={trackRef} className="flex gap-3 overflow-x-hidden scroll-smooth">
+            <div
+                ref={trackRef}
+                className="flex gap-3 overflow-x-auto sm:overflow-x-hidden scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
                 {slides.map((child, i) => (
-                    <div key={i} className="shrink-0 basis-[calc((100%-5*0.75rem)/5.5)]">
+                    <div
+                        key={i}
+                        className="shrink-0 snap-start"
+                        style={itemWidthStyle}
+                    >
                         {child}
                     </div>
                 ))}
@@ -36,7 +55,7 @@ function Carousel({ children, visibleCount = 5 }) {
                     onClick={() => scrollToIndex(index - 1)}
                     disabled={index <= 0}
                     aria-label="Previous"
-                    className="absolute top-1/2 -left-4.5 -translate-y-1/2 flex h-[100px] w-[48px] rounded-md border border-[#888C8C] border-l-0 items-center justify-center bg-white text-lg disabled:opacity-100 cursor-pointer"
+                    className="hidden sm:flex absolute top-1/2 -left-4.5 -translate-y-1/2 h-[100px] w-[48px] rounded-md border border-[#888C8C] border-l-0 items-center justify-center bg-white text-lg disabled:opacity-100 cursor-pointer shadow-md"
                 >
                     ‹
                 </button>
@@ -47,12 +66,11 @@ function Carousel({ children, visibleCount = 5 }) {
                     onClick={() => scrollToIndex(index + 1)}
                     disabled={index >= maxIndex}
                     aria-label="Next"
-                    className="absolute top-1/2 -right-4.5 -translate-y-1/2 flex h-[100px] w-[48px] rounded-md border border-[#888C8C] border-r-0 items-center justify-center bg-white text-lg disabled:opacity-100 cursor-pointer"
+                    className="hidden sm:flex absolute top-1/2 -right-4.5 -translate-y-1/2 h-[100px] w-[48px] rounded-md border border-[#888C8C] border-r-0 items-center justify-center bg-white text-lg disabled:opacity-100 cursor-pointer shadow-md"
                 >
                     ›
                 </button>
             )}
-
         </div>
     );
 }
