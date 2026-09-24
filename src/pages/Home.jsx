@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Carousel from "../components/shop/Carousel.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import {useSearch} from "../context/SearchContext.jsx";
@@ -6,13 +6,23 @@ import TodaysDeal from "./TodaysDeal.jsx";
 
 function Home() {
     const {setSearch} = useSearch();
+    const [carouselCount, setCarouselCount] = useState(
+        window.innerWidth < 900 ? (window.innerWidth < 600 ? 1.85 : 3) : 5
+    );
+    useEffect(() => {
+        const updateCount = () => {
+            setCarouselCount(window.innerWidth < 900 ? (window.innerWidth < 600 ? 1.85 : 3) : 5);
+        };
+        window.addEventListener('resize', updateCount);
+        return () => window.removeEventListener('resize', updateCount);
+    }, []);
     return (
         <>
-            <div className='px-15 bg-[#E3E6E6]'>
+            <div className='px-0 sm:px-0 lg:px-15 bg-[#E3E6E6]'>
                 <div className='bg-white px-4 py-2'>
-                    <Carousel visibleCount={5}>
+                    <Carousel visibleCount={carouselCount}>
 
-                        <div className='relative'>
+                        <div className='relative w-[302px] shrink-0'>
                             <a
                                 onClick={(e) => { e.preventDefault(); console.log('clicked'); setSearch('kitchen appliances'); }}
                                 href="">
@@ -20,10 +30,10 @@ function Home() {
                                     className='rounded-2xl min-w-[302px] h-[484px] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/51l7ZOsRo7L._AC_AIweblab1431263,T1_FMavif_SF1282.5,2052_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[30px] absolute top-2 left-0 px-3 leading-9 pointer-events-none'>Shop kitchen must-haves</h1>
+                            <h1 className='font-bold text-[30px] absolute top-2 left-0 right-0 px-3 leading-9 pointer-events-none'>Shop kitchen must-haves</h1>
                         </div>
 
-                        <div className='relative'>
+                        <div className='relative w-[302px] shrink-0'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                 href="">
@@ -31,10 +41,10 @@ function Home() {
                                     className='rounded-2xl min-w-[302px] h-[484px] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/61Ld77LHXQL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[30px] absolute top-2 left-0 px-3 leading-9 pointer-events-none'>Shop all things beauty</h1>
+                            <h1 className='font-bold text-[30px] absolute top-2 left-0 right-0 px-3 leading-9 pointer-events-none'>Shop all things beauty</h1>
                         </div>
 
-                        <div className='relative'>
+                        <div className='relative w-[302px] shrink-0'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('fashion clothing'); }}
                                 href="">
@@ -42,9 +52,10 @@ function Home() {
                                     className='rounded-2xl min-w-[302px] h-[484px] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/61R7G24e7dL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[30px] absolute top-2 left-0 px-3 leading-9 pointer-events-none'>Start looking sharp</h1>
+                            <h1 className='font-bold text-[30px] absolute top-2 left-0 right-0 px-3 leading-9 pointer-events-none'>Start looking sharp</h1>
                         </div>
-                        <div className='relative'>
+
+                        <div className='relative w-[302px] shrink-0'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('toys'); }}
                                 href="">
@@ -52,10 +63,10 @@ function Home() {
                                     className='rounded-2xl min-w-[302px] h-[484px] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/61upHi2gzaL._AC_AIweblab1431263,T1_FMavif_SF1282.5,2052_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[30px] absolute top-2 left-0 px-3 leading-9 pointer-events-none'>Toys for little ones</h1>
+                            <h1 className='font-bold text-[30px] absolute top-2 left-0 right-0 px-3 leading-9 pointer-events-none'>Toys for little ones</h1>
                         </div>
 
-                        <div className='relative'>
+                        <div className='relative w-[302px] shrink-0'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('pc'); }}
                                 href="">
@@ -63,10 +74,10 @@ function Home() {
                                     className='rounded-2xl min-w-[302px] h-[484px] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/714RPvHc4LL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[30px] absolute top-2 left-0 px-3 leading-9 pointer-events-none'>Level up your PC here</h1>
+                            <h1 className='font-bold text-[30px] absolute top-2 left-0 right-0 px-3 leading-9 pointer-events-none'>Level up your PC here</h1>
                         </div>
 
-                        <div className='relative'>
+                        <div className='relative w-[302px] shrink-0'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('good books'); }}
                                 href="">
@@ -74,12 +85,13 @@ function Home() {
                                     className='rounded-2xl min-w-[302px] h-[484px] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/613fnGHLTYL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[30px] absolute top-2 left-0 px-3 leading-9 pointer-events-none'>Discover books you can't put down</h1>
+                            <h1 className='font-bold text-[30px] absolute top-2 left-0 right-0 px-3 leading-9 pointer-events-none'>Discover books you can't put down</h1>
                         </div>
+
                     </Carousel>
                 </div>
 
-                <div className='bg-white px-4 py-2 grid grid-cols-4 space-x-2 space-y-6'>
+                <div className='bg-white px-4 py-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6'>
 
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
@@ -92,13 +104,13 @@ function Home() {
                             </a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('headphones'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/417NhPd56zL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -111,7 +123,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('electronic tablets'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41dMYqsSuGL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -126,7 +138,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('gaming equipment'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41gk0-eoy4L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -139,7 +151,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41uuEMle6TL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -158,13 +170,13 @@ function Home() {
                             </a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('desktop computers'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31aw+nYkUmL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -177,7 +189,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31hqkoNqvTL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -192,7 +204,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('external hard drives'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/217Arq+nObL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -205,7 +217,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('computer accessories'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/312z6VjcSmL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -224,13 +236,13 @@ function Home() {
                                 Gear up to get fit</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness clothing'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41CutKsrzNL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -243,7 +255,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness trackers'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41RKKF01YxL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -258,7 +270,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness equipment'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41MjMjLh9BL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -271,7 +283,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41idnUIEIZL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -290,13 +302,13 @@ function Home() {
                                 Apparel under $25</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Women Clothing'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41DNYos4L1L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -309,7 +321,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Men Clothing'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31-zpA1B2zL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -324,7 +336,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Girls Fashion'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41J+KoaCycL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -337,7 +349,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Boys Fashion'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31YRD7rRprL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -356,13 +368,13 @@ function Home() {
                                 Fantastic Finds for Home</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41opB3I6bHL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -375,7 +387,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31zR9dINh6L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -390,7 +402,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('kitchen and dining'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41bvMGlDk4L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -403,7 +415,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('smart home'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/314AasupNAL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -422,13 +434,13 @@ function Home() {
                                 Shine brighter with your fashion faves</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('jewelry'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31iAfM94Q1L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -441,7 +453,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('handbags'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41RsxdVi8QL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -456,7 +468,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41wBvSYrvWL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -469,7 +481,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41Tsj3W9JHL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -488,13 +500,13 @@ function Home() {
                                 Unveil your radiance</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('hair care'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41+i4d+1YXL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -507,7 +519,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('fragrances'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/4115ssxY8RL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -522,7 +534,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Make up'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/51F8Stay1iL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -535,7 +547,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('skin care'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41hBTWbTOvL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -554,13 +566,13 @@ function Home() {
                                 Level up your PC here</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41SeoNqumwL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -573,7 +585,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('desktop PCs'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41hls0IW3XL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -588,7 +600,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41DUMIpCRRL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -601,7 +613,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('computer monitors'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/410RcCBLHIL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -620,13 +632,13 @@ function Home() {
                                 Fashion trends in Shoes</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Women Shoes'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41yqgtOqxPL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -639,7 +651,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Men Shoes'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41wfXsKdqEL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -654,7 +666,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Kid Shoes'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41-zOL2WhXL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -667,7 +679,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Shoes'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/4103VPrZvIL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -686,13 +698,13 @@ function Home() {
                                 Home harmony</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('kitchen essentials'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41dEpCmTRFL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -705,7 +717,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('home sofa living room'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41cXdDKGU6L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -720,7 +732,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41EvbQ64I2L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -733,7 +745,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Home decor'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41hJC3LJ2aL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -752,13 +764,13 @@ function Home() {
                                 Shoes under $50</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31U967D6S3L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -771,7 +783,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('men footwear'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31Wut-0nWqL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -786,7 +798,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('girls footwear'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31JVbBrAgDL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -799,7 +811,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('boys footwear'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41DEKPASTNL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -818,13 +830,13 @@ function Home() {
                                 What you need for furry friends</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('pet dog supplies'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41eLkFePVUL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -837,7 +849,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('pet cats supplies'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41OERaEZuaL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -852,7 +864,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('small pet supplies'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/410BX1Aby0L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -862,14 +874,14 @@ function Home() {
 
                             <div>
                                 <Link to='/labordaysale'
-                                    href=""
+                                      href=""
                                 >
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/4172LJHm7gL._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/labordaysale'
-                                    href="">Deals</Link>
+                                      href="">Deals</Link>
                             </div>
                         </div>
                     </div>
@@ -883,13 +895,13 @@ function Home() {
                                 Video games & accessories</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('xbox controller'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21HndQWZivL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -902,7 +914,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Nintendo'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31L8hlUOKfL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -917,7 +929,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('vr headset'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21+Ccbv5f5L._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -930,7 +942,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('PS5 accessories'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21DOO2U+rQL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -949,13 +961,13 @@ function Home() {
                                 Have more fun with the family</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('outdoor play toys'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31uBBG+KvtL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -968,7 +980,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('learning toys'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31QJz8+ereL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -983,7 +995,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('action figures'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/310Ke5y4pBL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -996,7 +1008,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Pretend Play Toys'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/416Kr1IKmgL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1015,13 +1027,13 @@ function Home() {
                                 Finds in Home</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Bedsheets'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/319RC1dCFNL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1034,7 +1046,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Pillows'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41+4Tvu3E0L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1049,7 +1061,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('duvet covers'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41u90AplYLL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1062,7 +1074,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Throws'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41iRkfbZX6L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1074,57 +1086,57 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <Link to='/labordaysale'
-                                href=''
-                                className='tracking-tight'
+                                  href=''
+                                  className='tracking-tight'
                             >
                                 Deals on top categories</Link>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <Link to='/labordaysale'
-                                    href="">
+                                      href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41GibUzBeXL._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/labordaysale'
-                                    href=''>Books</Link>
+                                      href=''>Books</Link>
                             </div>
 
                             <div>
                                 <Link to='/labordaysale'
-                                    href="">
+                                      href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41YDpSUai3L._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/labordaysale'
-                                    href="">
+                                      href="">
                                     Fashion
                                 </Link>
                             </div>
 
                             <div>
                                 <Link to='/labordaysale'
-                                    href="">
+                                      href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41qG08jk3ML._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/labordaysale'
-                                    href="">PC</Link>
+                                      href="">PC</Link>
                             </div>
 
                             <div>
                                 <Link to='/labordaysale'
-                                    href="">
+                                      href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41QFxGoW7IL._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/labordaysale'
-                                    href="">Beauty</Link>
+                                      href="">Beauty</Link>
                             </div>
                         </div>
                     </div>
@@ -1138,13 +1150,13 @@ function Home() {
                                 New home arrivals under $50</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('kitchen and dining'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41I85MytToL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1157,7 +1169,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('home improvement'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41mb6AUCJSL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1172,7 +1184,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41J1-iazq6L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1185,7 +1197,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('bedding and bath'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/417HmRJ2WJL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1197,19 +1209,19 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <Link to='/labordaysale'
-                                href=''
-                                className='tracking-tight'
+                                  href=''
+                                  className='tracking-tight'
                             >
                                 Discover the latest arrivals</Link>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('electronics'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31zLfxfdJ1L._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1222,7 +1234,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('home'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31cU8R+ZNFL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1237,7 +1249,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21vZBVKPsDL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1250,7 +1262,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('fashion'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21X3TF86YFL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1269,13 +1281,13 @@ function Home() {
                                 Accessorize your life</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fashion accessories'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/413lM0C0PEL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1288,7 +1300,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('men accessories'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/410LHEUGZ5L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1303,7 +1315,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('health and beauty'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41IIOwmruhL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1316,7 +1328,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Sports'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31KVFrr1USL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1335,13 +1347,13 @@ function Home() {
                                 Step into style</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41Ty8UTzIFL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1354,7 +1366,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Women shoes'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41WzZLqiLEL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1369,7 +1381,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Men apparel'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31oxb92GmqL._SR170,170_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1382,7 +1394,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Men shoes'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41iPIZIMh2L._SR170,170_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1401,13 +1413,13 @@ function Home() {
                                 Level up your beauty routine</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31aJyAdILmL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1420,7 +1432,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup brushes'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41MIeNiwdhL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1435,7 +1447,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup sponge'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31wSz8gA5wL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1448,7 +1460,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup mirror'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21xHtP1ZnlL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1467,13 +1479,13 @@ function Home() {
                                 Handpicked home theater</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('television'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41Nldn0FGML._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1486,7 +1498,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/4198T9z6hjL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1501,7 +1513,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('soundbars'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41Z1yvPi2rL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1514,7 +1526,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('projectors'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41J5MFD8nnL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1533,13 +1545,13 @@ function Home() {
                                 Curate your space</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Candles'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/415fShfBidL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1552,7 +1564,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('stylish pillows'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41eHYxK1H4L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1567,7 +1579,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('indoor gardening'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41RqiI-5T5L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1580,7 +1592,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('Storage organization'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41wRrAnGAJL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1599,13 +1611,13 @@ function Home() {
                                 Look your best this season</a>
                             <span>›</span>
                         </div>
-                        <div className='grid grid-cols-2 space-x-3 space-y-10'>
+                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41u9C4AnoaL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1618,7 +1630,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('men apparel'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41mhTFj8EhL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1633,7 +1645,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('teen apparel'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41VUN4-BMYL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
@@ -1646,7 +1658,7 @@ function Home() {
                                     onClick={(e) => { e.preventDefault(); setSearch('kids apparel'); }}
                                     href="">
                                     <img
-                                        className='rounded-xl w-[176px] h-[176px] object-cover'
+                                        className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/413w78Z-7PL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
