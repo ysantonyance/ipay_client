@@ -54,6 +54,7 @@ function App() {
             <Route element={<MainLayout />} >
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
 {/*
               <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/yourstore/home" element={<UserAmazon />} />
@@ -65,7 +66,6 @@ function App() {
               <Route path="/buyagain" element={<BuyAgain />} />
               <Route path="/gift-cards" element={<GiftCards />} />
               <Route path="/sell" element={<Sell />} />
-              <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/video/:id" element={<VideoDetails />} />
 
               <Route path="/customer-preferences" element={<CustomerPreferences />} />
