@@ -65,9 +65,11 @@ function Footer() {
                 <hr className='border-[#3A4553] border'/>
 
                 <div className='p-6 md:p-10 flex flex-col md:flex-row justify-center items-center gap-6 md:gap-20'>
-                    <img
-                        className='w-[75px] h-[25px] object-contain'
-                        src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Famazon-logo-black-background-xb9pdemosnjfz9ej.png&f=1&nofb=1&ipt=1172987294c6bf825c90f06155e9a3b53408e1f3dcead65f11f2b4ce5542c5eb" alt="amazon-logo"/>
+                    <Link to='/'>
+                        <img
+                            className='w-[75px] h-[25px] object-contain cursor-pointer'
+                            src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Famazon-logo-black-background-xb9pdemosnjfz9ej.png&f=1&nofb=1&ipt=1172987294c6bf825c90f06155e9a3b53408e1f3dcead65f11f2b4ce5542c5eb" alt="amazon-logo"/>
+                    </Link>
 
                     <div className='text-white text-[14px] flex flex-wrap justify-center gap-2'>
                         <Link
