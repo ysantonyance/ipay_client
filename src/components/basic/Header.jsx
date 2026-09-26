@@ -11,7 +11,9 @@ function Header() {
                 <div className='flex flex-col sm:flex-row sm:justify-between items-center px-3 py-2 sm:py-0 gap-2 sm:gap-4'>
                     {/* Top Row on Mobile: Logo + Mobile Actions */}
                     <div className='flex items-center justify-between w-full sm:w-auto gap-2'>
-                        <img className='w-[90px] sm:w-[100px] h-[40px] sm:h-[50px] border border-transparent hover:border-white p-2 sm:p-3 cursor-pointer object-contain' src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Famazon-logo-black-background-xb9pdemosnjfz9ej.png&f=1&nofb=1&ipt=1172987294c6bf825c90f06155e9a3b53408e1f3dcead65f11f2b4ce5542c5eb" alt="amazon-logo"/>
+                        <Link to='/' className='shrink-0'>
+                            <img className='w-[90px] sm:w-[100px] h-[40px] sm:h-[50px] border border-transparent hover:border-white p-2 sm:p-3 cursor-pointer object-contain' src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Famazon-logo-black-background-xb9pdemosnjfz9ej.png&f=1&nofb=1&ipt=1172987294c6bf825c90f06155e9a3b53408e1f3dcead65f11f2b4ce5542c5eb" alt="amazon-logo"/>
+                        </Link>
 
                         {/* Deliver to - Hidden on small mobile */}
                         <div className='hidden md:flex h-[50px] border border-transparent hover:border-white flex-col justify-center cursor-pointer px-2 shrink-0'>

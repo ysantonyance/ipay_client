@@ -2,7 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { productsApi } from '../api/productsApi.js';
 import { getErrorMessage } from '../api/api.js';
 
-function useProducts(limit = 12) {
+// Filtering (price/rating/category/manufacturer) needs the whole catalog to search
+// over, not just one page, so this loads everything via /products/all rather than
+// the paginated /products endpoint.
+function useProducts() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -13,7 +16,7 @@ function useProducts(limit = 12) {
 
         try {
             // api.js interceptor already unwraps response.data
-            const data = await productsApi.getAll({ limit });
+            const data = await productsApi.getAllUnpaged();
             setProducts(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Failed to load products', err);
@@ -21,7 +24,7 @@ function useProducts(limit = 12) {
         } finally {
             setLoading(false);
         }
-    }, [limit]);
+    }, []);
 
     useEffect(() => {
         load();

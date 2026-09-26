@@ -55,6 +55,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<ProductDetails />} />
+              <Route path="/admin" element={<Admin />} />
 {/*
               <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/yourstore/home" element={<UserAmazon />} />
@@ -80,10 +81,6 @@ function App() {
               <Route path="/register" element={<Register />} />
 
               <Route path="/login" element={<Login />} />
-{/*
-              <Route path="/admin" element={<Admin />} />
-*/}
-
 
             </Route>
           </Routes>
