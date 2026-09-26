@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import {Link} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authApi } from '../api/authApi.js';
+import { getErrorMessage } from '../api/api.js';
 
 function Register() {
+    const navigate = useNavigate();
+
     const initialFormState = {
         fullname: '',
         email: '',
@@ -12,14 +16,13 @@ function Register() {
 
     const [formState, setFormState] = useState(initialFormState);
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const validateForm = () => {
         const newErrors = {};
 
         if (!formState.fullname.trim()) {
             newErrors.fullname = 'Enter your name';
-        } else if (formState.fullname.trim().split(/\s+/).length < 2) {
-            newErrors.fullname = 'Include both first and last name';
         }
 
         if (!formState.email.trim()) {
@@ -58,18 +61,32 @@ function Register() {
             ...prev,
             [name]: value
         }));
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: '' }));
+        if (errors[name] || errors.server) {
+            setErrors((prev) => ({ ...prev, [name]: '', server: '' }));
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validateForm()) {
-            console.log('Registration data submitted:', formState);
-            alert('Account created successfully!');
-            setFormState(initialFormState);
-            setErrors({});
+        if (!validateForm()) return;
+
+        setLoading(true);
+        setErrors({});
+
+        try {
+            await authApi.register({
+                email: formState.email,
+                password: formState.password,
+                confirmPassword: formState.confirmPassword,
+                name: formState.fullname.trim() || 'guest'
+            });
+
+            navigate('/login');
+        } catch (err) {
+            const serverMessage = getErrorMessage(err, 'Registration failed. Please try again.');
+            setErrors({ server: serverMessage });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -84,6 +101,12 @@ function Register() {
             <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm'>
                 <h1 className='text-[28px] font-normal mb-4'>Create account</h1>
 
+                {errors.server && (
+                    <div className='p-2 mb-3 bg-[#fdf2f2] border border-[#d32f2f] rounded-lg text-[#d32f2f] text-[13px]'>
+                        {errors.server}
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
                     <div className='flex flex-col'>
                         <label htmlFor='fullname' className='text-[13px] font-bold mb-1'>
@@ -96,6 +119,7 @@ function Register() {
                             placeholder='First and last name'
                             value={formState.fullname}
                             onChange={handleInputChange}
+                            disabled={loading}
                             className={`w-full p-2 text-[13px] border rounded-xl outline-none focus:ring-2 focus:ring-[#888C8D] focus:border-[#888C8D] ${
                                 errors.fullname ? 'border-[#d32f2f]' : 'border-[#a6a6a6]'
                             }`}
@@ -115,6 +139,7 @@ function Register() {
                             name='email'
                             value={formState.email}
                             onChange={handleInputChange}
+                            disabled={loading}
                             className={`w-full p-2 text-[13px] border rounded-xl outline-none focus:ring-2 focus:ring-[#888C8D] focus:border-[#888C8D] ${
                                 errors.email ? 'border-[#d32f2f]' : 'border-[#a6a6a6]'
                             }`}
@@ -135,6 +160,7 @@ function Register() {
                             placeholder='e.g. +380630300035'
                             value={formState.phone}
                             onChange={handleInputChange}
+                            disabled={loading}
                             className={`w-full p-2 text-[13px] border rounded-xl outline-none focus:ring-2 focus:ring-[#888C8D] focus:border-[#888C8D] ${
                                 errors.phone ? 'border-[#d32f2f]' : 'border-[#a6a6a6]'
                             }`}
@@ -156,6 +182,7 @@ function Register() {
                             value={formState.password}
                             onChange={handleInputChange}
                             autoComplete='new-password'
+                            disabled={loading}
                             className={`w-full p-2 text-[13px] border rounded-xl outline-none focus:ring-2 focus:ring-[#888C8D] focus:border-[#888C8D] ${
                                 errors.password ? 'border-[#d32f2f]' : 'border-[#a6a6a6]'
                             }`}
@@ -164,7 +191,7 @@ function Register() {
                             <span className='text-[#d32f2f] text-[12px] mt-1'>{errors.password}</span>
                         ) : (
                             <span className='text-[11px] text-[#555] mt-1'>
-                                Passwords must be at least 8 characters and contain letters and numbers.
+                                Passwords must be at least 8+ characters, at least 1 uppercase letter, 1 lowercase letter, 1 digit, AND 1 special character (e.g., @, #, !, $)
                             </span>
                         )}
                     </div>
@@ -180,6 +207,7 @@ function Register() {
                             value={formState.confirmPassword}
                             onChange={handleInputChange}
                             autoComplete='new-password'
+                            disabled={loading}
                             className={`w-full p-2 text-[13px] border rounded-xl outline-none focus:ring-2 focus:ring-[#888C8D] focus:border-[#888C8D] ${
                                 errors.confirmPassword ? 'border-[#d32f2f]' : 'border-[#a6a6a6]'
                             }`}
@@ -191,9 +219,10 @@ function Register() {
 
                     <button
                         type='submit'
-                        className='w-full py-1.5 mt-3 bg-[#FFD814] hover:bg-[#FFCE12] border border-[#FCD200] rounded-xl text-[13px] cursor-pointer active:bg-[#F0B800] font-medium'
+                        disabled={loading}
+                        className='w-full py-1.5 mt-3 bg-[#FFD814] hover:bg-[#FFCE12] border border-[#FCD200] rounded-xl text-[13px] cursor-pointer active:bg-[#F0B800] font-medium disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        Create your Amazon account
+                        {loading ? 'Creating account...' : 'Create your Amazon account'}
                     </button>
                 </form>
 

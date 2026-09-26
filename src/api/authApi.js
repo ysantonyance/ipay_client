@@ -15,16 +15,26 @@ export const authApi = {
             localStorage.setItem('refreshToken', data.refreshToken);
         }
 
+        const displayName = data?.user?.fullname || data?.user?.email || "User";
+        localStorage.setItem('userName', displayName);
+
         return data;
     },
 
     // Body: { email, password, confirmPassword, name }
-    register: (userData) => api.post('/auth/register', userData),
+    register: async (userData) => {
+        const data = api.post('/auth/register', userData);
+
+        if (userData.fullname)
+            localStorage.setItem('name', userData.fullname);
+        return data;
+    },
 
     // The backend has no logout endpoint - the JWT is simply forgotten on the client.
     logout: () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userName');
         return Promise.resolve();
     },
 
