@@ -4,6 +4,9 @@ import useProducts from '../hooks/useProducts.js';
 import { imagesApi } from '../api/imagesApi.js';
 import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
+import Pagination from '../components/basic/Pagination.jsx';
+
+const PAGE_SIZE = 12;
 
 const SORT_OPTIONS = [
     { value: 'featured', label: 'Featured' },
@@ -215,6 +218,24 @@ function Products() {
         }
     }, [products, query, sort, categoryId, manufacturer, minRating, priceMin, priceMax]);
 
+    // Pagination - done on the client because filtering/sorting needs the whole catalog.
+    const [page, setPage] = useState(1);
+
+    // Any change to the filters, search or sort starts again from page 1.
+    useEffect(() => {
+        setPage(1);
+    }, [query, sort, categoryId, manufacturer, minRating, priceMin, priceMax]);
+
+    const totalPages = Math.max(1, Math.ceil(visibleProducts.length / PAGE_SIZE));
+    const currentPage = Math.min(page, totalPages);
+    const pageStart = (currentPage - 1) * PAGE_SIZE;
+    const pagedProducts = visibleProducts.slice(pageStart, pageStart + PAGE_SIZE);
+
+    const goToPage = (nextPage) => {
+        setPage(nextPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <div className='bg-[#EAEDED] min-h-screen'>
             <div className='bg-white border-b border-[#DDDDDD] px-6 py-3 flex flex-wrap items-center justify-between gap-3'>
@@ -223,6 +244,8 @@ function Products() {
                     {!loading && !error && (
                         <p className='text-[13px] text-[#565959]'>
                             {visibleProducts.length} result{visibleProducts.length === 1 ? '' : 's'}
+                            {visibleProducts.length > PAGE_SIZE &&
+                                ` · showing ${pageStart + 1}–${Math.min(pageStart + PAGE_SIZE, visibleProducts.length)}`}
                         </p>
                     )}
                 </div>
@@ -360,11 +383,19 @@ function Products() {
                     )}
 
                     {!loading && !error && visibleProducts.length > 0 && (
-                        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-                            {visibleProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
+                        <>
+                            <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
+                                {pagedProducts.map((product) => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
+
+                            <Pagination
+                                page={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={goToPage}
+                            />
+                        </>
                     )}
                 </div>
             </div>
