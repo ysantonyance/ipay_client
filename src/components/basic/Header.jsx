@@ -1,9 +1,16 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useSearch} from "../../context/SearchContext.jsx";
-import {useState} from "react";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 function Header() {
     const {search, setSearch} = useSearch();
+    const {isLoggedIn, userName, logout} = useAuth();
+    const navigate = useNavigate();
+
+    const handleSignOut = async () => {
+        await logout();
+        navigate('/');
+    };
 
     return (
         <>
@@ -11,7 +18,9 @@ function Header() {
                 <div className='flex flex-col sm:flex-row sm:justify-between items-center px-3 py-2 sm:py-0 gap-2 sm:gap-4'>
                     {/* Top Row on Mobile: Logo + Mobile Actions */}
                     <div className='flex items-center justify-between w-full sm:w-auto gap-2'>
-                        <img className='w-[90px] sm:w-[100px] h-[40px] sm:h-[50px] border border-transparent hover:border-white p-2 sm:p-3 cursor-pointer object-contain' src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Famazon-logo-black-background-xb9pdemosnjfz9ej.png&f=1&nofb=1&ipt=1172987294c6bf825c90f06155e9a3b53408e1f3dcead65f11f2b4ce5542c5eb" alt="amazon-logo"/>
+                        <Link to='/'>
+                            <img className='w-[90px] sm:w-[100px] h-[40px] sm:h-[50px] border border-transparent hover:border-white p-2 sm:p-3 cursor-pointer object-contain' src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Famazon-logo-black-background-xb9pdemosnjfz9ej.png&f=1&nofb=1&ipt=1172987294c6bf825c90f06155e9a3b53408e1f3dcead65f11f2b4ce5542c5eb" alt="amazon-logo"/>
+                        </Link>
 
                         {/* Deliver to - Hidden on small mobile */}
                         <div className='hidden md:flex h-[50px] border border-transparent hover:border-white flex-col justify-center cursor-pointer px-2 shrink-0'>
@@ -28,9 +37,19 @@ function Header() {
                                 <img src="" alt=""/>
                                 EN
                             </div>
-                            <Link to='/register' className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px]'>
-                                Sign in ›
-                            </Link>
+                            {isLoggedIn ? (
+                                <button
+                                    type='button'
+                                    onClick={handleSignOut}
+                                    className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px] cursor-pointer'
+                                >
+                                    Sign out
+                                </button>
+                            ) : (
+                                <Link to='/login' className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px]'>
+                                    Sign in ›
+                                </Link>
+                            )}
                             <div className='h-[40px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
                                 <span>0</span>
                                 <b className='ml-1'>Cart</b>
@@ -56,12 +75,22 @@ function Header() {
                             EN
                         </div>
 
-                        <Link
-                            to='/register'
-                            className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer'>
-                            <p>Hello, sign in</p>
-                            <b>Accounts & Lists</b>
-                        </Link>
+                        {isLoggedIn ? (
+                            <button
+                                type='button'
+                                onClick={handleSignOut}
+                                className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
+                                <p>Hello, {userName}</p>
+                                <b>Sign out</b>
+                            </button>
+                        ) : (
+                            <Link
+                                to='/login'
+                                className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer'>
+                                <p>Hello, sign in</p>
+                                <b>Accounts & Lists</b>
+                            </Link>
+                        )}
 
                         <div className='hidden lg:flex h-[50px] border border-transparent hover:border-white px-2 flex-col justify-center cursor-pointer'>
                             <p className='text-[#CCCCCC]'>Returns</p>

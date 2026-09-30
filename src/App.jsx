@@ -24,6 +24,7 @@ import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import Admin from "./pages/Admin.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
+import {AuthProvider} from "./context/AuthContext.jsx";
 
 function MainLayout() {
   return (
@@ -38,17 +39,10 @@ function MainLayout() {
   );
 }
 
-function CleanLayout() {
-  return (
-      <>
-        <Outlet />
-      </>
-  )
-}
-
 function App() {
   return (
       <div className="App">
+        <AuthProvider>
         <main>
           <Routes>
             <Route element={<MainLayout />} >
@@ -56,6 +50,8 @@ function App() {
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
 {/*
               <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/yourstore/home" element={<UserAmazon />} />
@@ -75,16 +71,9 @@ function App() {
               <Route path="/cart" element={<Cart />} />
 */}
             </Route>
-
-            <Route element={<CleanLayout />} >
-
-              <Route path="/register" element={<Register />} />
-
-              <Route path="/login" element={<Login />} />
-
-            </Route>
           </Routes>
         </main>
+        </AuthProvider>
       </div>
   );
 }

@@ -1,4 +1,8 @@
+import { useEffect, useState } from 'react';
 import { imagesApi } from '../../api/imagesApi.js';
+import Pagination from '../basic/Pagination.jsx';
+
+const PAGE_SIZE = 30;
 
 function formatCell(field, value) {
     if (value === null || value === undefined || value === '') return '—';
@@ -8,6 +12,20 @@ function formatCell(field, value) {
 }
 
 function ResourceTable({ schema, items, loading, error, categoryLookup, onEdit, onDelete, deletingId }) {
+    const [page, setPage] = useState(1);
+
+    // Switching resource tabs (Products -> Categories, etc.) starts back at page 1.
+    useEffect(() => {
+        setPage(1);
+    }, [schema]);
+
+    const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+    const currentPage = Math.min(page, totalPages);
+    const pageStart = (currentPage - 1) * PAGE_SIZE;
+    const pagedItems = items.slice(pageStart, pageStart + PAGE_SIZE);
+
+    const goToPage = (nextPage) => setPage(nextPage);
+
     if (loading) {
         return (
             <div className='space-y-2 animate-pulse'>
@@ -30,68 +48,79 @@ function ResourceTable({ schema, items, loading, error, categoryLookup, onEdit, 
     const textFields = schema.fields.filter((f) => !f.image);
 
     return (
-        <div className='overflow-x-auto'>
-            <table className='w-full text-[13px] border-collapse'>
-                <thead>
-                    <tr className='border-b border-[#DDDDDD] text-left text-[#565959]'>
-                        <th className='py-2 pr-3'>ID</th>
-                        {imageField && <th className='py-2 pr-3'></th>}
-                        {textFields.map((f) => (
-                            <th key={f.key} className='py-2 pr-3'>
-                                {f.label}
-                            </th>
-                        ))}
-                        <th className='py-2'></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {items.map((item) => (
-                        <tr key={item.id} className='border-b border-[#EEEEEE] align-middle'>
-                            <td className='py-2 pr-3 text-[#565959]'>{item.id}</td>
-
-                            {imageField && (
-                                <td className='py-2 pr-3'>
-                                    {item[imageField.key] ? (
-                                        <img
-                                            src={imagesApi.resolveUrl(item[imageField.key])}
-                                            alt=''
-                                            className='w-10 h-10 object-cover rounded border border-[#DDDDDD]'
-                                        />
-                                    ) : (
-                                        <div className='w-10 h-10 rounded bg-[#F3F3F3]'></div>
-                                    )}
-                                </td>
-                            )}
-
+        <div>
+            <div className='overflow-x-auto'>
+                <table className='w-full text-[13px] border-collapse'>
+                    <thead>
+                        <tr className='border-b border-[#DDDDDD] text-left text-[#565959]'>
+                            <th className='py-2 pr-3'>ID</th>
+                            {imageField && <th className='py-2 pr-3'></th>}
                             {textFields.map((f) => (
-                                <td key={f.key} className='py-2 pr-3 text-[#0F1111]'>
-                                    {f.type === 'category-select' && categoryLookup
-                                        ? categoryLookup[item[f.key]] ?? `#${item[f.key]}`
-                                        : formatCell(f, item[f.key])}
-                                </td>
+                                <th key={f.key} className='py-2 pr-3'>
+                                    {f.label}
+                                </th>
                             ))}
-
-                            <td className='py-2 text-right whitespace-nowrap'>
-                                <button
-                                    type='button'
-                                    onClick={() => onEdit(item)}
-                                    className='text-[#007185] hover:underline mr-3 cursor-pointer'
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    type='button'
-                                    disabled={deletingId === item.id}
-                                    onClick={() => onDelete(item)}
-                                    className='text-[#B12704] hover:underline disabled:opacity-50 cursor-pointer'
-                                >
-                                    {deletingId === item.id ? 'Deleting…' : 'Delete'}
-                                </button>
-                            </td>
+                            <th className='py-2'></th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {pagedItems.map((item) => (
+                            <tr key={item.id} className='border-b border-[#EEEEEE] align-middle'>
+                                <td className='py-2 pr-3 text-[#565959]'>{item.id}</td>
+
+                                {imageField && (
+                                    <td className='py-2 pr-3'>
+                                        {item[imageField.key] ? (
+                                            <img
+                                                src={imagesApi.resolveUrl(item[imageField.key])}
+                                                alt=''
+                                                className='w-10 h-10 object-cover rounded border border-[#DDDDDD]'
+                                            />
+                                        ) : (
+                                            <div className='w-10 h-10 rounded bg-[#F3F3F3]'></div>
+                                        )}
+                                    </td>
+                                )}
+
+                                {textFields.map((f) => (
+                                    <td key={f.key} className='py-2 pr-3 text-[#0F1111]'>
+                                        {f.type === 'category-select' && categoryLookup
+                                            ? categoryLookup[item[f.key]] ?? `#${item[f.key]}`
+                                            : formatCell(f, item[f.key])}
+                                    </td>
+                                ))}
+
+                                <td className='py-2 text-right whitespace-nowrap'>
+                                    <button
+                                        type='button'
+                                        onClick={() => onEdit(item)}
+                                        className='text-[#007185] hover:underline mr-3 cursor-pointer'
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        type='button'
+                                        disabled={deletingId === item.id}
+                                        onClick={() => onDelete(item)}
+                                        className='text-[#B12704] hover:underline disabled:opacity-50 cursor-pointer'
+                                    >
+                                        {deletingId === item.id ? 'Deleting…' : 'Delete'}
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {items.length > PAGE_SIZE && (
+                <>
+                    <p className='text-[12px] text-[#565959] text-center mt-3'>
+                        Showing {pageStart + 1}–{Math.min(pageStart + PAGE_SIZE, items.length)} of {items.length}
+                    </p>
+                    <Pagination page={currentPage} totalPages={totalPages} onPageChange={goToPage} />
+                </>
+            )}
         </div>
     );
 }
