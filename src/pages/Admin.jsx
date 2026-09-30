@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AdminAuthProvider, useAdminAuth } from '../context/AdminAuthContext.jsx';
-import AdminLogin from '../components/admin/AdminLogin.jsx';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
+import Forbidden from './Forbidden.jsx';
 import ResourceForm from '../components/admin/ResourceForm.jsx';
 import ResourceTable from '../components/admin/ResourceTable.jsx';
 import useAdminResource from '../hooks/useAdminResource.js';
@@ -11,7 +12,8 @@ import { manufacturersApi } from '../api/manufacturersApi.js';
 const NAV_ITEMS = RESOURCE_ORDER.map((key) => ({ key, label: RESOURCE_SCHEMAS[key].label }));
 
 function AdminDashboard() {
-    const { lock } = useAdminAuth();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
     const [resourceKey, setResourceKey] = useState(RESOURCE_ORDER[0]);
     const schema = RESOURCE_SCHEMAS[resourceKey];
 
@@ -88,6 +90,11 @@ function AdminDashboard() {
         if (resourceKey === 'manufacturers') await refreshManufacturers();
     };
 
+    const handleSignOut = async () => {
+        await logout();
+        navigate('/');
+    };
+
     return (
         <div className='min-h-screen bg-[#EAEDED]'>
             <div className='bg-[#131921] text-white px-6 py-3 flex items-center justify-between'>
@@ -97,7 +104,7 @@ function AdminDashboard() {
                 </div>
                 <button
                     type='button'
-                    onClick={lock}
+                    onClick={handleSignOut}
                     className='text-[13px] border border-transparent hover:border-white rounded px-3 py-1 cursor-pointer'
                 >
                     Sign out
@@ -164,17 +171,12 @@ function AdminDashboard() {
     );
 }
 
-function AdminGate() {
-    const { isAuthenticated } = useAdminAuth();
-    return isAuthenticated ? <AdminDashboard /> : <AdminLogin />;
-}
-
 function Admin() {
-    return (
-        <AdminAuthProvider>
-            <AdminGate />
-        </AdminAuthProvider>
-    );
+    // Real role check (from the logged-in user's JWT), not a shared passcode -
+    // ChangeRole (AuthController, AdminOnly policy) is how someone actually
+    // becomes an Admin. Anyone else lands on a plain 403.
+    const { isAdmin } = useAuth();
+    return isAdmin ? <AdminDashboard /> : <Forbidden />;
 }
 
 export default Admin;

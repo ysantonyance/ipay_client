@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { authApi } from '../api/authApi.js';
+import { getRoleFromToken } from '../utils/jwt.js';
 
 // authApi.login/logout dispatch this ('ipay-auth-changed') right after
 // touching localStorage, because the native 'storage' event only fires in
@@ -7,9 +8,12 @@ import { authApi } from '../api/authApi.js';
 const AUTH_EVENT = 'ipay-auth-changed';
 
 function readAuth() {
+    const role = getRoleFromToken(localStorage.getItem('authToken'));
     return {
         isLoggedIn: authApi.isLoggedIn(),
         userName: localStorage.getItem('userName') || '',
+        role,
+        isAdmin: role === 'Admin',
     };
 }
 
