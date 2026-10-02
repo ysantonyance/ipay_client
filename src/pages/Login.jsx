@@ -64,14 +64,8 @@ function Login() {
     };
 
     return (
-        <div className='flex flex-col items-center p-5 min-h-screen bg-white'>
-            <img
-                className='w-[100px] h-[30px] object-contain mb-4'
-                src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flogodownload.org%2Fwp-content%2Fuploads%2F2014%2F04%2Famazon-logo.png&f=1&nofb=1&ipt=fef6cff166c6ed07229dbe4fd6e02ee582c684de49a245bcd6f6473423f92c4e"
-                alt="Amazon logo"
-            />
-
-            <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm'>
+        <div className='flex flex-col items-center p-5 min-h-[70vh] bg-white'>
+            <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm mt-8'>
                 <h1 className='text-[28px] font-normal mb-4'>Sign in</h1>
 
                 {errors.server && (
@@ -172,17 +166,6 @@ function Login() {
             >
                 Create your Amazon account
             </Link>
-
-            <hr className='border border-[#D5D9D9] w-full mb-4'/>
-
-            <div className='p-2 flex flex-col items-center gap-2'>
-                <div className='text-[#2162A1] text-[12px] flex gap-4'>
-                    <a className='hover:text-[#093457] hover:underline' href="#">Conditions of Use</a>
-                    <a className='hover:text-[#093457] hover:underline' href="#">Privacy Notice</a>
-                    <a className='hover:text-[#093457] hover:underline' href="#">Help</a>
-                </div>
-                <p className='text-[12px] text-[#555]'> © 1996-2026, Amazon.com, Inc. or its affiliates </p>
-            </div>
         </div>
     );
 }

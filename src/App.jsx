@@ -56,9 +56,9 @@ function App() {
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/admin" element={<Admin />} />
-
+{/*
               <Route path="/amazon-video" element={<AmazonVideo />} />
-{/*              <Route path="/yourstore/home" element={<UserAmazon />} />
+              <Route path="/yourstore/home" element={<UserAmazon />} />
               <Route path="/coupons" element={<Coupons />} />
               <Route path="/contact-us" element={<CustomerService />} />
               <Route path="/history" element={<History />} />
@@ -72,8 +72,8 @@ function App() {
               <Route path="/customer-preferences" element={<CustomerPreferences />} />
               <Route path="/your-account" element={<Account />} />
               <Route path="/your-orders" element={<Orders />} />
-              <Route path="/cart" element={<Cart />} />*/}
-
+              <Route path="/cart" element={<Cart />} />
+*/}
             </Route>
 
             <Route element={<CleanLayout />} >
