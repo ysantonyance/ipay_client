@@ -38,13 +38,21 @@ function Header() {
                                 EN
                             </div>
                             {isLoggedIn ? (
-                                <button
-                                    type='button'
-                                    onClick={handleSignOut}
-                                    className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px] cursor-pointer'
-                                >
-                                    Sign out
-                                </button>
+                                <>
+                                    <Link
+                                        to='/profile'
+                                        className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px]'
+                                    >
+                                        Profile
+                                    </Link>
+                                    <button
+                                        type='button'
+                                        onClick={handleSignOut}
+                                        className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px] cursor-pointer'
+                                    >
+                                        Sign out
+                                    </button>
+                                </>
                             ) : (
                                 <Link to='/login' className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px]'>
                                     Sign in ›
@@ -76,13 +84,21 @@ function Header() {
                         </div>
 
                         {isLoggedIn ? (
-                            <button
-                                type='button'
-                                onClick={handleSignOut}
-                                className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
-                                <p>Hello, {userName}</p>
-                                <b>Sign out</b>
-                            </button>
+                            <>
+                                <Link
+                                    to='/profile'
+                                    className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
+                                    <p>Hello, {userName}</p>
+                                    <b>Your profile</b>
+                                </Link>
+                                <button
+                                    type='button'
+                                    onClick={handleSignOut}
+                                    className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
+                                    <p className='text-[#CCCCCC]'>Not you?</p>
+                                    <b>Sign out</b>
+                                </button>
+                            </>
                         ) : (
                             <Link
                                 to='/login'

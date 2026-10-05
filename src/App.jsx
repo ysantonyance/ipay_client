@@ -23,6 +23,7 @@ import Cart from "./pages/Cart.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import Admin from "./pages/Admin.jsx";
+import Profile from "./pages/Profile.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
 
 function MainLayout() {
@@ -56,6 +57,7 @@ function App() {
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/profile" element={<Profile />} />
 {/*
               <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/yourstore/home" element={<UserAmazon />} />

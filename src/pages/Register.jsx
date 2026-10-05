@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { authApi } from '../api/authApi.js';
 import { getErrorMessage } from '../api/api.js';
+import { getFirebaseErrorMessage, sendVerificationEmail } from '../api/firebaseAuth.js';
 
 function Register() {
     const navigate = useNavigate();
@@ -87,7 +88,19 @@ function Register() {
                 name: formState.fullname.trim() || 'guest'
             });
 
-            navigate('/login');
+            // The account exists now. Firebase sends the verification email (template: Firebase console >
+            // Authentication > Templates). If that step fails the account is still fine - the person can
+            // request another email from the sign-in page.
+            let notice;
+            try {
+                await sendVerificationEmail(formState.email.trim(), formState.password);
+                notice = `Account created! We sent a verification email to ${formState.email.trim()}. Click the link in it, then sign in.`;
+            } catch (verificationError) {
+                const reason = getFirebaseErrorMessage(verificationError, '');
+                notice = `Account created, but we could not send the verification email${reason ? ` (${reason})` : ''}. Sign in and choose "Resend verification email".`;
+            }
+
+            navigate('/login', { state: { notice } });
         } catch (err) {
             const serverMessage = getErrorMessage(err, 'Registration failed. Please try again.');
             setErrors({ server: serverMessage });
