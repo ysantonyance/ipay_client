@@ -5,6 +5,7 @@ import { imagesApi } from '../api/imagesApi.js';
 import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
 import Pagination from '../components/basic/Pagination.jsx';
+import {useCart} from "../context/CartContext.jsx";
 
 const PAGE_SIZE = 12;
 
@@ -62,6 +63,7 @@ function RatingFilter({ value, onChange }) {
 function ProductCard({ product }) {
     const finalPrice = getFinalPrice(product);
     const hasDiscount = finalPrice < product.price;
+    const { add } = useCart();
 
     return (
         <div className='bg-white border border-[#DDDDDD] rounded p-4 flex flex-col hover:shadow-lg transition-shadow'>
@@ -115,6 +117,7 @@ function ProductCard({ product }) {
                 <button
                     type='button'
                     className='w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
+                    onClick={() => add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice})}
                 >
                     Add to Cart
                 </button>

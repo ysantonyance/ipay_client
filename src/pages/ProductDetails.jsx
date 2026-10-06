@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails.js';
 import { imagesApi } from '../api/imagesApi.js';
+import {useCart} from "../context/CartContext.jsx";
 
 const SIMILAR_LIMIT = 8;
 
@@ -160,6 +161,7 @@ function ProductHero({ product, category, stats }) {
     const discountPercent = product.discountPercent > 0
         ? product.discountPercent
         : ((product.price - finalPrice) / product.price) * 100;
+    const { add } = useCart();
 
     return (
         <section className='bg-white border border-[#DDDDDD] rounded p-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_280px] gap-8'>
@@ -224,6 +226,7 @@ function ProductHero({ product, category, stats }) {
                     <button
                         type='button'
                         className='w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
+                        onClick={() => add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice})}
                     >
                         Add to Cart
                     </button>

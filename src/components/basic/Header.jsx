@@ -1,11 +1,14 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useSearch} from "../../context/SearchContext.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
+import {useCart} from "../../context/CartContext.jsx";
 
 function Header() {
     const {search, setSearch} = useSearch();
     const {isLoggedIn, userName, logout} = useAuth();
     const navigate = useNavigate();
+    const {items} = useCart();
+    const cartCount = items.reduce((n,i) => n + i.qty, 0);
 
     const handleSignOut = async () => {
         await logout();
@@ -16,13 +19,11 @@ function Header() {
         <>
             <div className='bg-[#131921] text-white text-[12px]'>
                 <div className='flex flex-col sm:flex-row sm:justify-between items-center px-3 py-2 sm:py-0 gap-2 sm:gap-4'>
-                    {/* Top Row on Mobile: Logo + Mobile Actions */}
                     <div className='flex items-center justify-between w-full sm:w-auto gap-2'>
                         <Link to='/'>
                             <img className='w-[90px] sm:w-[100px] h-[40px] sm:h-[50px] border border-transparent hover:border-white p-2 sm:p-3 cursor-pointer object-contain' src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Famazon-logo-black-background-xb9pdemosnjfz9ej.png&f=1&nofb=1&ipt=1172987294c6bf825c90f06155e9a3b53408e1f3dcead65f11f2b4ce5542c5eb" alt="amazon-logo"/>
                         </Link>
 
-                        {/* Deliver to - Hidden on small mobile */}
                         <div className='hidden md:flex h-[50px] border border-transparent hover:border-white flex-col justify-center cursor-pointer px-2 shrink-0'>
                             <p className='text-[#CCCCCC]'>Deliver to</p>
                             <div>
@@ -31,7 +32,6 @@ function Header() {
                             </div>
                         </div>
 
-                        {/* Mobile view quick action icons (Language, SignIn + Cart) */}
                         <div className='flex items-center gap-1 sm:hidden'>
                             <div className='h-[40px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
                                 <img src="" alt=""/>
@@ -58,14 +58,18 @@ function Header() {
                                     Sign in ›
                                 </Link>
                             )}
-                            <div className='h-[40px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
-                                <span>0</span>
+
+                            <Link
+                                to='/cart'
+                                className='h-[40px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'
+                            >
+                                <span>{cartCount}</span>
+                                <img src="https://icons8.com/icon/QVQY51sDgy1I/shopping-cart" alt=""/>
                                 <b className='ml-1'>Cart</b>
-                            </div>
+                            </Link>
                         </div>
                     </div>
 
-                    {/* Search Bar - Full Width on Mobile, Flexible on Desktop */}
                     <div className='w-full sm:flex-1 max-w-[1000px] my-1 sm:my-3'>
                         <input
                             className='w-full h-[40px] bg-white rounded-xl text-black px-3 text-[14px] outline-none'
@@ -76,7 +80,6 @@ function Header() {
                         />
                     </div>
 
-                    {/* Desktop Right Actions */}
                     <div className='hidden sm:flex items-center gap-2 shrink-0'>
                         <div className='h-[50px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
                             <img src="" alt=""/>
@@ -113,15 +116,18 @@ function Header() {
                             <b>& Orders</b>
                         </div>
 
-                        <div className='h-[50px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
-                            <span>0</span>
+                        <Link
+                            to='/cart'
+                            className='h-[50px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'
+                        >
+                            <span>{cartCount}</span>
+                            <img src="https://icons8.com/icon/QVQY51sDgy1I/shopping-cart" alt=""/>
                             <b className='ml-1'>Cart</b>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>
 
-            {/* Sub-Navigation Bar - Horizontally Scrollable on Mobile */}
             <div className='bg-[#232F3E] text-white text-[14px] px-3 overflow-x-auto whitespace-nowrap scrollbar-none'>
                 <div className='flex flex-row items-center space-x-3 py-1 sm:py-0'>
                     <div className='flex flex-row items-center pr-2 border border-transparent hover:border-white cursor-pointer shrink-0'>

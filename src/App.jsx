@@ -25,14 +25,17 @@ import Login from "./pages/Login.jsx";
 import Admin from "./pages/Admin.jsx";
 import Profile from "./pages/Profile.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
+import {CartProvider} from "./context/CartContext.jsx";
 
 function MainLayout() {
   return (
       <>
           <SearchProvider>
-              <Header />
-              <Outlet />
-              <Footer />
+              <CartProvider>
+                  <Header />
+                  <Outlet />
+                  <Footer />
+              </CartProvider>
           </SearchProvider>
 
       </>
@@ -58,8 +61,8 @@ function App() {
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/profile" element={<Profile />} />
-{/*
-              <Route path="/amazon-video" element={<AmazonVideo />} />
+
+{/*              <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/yourstore/home" element={<UserAmazon />} />
               <Route path="/coupons" element={<Coupons />} />
               <Route path="/contact-us" element={<CustomerService />} />
@@ -73,9 +76,9 @@ function App() {
 
               <Route path="/customer-preferences" element={<CustomerPreferences />} />
               <Route path="/your-account" element={<Account />} />
-              <Route path="/your-orders" element={<Orders />} />
+              <Route path="/your-orders" element={<Orders />} />*/}
               <Route path="/cart" element={<Cart />} />
-*/}
+
             </Route>
 
             <Route element={<CleanLayout />} >
