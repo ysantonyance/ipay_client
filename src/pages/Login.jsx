@@ -144,6 +144,12 @@ function Login() {
 
     return (
         <div className='flex flex-col items-center p-5 min-h-[70vh] bg-white'>
+            <Link to='/'>
+                <img
+                    className='w-[100px] h-[40px]'
+                    src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fapi.freelogodesign.org%2Fassets%2Fblog%2Fimg%2F20180911090509731amazon_logo_RGB.jpg&f=1&nofb=1&ipt=994d9fc7edf1d9ef113111b14d1cb612e3c3e085cea6ad81a30c13950ae67080&ipo=images" alt=""
+                />
+            </Link>
             <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm mt-8'>
                 <h1 className='text-[28px] font-normal mb-4'>Sign in</h1>
 

@@ -7,7 +7,45 @@ function Cart() {
     const count = items.reduce((n, i) => n + i.qty, 0);
 
     if (items.length === 0)
-        return <p className='p-10'>Your cart is empty. <Link to='/products' className='underline'>Keep shopping</Link></p>;
+        return (
+            <div className='bg-[#EAEDED] lg:px-20'>
+                <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 p-10 items-center'>
+                    <div className='bg-white p-5 lg:col-span-3 flex flex-col sm:flex-row items-center gap-6'>
+                        <img
+                            className='w-[360px] h-[200px] object-contain'
+                            src="https://m.media-amazon.com/images/G/01/cart/empty/kettle-desaturated._CB445243794_.svg"
+                            alt="Empty Cart Kettle"
+                        />
+                        <div>
+                            <div>
+                                <h1 className='text-[26px] font-bold'>Your IPAY Cart is empty</h1>
+                                <Link
+                                    className='text-[#20639F] hover:underline hover:text-[#083251]'
+                                    to='/products'
+                                >
+                                    Shop today's deals
+                                </Link>
+                            </div>
+                            <div className='space-x-2 flex py-3'>
+                                <Link
+                                    className='block bg-[#FFD814] hover:bg-[#FFCE12] rounded-2xl px-2 py-1'
+                                    to='/login'
+                                >
+                                    Sign in to your account
+                                </Link>
+                                <Link
+                                    className='block border border-[#898D8E] hover:bg-[#F6FAFB] rounded-2xl px-2 py-1'
+                                    to='/register'
+                                >
+                                    Sign up now
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        )
 
     return (
         <div className='bg-[#EAEDED] lg:px-20'>
