@@ -119,6 +119,7 @@ function Login() {
             await authApi.googleLogin(idToken);
             navigate('/');
         } catch (err) {
+            console.error('Google sign-in error:', err.code, err.message, err);
             const message = err.response
                 ? getErrorMessage(err, 'Google sign-in failed. Please try again.')
                 : getFirebaseErrorMessage(err, 'Google sign-in failed. Please try again.');

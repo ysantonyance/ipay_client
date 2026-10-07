@@ -5,6 +5,7 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
+    verifyBeforeUpdateEmail,
 } from 'firebase/auth';
 import { firebaseAuth, isFirebaseConfigured } from '../firebase.js';
 
@@ -63,11 +64,66 @@ export async function sendVerificationEmail(email, password) {
     }
 }
 
+/**
+ * Email change, part 1: asks Firebase to email a confirmation link to the NEW address.
+ * Firebase only switches the account's address once that link is clicked.
+ * Signs in with the current email + password for a moment (the backend has already checked
+ * the password); older accounts that never got a Firebase account get one created first.
+ */
+export async function sendEmailChangeLink(currentEmail, password, newEmail) {
+    const auth = requireFirebase();
+
+    try {
+        let user;
+        try {
+            user = (await signInWithEmailAndPassword(auth, currentEmail, password)).user;
+        } catch (err) {
+            if (err.code !== 'auth/user-not-found' && err.code !== 'auth/invalid-credential') throw err;
+            user = (await createUserWithEmailAndPassword(auth, currentEmail, password)).user;
+        }
+
+        await verifyBeforeUpdateEmail(user, newEmail);
+    } finally {
+        await signOut(auth).catch(() => {});
+    }
+}
+
+/**
+ * Email change, part 2: after the link was clicked the Firebase account lives under the new
+ * address, so signing in with it proves the click happened. Returns a fresh ID token for the
+ * backend to verify. Throws code 'app/email-not-confirmed' while the link has not been used.
+ */
+export async function getIdTokenForEmail(email, password) {
+    const auth = requireFirebase();
+
+    try {
+        const { user } = await signInWithEmailAndPassword(auth, email, password);
+        return await user.getIdToken(true);
+    } catch (err) {
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+            const notConfirmed = new Error('The new email address is not confirmed yet.');
+            notConfirmed.code = 'app/email-not-confirmed';
+            throw notConfirmed;
+        }
+        throw err;
+    } finally {
+        await signOut(auth).catch(() => {});
+    }
+}
+
 /** Turns a Firebase error into something a person can read. */
 export function getFirebaseErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
     switch (error?.code) {
         case 'app/firebase-not-configured':
             return error.message;
+        case 'app/email-not-confirmed':
+            return 'We cannot see the new address confirmed yet. Open the link we emailed to it, check your password, then try again.';
+        case 'auth/invalid-new-email':
+            return 'That email address is not valid.';
+        case 'auth/email-already-in-use':
+            return 'We could not start the email change for this account. Please try again later.';
+        case 'auth/requires-recent-login':
+            return 'Please sign in again and retry.';
         case 'auth/popup-closed-by-user':
         case 'auth/cancelled-popup-request':
             return ''; // user just closed the window - not worth an error banner

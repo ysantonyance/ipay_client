@@ -1,7 +1,7 @@
 import api from './api.js'
 
 // Saves the backend's session response (same shape for password and Google login).
-function saveSession(data) {
+export function saveSession(data) {
     if (data?.accessToken) {
         localStorage.setItem('authToken', data.accessToken);
     }
