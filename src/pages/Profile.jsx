@@ -6,12 +6,17 @@ import { getErrorMessage } from '../api/api.js';
 import {
     getFirebaseErrorMessage,
     getIdTokenForEmail,
+    getIdTokenForNewPassword,
     sendEmailChangeLink,
+    sendPasswordResetLink,
 } from '../api/firebaseAuth.js';
 
 // Email changes take two steps with a click in an email in between, so the address we are
 // waiting on is remembered here. That way a page reload does not lose the second step.
 const PENDING_EMAIL_KEY = 'ipayPendingEmail';
+
+// Same idea for password changes: after the reset email went out we remember that a second step is due.
+const PENDING_PASSWORD_KEY = 'ipayPendingPasswordChange';
 
 const inputClass =
     'w-full p-2 text-[13px] border border-[#a6a6a6] rounded-xl outline-none focus:ring-2 focus:ring-[#888C8D] focus:border-[#888C8D]';
@@ -357,6 +362,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [waiting, setWaiting] = useState(() => localStorage.getItem(PENDING_PASSWORD_KEY) === '1');
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -370,12 +376,51 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
         }
     }, [isOpen]);
 
-    const submit = async () => {
+    const forgetPending = () => {
+        localStorage.removeItem(PENDING_PASSWORD_KEY);
+        setWaiting(false);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setError('');
+    };
+
+    // Step 1: backend checks the current password, then Firebase emails its reset link to your address.
+    const sendLink = async () => {
         setError('');
         setSuccess('');
 
         if (!currentPassword) {
             setError('Enter your current password.');
+            return;
+        }
+
+        setBusy(true);
+        try {
+            await profileApi.startPasswordChange({ currentPassword });
+            await sendPasswordResetLink(profile.email);
+
+            localStorage.setItem(PENDING_PASSWORD_KEY, '1');
+            setWaiting(true);
+            setCurrentPassword('');
+        } catch (err) {
+            setError(describeError(err, 'We could not send the reset email. Please try again.'));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    // Step 2: the new password was set through the emailed link, so signing in to Firebase with it
+    // proves that; the backend then updates its own copy.
+    const confirmChange = async () => {
+        setError('');
+
+        if (!currentPassword) {
+            setError('Enter your current password.');
+            return;
+        }
+        if (!newPassword) {
+            setError('Enter the new password you set through the link.');
             return;
         }
         if (newPassword !== confirmPassword) {
@@ -385,11 +430,15 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
 
         setBusy(true);
         try {
-            await profileApi.changePassword({ currentPassword, newPassword });
+            const idToken = await getIdTokenForNewPassword(profile.email, newPassword);
+            await profileApi.confirmPasswordChange({ idToken, currentPassword, newPassword });
+
+            localStorage.removeItem(PENDING_PASSWORD_KEY);
+            setWaiting(false);
             setSuccess('Your password was updated.');
             onClose();
         } catch (err) {
-            setError(describeError(err, 'We could not update your password. Please try again.'));
+            setError(describeError(err, 'We could not confirm your new password. Please try again.'));
         } finally {
             setBusy(false);
         }
@@ -401,41 +450,69 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
             value='••••••••'
             isOpen={isOpen}
             onToggle={onToggle}
-            onSubmit={submit}
+            onSubmit={waiting ? confirmChange : sendLink}
             busy={busy}
             error={error}
             success={success}
-            submitLabel='Save password'
+            submitLabel={waiting ? 'I have set the new password' : 'Send reset email'}
             disabledReason={
                 profile.hasPassword ? '' : 'This account signs in with Google, so it has no password to change.'
             }
-            note='At least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.'
+            note={
+                waiting
+                    ? 'Finish within 30 minutes of opening the link. New password: at least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.'
+                    : 'We will email a password reset link to your current address. Your password only changes after you set a new one through it.'
+            }
             last
         >
-            <Field
-                id='currentPassword'
-                label='Current password'
-                type='password'
-                value={currentPassword}
-                onChange={setCurrentPassword}
-                autoComplete='current-password'
-            />
-            <Field
-                id='newPassword'
-                label='New password'
-                type='password'
-                value={newPassword}
-                onChange={setNewPassword}
-                autoComplete='new-password'
-            />
-            <Field
-                id='confirmNewPassword'
-                label='Confirm new password'
-                type='password'
-                value={confirmPassword}
-                onChange={setConfirmPassword}
-                autoComplete='new-password'
-            />
+            {waiting ? (
+                <>
+                    <p className='text-[13px]'>
+                        We sent a reset link to <strong className='break-all'>{profile.email}</strong>. Open it and
+                        choose your new password there, then come back and enter it below.
+                    </p>
+                    <Field
+                        id='currentPassword'
+                        label='Current password'
+                        type='password'
+                        value={currentPassword}
+                        onChange={setCurrentPassword}
+                        autoComplete='current-password'
+                    />
+                    <Field
+                        id='newPassword'
+                        label='New password (the one you just set)'
+                        type='password'
+                        value={newPassword}
+                        onChange={setNewPassword}
+                        autoComplete='new-password'
+                    />
+                    <Field
+                        id='confirmNewPassword'
+                        label='Confirm new password'
+                        type='password'
+                        value={confirmPassword}
+                        onChange={setConfirmPassword}
+                        autoComplete='new-password'
+                    />
+                    <button
+                        type='button'
+                        onClick={forgetPending}
+                        className='self-start text-[12px] text-[#2162A1] hover:underline cursor-pointer'
+                    >
+                        Send a new link
+                    </button>
+                </>
+            ) : (
+                <Field
+                    id='currentPassword'
+                    label='Current password'
+                    type='password'
+                    value={currentPassword}
+                    onChange={setCurrentPassword}
+                    autoComplete='current-password'
+                />
+            )}
         </SettingRow>
     );
 }

@@ -2,6 +2,7 @@ import {
     GoogleAuthProvider,
     createUserWithEmailAndPassword,
     sendEmailVerification,
+    sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
@@ -111,6 +112,39 @@ export async function getIdTokenForEmail(email, password) {
     }
 }
 
+/**
+ * Password change, part 1: asks Firebase to email its password reset link to the account's address.
+ * The backend has already checked the current password and made sure the Firebase account exists
+ * (profileApi.startPasswordChange). Nobody is signed in to Firebase here, so there is nothing to sign out of.
+ */
+export async function sendPasswordResetLink(email) {
+    const auth = requireFirebase();
+    await sendPasswordResetEmail(auth, email);
+}
+
+/**
+ * Password change, part 2: after the reset link was used, the Firebase account has the new password,
+ * so signing in with it proves the person opened the link and set it. Returns a fresh ID token for the
+ * backend to verify. Throws code 'app/password-not-reset' while Firebase still rejects the new password.
+ */
+export async function getIdTokenForNewPassword(email, newPassword) {
+    const auth = requireFirebase();
+
+    try {
+        const { user } = await signInWithEmailAndPassword(auth, email, newPassword);
+        return await user.getIdToken(true);
+    } catch (err) {
+        if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+            const notReset = new Error('The new password is not set yet.');
+            notReset.code = 'app/password-not-reset';
+            throw notReset;
+        }
+        throw err;
+    } finally {
+        await signOut(auth).catch(() => {});
+    }
+}
+
 /** Turns a Firebase error into something a person can read. */
 export function getFirebaseErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
     switch (error?.code) {
@@ -118,6 +152,8 @@ export function getFirebaseErrorMessage(error, fallback = 'Something went wrong.
             return error.message;
         case 'app/email-not-confirmed':
             return 'We cannot see the new address confirmed yet. Open the link we emailed to it, check your password, then try again.';
+        case 'app/password-not-reset':
+            return 'We cannot see the new password yet. Open the reset link we emailed you, set the new password there, then enter that same password here.';
         case 'auth/invalid-new-email':
             return 'That email address is not valid.';
         case 'auth/email-already-in-use':
