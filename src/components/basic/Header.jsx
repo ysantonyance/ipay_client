@@ -1,10 +1,9 @@
 import {Link, useNavigate} from "react-router-dom";
-import {useSearch} from "../../context/SearchContext.jsx";
+import SearchBar from "./SearchBar.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
 import {useCart} from "../../context/CartContext.jsx";
 
 function Header() {
-    const {search, setSearch} = useSearch();
     const {isLoggedIn, userName, logout} = useAuth();
     const navigate = useNavigate();
     const {items} = useCart();
@@ -71,13 +70,7 @@ function Header() {
                     </div>
 
                     <div className='w-full sm:flex-1 max-w-[1000px] my-1 sm:my-3'>
-                        <input
-                            className='w-full h-[40px] bg-white rounded-xl text-black px-3 text-[14px] outline-none'
-                            type="text"
-                            placeholder="Search..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
+                        <SearchBar />
                     </div>
 
                     <div className='hidden sm:flex items-center gap-2 shrink-0'>

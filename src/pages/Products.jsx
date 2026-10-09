@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import useProducts from '../hooks/useProducts.js';
 import { imagesApi } from '../api/imagesApi.js';
 import { categoriesApi } from '../api/categoriesApi.js';
@@ -140,7 +140,10 @@ function SkeletonCard() {
 
 function Products() {
     const { products, loading, error, reload } = useProducts();
-    const [query, setQuery] = useState('');
+    // The search term lives in the URL (?q=...) so the header search bar can set it.
+    const [searchParams, setSearchParams] = useSearchParams();
+    const query = searchParams.get('q') ?? '';
+    const setQuery = (value) => setSearchParams(value ? { q: value } : {}, { replace: true });
     const [sort, setSort] = useState('featured');
 
     // Filter option lists - fetched once, independent of the products load/error
@@ -187,8 +190,12 @@ function Products() {
     const visibleProducts = useMemo(() => {
         const q = query.trim().toLowerCase();
 
-        let filtered = q
-            ? products.filter((p) => `${p.name} ${p.manufacturer}`.toLowerCase().includes(q))
+        const tokens = q.split(/\s+/).filter(Boolean);
+        let filtered = tokens.length
+            ? products.filter((p) => {
+                const haystack = `${p.name} ${p.manufacturer}`.toLowerCase();
+                return tokens.every((t) => haystack.includes(t));
+            })
             : [...products];
 
         if (categoryId !== '') {
