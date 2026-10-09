@@ -140,10 +140,19 @@ function SkeletonCard() {
 
 function Products() {
     const { products, loading, error, reload } = useProducts();
-    // The search term lives in the URL (?q=...) so the header search bar can set it.
+    // The search term and category live in the URL (?q=...&category=...) so the header search bar can set them.
     const [searchParams, setSearchParams] = useSearchParams();
+    const updateParam = (key, value) =>
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            if (value) next.set(key, value);
+            else next.delete(key);
+            return next;
+        }, { replace: true });
     const query = searchParams.get('q') ?? '';
-    const setQuery = (value) => setSearchParams(value ? { q: value } : {}, { replace: true });
+    const setQuery = (value) => updateParam('q', value);
+    const categoryId = searchParams.get('category') ?? '';
+    const setCategoryId = (value) => updateParam('category', value);
     const [sort, setSort] = useState('featured');
 
     // Filter option lists - fetched once, independent of the products load/error
@@ -170,7 +179,6 @@ function Products() {
         return () => { ignore = true; };
     }, []);
 
-    const [categoryId, setCategoryId] = useState('');
     const [manufacturer, setManufacturer] = useState('');
     const [minRating, setMinRating] = useState(0);
     const [priceMin, setPriceMin] = useState('');
@@ -191,9 +199,10 @@ function Products() {
         const q = query.trim().toLowerCase();
 
         const tokens = q.split(/\s+/).filter(Boolean);
+        const categoryNames = new Map(categories.map((c) => [String(c.id), c.name]));
         let filtered = tokens.length
             ? products.filter((p) => {
-                const haystack = `${p.name} ${p.manufacturer}`.toLowerCase();
+                const haystack = `${p.name} ${p.manufacturer} ${categoryNames.get(String(p.categoryId)) ?? ''}`.toLowerCase();
                 return tokens.every((t) => haystack.includes(t));
             })
             : [...products];
@@ -226,7 +235,7 @@ function Products() {
             default:
                 return filtered;
         }
-    }, [products, query, sort, categoryId, manufacturer, minRating, priceMin, priceMax]);
+    }, [products, categories, query, sort, categoryId, manufacturer, minRating, priceMin, priceMax]);
 
     // Pagination - done on the client because filtering/sorting needs the whole catalog.
     const [page, setPage] = useState(1);
