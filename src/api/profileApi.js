@@ -25,17 +25,21 @@ export const profileApi = {
     changePhone: ({ newPhone, password }) =>
         api.put('/profile/phone', { newPhone, password }),
 
-    // Password change, step 1. Body: { currentPassword } -> { name, email, phone, hasPassword }
-    // Only checks the current password and makes sure a Firebase account exists to send from;
-    // nothing is changed yet. The caller then asks Firebase to email the reset link.
-    startPasswordChange: ({ currentPassword }) =>
-        api.post('/profile/password/start', { currentPassword }),
+    // Password change, option 1: type the current password and the new one.
+    // Body: { currentPassword, newPassword } -> { name, email, phone, hasPassword }
+    changePassword: ({ currentPassword, newPassword }) =>
+        api.put('/profile/password', { currentPassword, newPassword }),
 
-    // Password change, step 2 (the ONLY way to change it). Body: { idToken, currentPassword, newPassword }.
+    // Password change, option 2 (email reset), step 1. No body -> { name, email, phone, hasPassword }
+    // Only makes sure a Firebase account exists to send from; nothing is changed yet and no current
+    // password is needed. The caller then asks Firebase to email the reset link.
+    startPasswordChange: () => api.post('/profile/password/start'),
+
+    // Password change, option 2 (email reset), step 2. Body: { idToken, newPassword }.
     // idToken comes from signing in to Firebase with the new password, which proves the person
     // opened the emailed link and set it there.
-    confirmPasswordChange: ({ idToken, currentPassword, newPassword }) =>
-        api.post('/profile/password/confirm', { idToken, currentPassword, newPassword }),
+    confirmPasswordChange: ({ idToken, newPassword }) =>
+        api.post('/profile/password/confirm', { idToken, newPassword }),
 
     // Email change, step 1. Body: { newEmail, password } -> { name, email, phone, hasPassword }
     // Only checks the password and that the address is free; nothing is changed yet.

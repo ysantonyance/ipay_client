@@ -4,6 +4,7 @@ import { authApi } from '../api/authApi.js';
 import { getErrorMessage } from '../api/api.js';
 import { getGoogleIdToken, getFirebaseErrorMessage, sendVerificationEmail } from '../api/firebaseAuth.js';
 import TwoFactorStep from '../components/basic/TwoFactorStep.jsx';
+import ForgotPasswordStep from '../components/basic/ForgotPasswordStep.jsx';
 
 function Login() {
     const navigate = useNavigate();
@@ -23,6 +24,9 @@ function Login() {
     const [resending, setResending] = useState(false);
     // Set when the password was accepted but an emailed code is still needed: { challengeId, maskedEmail }.
     const [challenge, setChallenge] = useState(null);
+    // True while the "Forgot password?" screen is showing instead of the sign-in form.
+    // A reset that was started earlier (email already sent) reopens on its second step after a reload.
+    const [forgotOpen, setForgotOpen] = useState(() => Boolean(localStorage.getItem('ipayPendingForgotPassword')));
     // Message passed from the Register page ("we sent you a verification email").
     const [notice, setNotice] = useState(location.state?.notice || '');
 
@@ -129,6 +133,21 @@ function Login() {
         }
     };
 
+    if (forgotOpen) {
+        return (
+            <ForgotPasswordStep
+                initialEmail={formState.email.trim()}
+                onDone={(message) => {
+                    setForgotOpen(false);
+                    setFormState((prev) => ({ ...prev, password: '' }));
+                    setErrors({});
+                    setNotice(message);
+                }}
+                onCancel={() => setForgotOpen(false)}
+            />
+        );
+    }
+
     if (challenge) {
         return (
             <TwoFactorStep
@@ -206,9 +225,13 @@ function Login() {
                             <label htmlFor='password' className='text-[13px] font-bold'>
                                 Password
                             </label>
-                            <a href='#' className='text-[12px] text-[#2162A1] hover:underline'>
+                            <button
+                                type='button'
+                                onClick={() => setForgotOpen(true)}
+                                className='text-[12px] text-[#2162A1] hover:underline cursor-pointer'
+                            >
                                 Forgot password?
-                            </a>
+                            </button>
                         </div>
                         <input
                             type='password'

@@ -363,6 +363,10 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [waiting, setWaiting] = useState(() => localStorage.getItem(PENDING_PASSWORD_KEY) === '1');
+    // 'direct' = type the current + new password; 'email' = reset through the Firebase email.
+    const [mode, setMode] = useState(() =>
+        localStorage.getItem(PENDING_PASSWORD_KEY) === '1' ? 'email' : 'direct',
+    );
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -385,8 +389,16 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
         setError('');
     };
 
-    // Step 1: backend checks the current password, then Firebase emails its reset link to your address.
-    const sendLink = async () => {
+    const switchMode = (next) => {
+        setMode(next);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setError('');
+    };
+
+    // Option 1: current password + new password, nothing else.
+    const changeDirect = async () => {
         setError('');
         setSuccess('');
 
@@ -394,15 +406,44 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
             setError('Enter your current password.');
             return;
         }
+        if (!newPassword) {
+            setError('Enter a new password.');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setError('The new passwords do not match.');
+            return;
+        }
 
         setBusy(true);
         try {
-            await profileApi.startPasswordChange({ currentPassword });
+            await profileApi.changePassword({ currentPassword, newPassword });
+
+            // A half-finished email reset is pointless now.
+            localStorage.removeItem(PENDING_PASSWORD_KEY);
+            setWaiting(false);
+            setSuccess('Your password was updated.');
+            onClose();
+        } catch (err) {
+            setError(describeError(err, 'We could not update your password. Please try again.'));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    // Option 2, step 1: no password needed. The backend makes sure the Firebase account exists,
+    // then Firebase emails its reset link to your address.
+    const sendLink = async () => {
+        setError('');
+        setSuccess('');
+
+        setBusy(true);
+        try {
+            await profileApi.startPasswordChange();
             await sendPasswordResetLink(profile.email);
 
             localStorage.setItem(PENDING_PASSWORD_KEY, '1');
             setWaiting(true);
-            setCurrentPassword('');
         } catch (err) {
             setError(describeError(err, 'We could not send the reset email. Please try again.'));
         } finally {
@@ -415,10 +456,6 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
     const confirmChange = async () => {
         setError('');
 
-        if (!currentPassword) {
-            setError('Enter your current password.');
-            return;
-        }
         if (!newPassword) {
             setError('Enter the new password you set through the link.');
             return;
@@ -431,7 +468,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
         setBusy(true);
         try {
             const idToken = await getIdTokenForNewPassword(profile.email, newPassword);
-            await profileApi.confirmPasswordChange({ idToken, currentPassword, newPassword });
+            await profileApi.confirmPasswordChange({ idToken, newPassword });
 
             localStorage.removeItem(PENDING_PASSWORD_KEY);
             setWaiting(false);
@@ -450,27 +487,51 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
             value='••••••••'
             isOpen={isOpen}
             onToggle={onToggle}
-            onSubmit={waiting ? confirmChange : sendLink}
+            onSubmit={mode === 'direct' ? changeDirect : waiting ? confirmChange : sendLink}
             busy={busy}
             error={error}
             success={success}
-            submitLabel={waiting ? 'I have set the new password' : 'Send reset email'}
+            submitLabel={
+                mode === 'direct'
+                    ? 'Save password'
+                    : waiting
+                      ? 'I have set the new password'
+                      : 'Send reset email'
+            }
             disabledReason={
                 profile.hasPassword ? '' : 'This account signs in with Google, so it has no password to change.'
             }
             note={
-                waiting
-                    ? 'Finish within 30 minutes of opening the link. New password: at least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.'
-                    : 'We will email a password reset link to your current address. Your password only changes after you set a new one through it.'
+                mode === 'direct'
+                    ? 'At least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.'
+                    : waiting
+                      ? 'Finish within 30 minutes of opening the link. New password: at least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.'
+                      : 'We will email a password reset link to your current address. You do not need your current password: your password only changes after you set a new one through the link.'
             }
             last
         >
-            {waiting ? (
+            <div className='flex flex-wrap gap-2'>
+                {[
+                    ['direct', 'Use current password'],
+                    ['email', 'Reset by email'],
+                ].map(([key, label]) => (
+                    <button
+                        key={key}
+                        type='button'
+                        onClick={() => switchMode(key)}
+                        className={`px-3 py-1 rounded-xl text-[12px] border cursor-pointer ${
+                            mode === key
+                                ? 'bg-white border-[#888C8D] font-bold text-[#111]'
+                                : 'bg-transparent border-[#D5D9D9] text-[#565959] hover:bg-white'
+                        }`}
+                    >
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {mode === 'direct' && (
                 <>
-                    <p className='text-[13px]'>
-                        We sent a reset link to <strong className='break-all'>{profile.email}</strong>. Open it and
-                        choose your new password there, then come back and enter it below.
-                    </p>
                     <Field
                         id='currentPassword'
                         label='Current password'
@@ -481,7 +542,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
                     />
                     <Field
                         id='newPassword'
-                        label='New password (the one you just set)'
+                        label='New password'
                         type='password'
                         value={newPassword}
                         onChange={setNewPassword}
@@ -489,6 +550,31 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
                     />
                     <Field
                         id='confirmNewPassword'
+                        label='Confirm new password'
+                        type='password'
+                        value={confirmPassword}
+                        onChange={setConfirmPassword}
+                        autoComplete='new-password'
+                    />
+                </>
+            )}
+
+            {mode === 'email' && waiting && (
+                <>
+                    <p className='text-[13px]'>
+                        We sent a reset link to <strong className='break-all'>{profile.email}</strong>. Open it and
+                        choose your new password there, then come back and enter that same password below.
+                    </p>
+                    <Field
+                        id='resetNewPassword'
+                        label='New password (the one you just set)'
+                        type='password'
+                        value={newPassword}
+                        onChange={setNewPassword}
+                        autoComplete='new-password'
+                    />
+                    <Field
+                        id='resetConfirmPassword'
                         label='Confirm new password'
                         type='password'
                         value={confirmPassword}
@@ -503,15 +589,6 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
                         Send a new link
                     </button>
                 </>
-            ) : (
-                <Field
-                    id='currentPassword'
-                    label='Current password'
-                    type='password'
-                    value={currentPassword}
-                    onChange={setCurrentPassword}
-                    autoComplete='current-password'
-                />
             )}
         </SettingRow>
     );

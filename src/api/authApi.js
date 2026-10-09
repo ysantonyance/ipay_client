@@ -55,6 +55,16 @@ export const authApi = {
     // Body: { email, password, confirmPassword, name }
     register: (userData) => api.post('/auth/register', userData),
 
+    // "Forgot password?", step 1. Body: { email } -> 204, whether or not the address has an account.
+    // Only makes sure a Firebase account exists to send from; the caller then asks Firebase to email the link.
+    forgotPasswordStart: (email) => api.post('/auth/password-reset/start', { email }),
+
+    // "Forgot password?", step 2. Body: { idToken, newPassword } -> 204. No session is created: the person
+    // signs in with the new password afterwards. idToken comes from signing in to Firebase with the
+    // new password, which proves the emailed link was opened.
+    forgotPasswordConfirm: ({ idToken, newPassword }) =>
+        api.post('/auth/password-reset/confirm', { idToken, newPassword }),
+
     // The backend has no logout endpoint - the JWT is simply forgotten on the client.
     logout: () => {
         localStorage.removeItem('authToken');
