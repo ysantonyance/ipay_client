@@ -201,6 +201,84 @@ function UsernameSection({ profile, isOpen, onToggle, onClose, onProfileChanged 
     );
 }
 
+// Same rules as the name: the current password confirms the change (Google-only accounts have none).
+// The backend validates (7-15 digits, optional leading +) and stores the number normalised.
+function PhoneSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) {
+    const [newPhone, setNewPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+
+    useEffect(() => {
+        if (!isOpen) {
+            setNewPhone('');
+            setPassword('');
+            setError('');
+        }
+    }, [isOpen]);
+
+    const submit = async () => {
+        setError('');
+        setSuccess('');
+
+        if (!newPhone.trim()) {
+            setError('Enter your mobile phone number.');
+            return;
+        }
+        if (profile.hasPassword && !password) {
+            setError('Enter your password to confirm the change.');
+            return;
+        }
+
+        setBusy(true);
+        try {
+            const updated = await profileApi.changePhone({ newPhone: newPhone.trim(), password });
+            onProfileChanged(updated);
+            setSuccess('Your phone number was updated.');
+            onClose();
+        } catch (err) {
+            setError(describeError(err, 'We could not update your phone number. Please try again.'));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    return (
+        <SettingRow
+            title='Mobile phone number'
+            value={profile.phone || 'Not added yet'}
+            isOpen={isOpen}
+            onToggle={onToggle}
+            onSubmit={submit}
+            busy={busy}
+            error={error}
+            success={success}
+            submitLabel='Save phone number'
+        >
+            <Field
+                id='newPhone'
+                label='New mobile number'
+                type='tel'
+                value={newPhone}
+                onChange={setNewPhone}
+                placeholder='+380 12 345 6789'
+                autoComplete='tel'
+            />
+            {profile.hasPassword && (
+                <Field
+                    id='phonePassword'
+                    label='Current password'
+                    type='password'
+                    value={password}
+                    onChange={setPassword}
+                    autoComplete='current-password'
+                />
+            )}
+        </SettingRow>
+    );
+}
+
 function EmailSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) {
     const [newEmail, setNewEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -684,6 +762,13 @@ function Profile() {
                                 profile={profile}
                                 isOpen={openSection === 'email'}
                                 onToggle={() => toggle('email')}
+                                onClose={close}
+                                onProfileChanged={mergeProfile}
+                            />
+                            <PhoneSection
+                                profile={profile}
+                                isOpen={openSection === 'phone'}
+                                onToggle={() => toggle('phone')}
                                 onClose={close}
                                 onProfileChanged={mergeProfile}
                             />
