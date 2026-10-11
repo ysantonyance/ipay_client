@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails.js';
 import { imagesApi } from '../api/imagesApi.js';
 import {useCart} from "../context/CartContext.jsx";
+import { useRatings } from '../context/RatingsContext.jsx';
+import RatingStars from '../components/shop/RatingStars.jsx';
 
 const SIMILAR_LIMIT = 8;
 
@@ -69,23 +71,6 @@ function computeStats(product, categoryProducts) {
 }
 
 /* ---------- small UI pieces ---------- */
-
-function Stars({ rating = 0, large = false }) {
-    const rounded = Math.round(rating);
-
-    return (
-        <div
-            className={`flex items-center ${large ? 'text-[18px]' : 'text-[14px]'}`}
-            aria-label={`${rating} out of 5 stars`}
-        >
-            <span className='text-[#FFA41C]'>{'★'.repeat(rounded)}</span>
-            <span className='text-[#CCCCCC]'>{'★'.repeat(Math.max(0, 5 - rounded))}</span>
-            <span className={`ml-2 text-[#007185] ${large ? 'text-[14px]' : 'text-[12px]'}`}>
-                {Number(rating).toFixed(1)}
-            </span>
-        </div>
-    );
-}
 
 function Card({ title, subtitle, children, className = '' }) {
     return (
@@ -177,7 +162,7 @@ function ProductHero({ product, category, stats }) {
                 )}
 
                 <div className='mt-2 pb-3 border-b border-[#DDDDDD]'>
-                    <Stars rating={product.rating} large />
+                    <RatingStars product={product} large />
                     {stats?.hasPeers && (
                         <p className='text-[13px] text-[#565959] mt-1'>
                             #{stats.ratingRank} of {stats.count} in {category?.name || 'this category'} by rating
@@ -429,7 +414,7 @@ function SimilarProductCard({ product, currentPrice }) {
             )}
 
             <div className='mt-1'>
-                <Stars rating={product.rating} />
+                <RatingStars product={product} />
             </div>
 
             <div className='mt-2 flex items-baseline flex-wrap gap-x-2'>
@@ -533,7 +518,7 @@ function HeroSkeleton() {
 function ProductDetails() {
     const { id } = useParams();
     const {
-        product,
+        product: rawProduct,
         category,
         categoryProducts,
         loading,
@@ -543,6 +528,10 @@ function ProductDetails() {
         notFound,
         reload,
     } = useProductDetails(id);
+
+    // The product with its freshest rating, so the stats below update right after someone rates it here.
+    const { getLive } = useRatings();
+    const product = useMemo(() => (rawProduct ? getLive(rawProduct) : null), [rawProduct, getLive]);
 
     // Clicking a similar product keeps this component mounted, so reset the scroll ourselves.
     useEffect(() => {

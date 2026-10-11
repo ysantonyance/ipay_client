@@ -27,15 +27,18 @@ import Profile from "./pages/Profile.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
 import {CartProvider} from "./context/CartContext.jsx";
+import {RatingsProvider} from "./context/RatingsContext.jsx";
 
 function MainLayout() {
   return (
       <>
           <SearchProvider>
               <CartProvider>
+              <RatingsProvider>
                   <Header />
                   <Outlet />
                   <Footer />
+              </RatingsProvider>
               </CartProvider>
           </SearchProvider>
 
@@ -62,6 +65,7 @@ function App() {
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/sell" element={<Sell />} />
 
 {/*              <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/yourstore/home" element={<UserAmazon />} />

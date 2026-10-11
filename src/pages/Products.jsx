@@ -6,6 +6,7 @@ import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
 import Pagination from '../components/basic/Pagination.jsx';
 import {useCart} from "../context/CartContext.jsx";
+import RatingStars from '../components/shop/RatingStars.jsx';
 
 const PAGE_SIZE = 12;
 
@@ -25,18 +26,6 @@ function getFinalPrice(product) {
 
 function formatPrice(value) {
     return `$${Number(value).toFixed(2)}`;
-}
-
-function Stars({ rating = 0 }) {
-    const rounded = Math.round(rating);
-
-    return (
-        <div className='flex items-center text-[14px]' aria-label={`${rating} out of 5 stars`}>
-            <span className='text-[#FFA41C]'>{'★'.repeat(rounded)}</span>
-            <span className='text-[#CCCCCC]'>{'★'.repeat(Math.max(0, 5 - rounded))}</span>
-            <span className='ml-1 text-[#007185] text-[12px]'>{Number(rating).toFixed(1)}</span>
-        </div>
-    );
 }
 
 function RatingFilter({ value, onChange }) {
@@ -94,7 +83,7 @@ function ProductCard({ product }) {
             )}
 
             <div className='mt-1'>
-                <Stars rating={product.rating} />
+                <RatingStars product={product} />
             </div>
 
             <div className='mt-2 flex items-baseline flex-wrap gap-x-2'>

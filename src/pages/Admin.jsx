@@ -5,6 +5,7 @@ import Forbidden from './Forbidden.jsx';
 import ResourceForm from '../components/admin/ResourceForm.jsx';
 import ResourceTable from '../components/admin/ResourceTable.jsx';
 import UsersPanel from '../components/admin/UsersPanel.jsx';
+import SellerRequestsPanel from '../components/admin/SellerRequestsPanel.jsx';
 import useAdminResource from '../hooks/useAdminResource.js';
 import { RESOURCE_SCHEMAS, RESOURCE_ORDER } from '../admin/schemas.js';
 import { categoriesApi } from '../api/categoriesApi.js';
@@ -183,6 +184,15 @@ function AdminDashboard({ isAdmin }) {
                         <li className='pt-1 mt-1 border-t border-[#EEEEEE]'>
                             <button
                                 type='button'
+                                onClick={() => setView('requests')}
+                                className={navButtonClass(view === 'requests')}
+                            >
+                                Seller requests
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                type='button'
                                 onClick={() => setView('users')}
                                 className={navButtonClass(view === 'users')}
                             >
@@ -193,7 +203,9 @@ function AdminDashboard({ isAdmin }) {
                 </nav>
 
                 <div>
-                    {view === 'users' ? (
+                    {view === 'requests' ? (
+                        <SellerRequestsPanel />
+                    ) : view === 'users' ? (
                         <UsersPanel isAdmin={isAdmin} />
                     ) : (
                         <ResourceWorkspace resourceKey={resourceKey} />

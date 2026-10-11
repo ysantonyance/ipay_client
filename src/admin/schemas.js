@@ -33,7 +33,6 @@ export const RESOURCE_SCHEMAS = {
             { key: 'price', label: 'Price', type: 'number', step: '0.01', min: 0 },
             { key: 'discountedPrice', label: 'Discounted price', type: 'number', step: '0.01', min: 0 },
             { key: 'discountPercent', label: 'Discount %', type: 'number', step: '0.1', min: 0, max: 100 },
-            { key: 'rating', label: 'Rating', type: 'number', step: '0.1', min: 0, max: 5 },
             { key: 'manufacturer', label: 'Manufacturer', type: 'manufacturer-select' },
             { key: 'categoryId', label: 'Category', type: 'category-select', required: true },
             { key: 'imageUrl', label: 'Image', image: true },

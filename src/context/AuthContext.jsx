@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { authApi } from '../api/authApi.js';
-import { getRoleFromToken } from '../utils/jwt.js';
+import { getRoleFromToken, getUserIdFromToken } from '../utils/jwt.js';
 import api from '../api/api.js';
 
 // authApi.login/logout dispatch this ('ipay-auth-changed') right after
@@ -14,6 +14,7 @@ function readAuth() {
         isLoggedIn: authApi.isLoggedIn(),
         userName: localStorage.getItem('userName') || '',
         role,
+        userId: getUserIdFromToken(localStorage.getItem('authToken')),
         isAdmin: role === 'Admin',
         isModerator: role === 'Moderator',
     };

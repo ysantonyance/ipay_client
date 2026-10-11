@@ -35,3 +35,13 @@ export function getRoleFromToken(token) {
     if (!payload) return null;
     return payload[ROLE_CLAIM_URI] ?? payload.role ?? null;
 }
+
+// The user's id (the backend puts it in the NameIdentifier claim). Advisory only, like the role.
+const NAME_ID_CLAIM_URI = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier';
+
+export function getUserIdFromToken(token) {
+    const payload = decodeJwtPayload(token);
+    if (!payload) return null;
+    const id = payload[NAME_ID_CLAIM_URI] ?? payload.nameid ?? payload.sub ?? null;
+    return id === null ? null : String(id);
+}
