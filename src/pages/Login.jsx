@@ -167,7 +167,7 @@ function Login() {
             <Link to='/'>
                 <img
                     className='w-[100px] h-[40px]'
-                    src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fapi.freelogodesign.org%2Fassets%2Fblog%2Fimg%2F20180911090509731amazon_logo_RGB.jpg&f=1&nofb=1&ipt=994d9fc7edf1d9ef113111b14d1cb612e3c3e085cea6ad81a30c13950ae67080&ipo=images" alt=""
+                    src="/amazon-logo-black.png" alt=""
                 />
             </Link>
             <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm mt-8'>
@@ -283,7 +283,7 @@ function Login() {
                 </button>
 
                 <p className='text-[12px] text-[#111] mt-4 leading-normal'>
-                    By continuing, you agree to Amazon's{' '}
+                    By continuing, you agree to Ipay's{' '}
                     <a href='#' className='text-[#2162A1] hover:underline'>
                         Conditions of Use
                     </a>{' '}
@@ -303,7 +303,7 @@ function Login() {
 
             <div className='w-full max-w-[350px] flex items-center gap-2 mb-4'>
                 <hr className='flex-1 border-[#D5D9D9]' />
-                <span className='text-[12px] text-[#767676]'>New to Amazon?</span>
+                <span className='text-[12px] text-[#767676]'>New to Ipay?</span>
                 <hr className='flex-1 border-[#D5D9D9]' />
             </div>
 
@@ -311,7 +311,7 @@ function Login() {
                 to='/register'
                 className='block w-full max-w-[350px] text-center py-1.5 bg-white hover:bg-[#F7FAFA] border border-[#D5D9D9] rounded-xl text-[13px] text-[#111] cursor-pointer shadow-sm mb-8'
             >
-                Create your Amazon account
+                Create your Ipay account
             </Link>
         </div>
     );
