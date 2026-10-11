@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { sellerRequestsApi } from '../api/sellerRequestsApi.js';
 import { productsApi } from '../api/productsApi.js';
@@ -304,31 +304,15 @@ function SellerWorkspace() {
     );
 }
 
-/* ---------- staff ---------- */
-
-function StaffNotice() {
-    return (
-        <PageShell title='Sell on IPAY'>
-            <Card>
-                <p className='text-[14px] text-[#0F1111] mb-4'>
-                    Admins and moderators manage products and review seller requests from the admin page.
-                </p>
-                <Link to='/admin' className={primaryButton}>
-                    Go to the admin page
-                </Link>
-            </Card>
-        </PageShell>
-    );
-}
-
 /* ---------- page ---------- */
 
 function Sell() {
     const { isLoggedIn, role } = useAuth();
 
     if (!isLoggedIn || !role || role === 'Guest') return <SignInPrompt />;
+    // Admins and moderators have no use for the seller page: send them straight to the admin page (replace = Back won't bounce them here again).
+    if (role === 'Admin' || role === 'Moderator') return <Navigate to='/admin' replace />;
     if (role === 'Seller') return <SellerWorkspace />;
-    if (role === 'Admin' || role === 'Moderator') return <StaffNotice />;
     return <BecomeSeller />;
 }
 
