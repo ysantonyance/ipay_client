@@ -114,7 +114,7 @@ export async function getIdTokenForEmail(email, password) {
 
 /**
  * Password change, part 1: asks Firebase to email its password reset link to the account's address.
- * The backend has already checked the current password and made sure the Firebase account exists
+ * The backend has already made sure the Firebase account exists (no current password is needed here)
  * (profileApi.startPasswordChange). Nobody is signed in to Firebase here, so there is nothing to sign out of.
  */
 export async function sendPasswordResetLink(email) {
