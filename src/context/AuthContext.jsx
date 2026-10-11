@@ -14,6 +14,7 @@ function readAuth() {
         userName: localStorage.getItem('userName') || '',
         role,
         isAdmin: role === 'Admin',
+        isModerator: role === 'Moderator',
     };
 }
 

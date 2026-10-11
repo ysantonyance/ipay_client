@@ -4,22 +4,27 @@ import { useAuth } from '../context/AuthContext.jsx';
 import Forbidden from './Forbidden.jsx';
 import ResourceForm from '../components/admin/ResourceForm.jsx';
 import ResourceTable from '../components/admin/ResourceTable.jsx';
+import UsersPanel from '../components/admin/UsersPanel.jsx';
 import useAdminResource from '../hooks/useAdminResource.js';
 import { RESOURCE_SCHEMAS, RESOURCE_ORDER } from '../admin/schemas.js';
 import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
 
-const NAV_ITEMS = RESOURCE_ORDER.map((key) => ({ key, label: RESOURCE_SCHEMAS[key].label }));
+const RESOURCE_NAV = RESOURCE_ORDER.map((key) => ({ key, label: RESOURCE_SCHEMAS[key].label }));
 
-function AdminDashboard() {
-    const { logout } = useAuth();
-    const navigate = useNavigate();
-    const [resourceKey, setResourceKey] = useState(RESOURCE_ORDER[0]);
+// The products / categories / media editor. Only mounted for admins, so moderators never
+// trigger the content-management requests below.
+function ResourceWorkspace({ resourceKey }) {
     const schema = RESOURCE_SCHEMAS[resourceKey];
 
     const { items, loading, error, saving, save, remove } = useAdminResource(schema);
     const [editingItem, setEditingItem] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
+
+    // Switching resource closes whatever was being edited.
+    useEffect(() => {
+        setEditingItem(null);
+    }, [resourceKey]);
 
     // Products reference a category by id, so keep a lookup around for both
     // the form's dropdown and a readable column in the table. Fetched once on
@@ -65,11 +70,6 @@ function AdminDashboard() {
         [manufacturers]
     );
 
-    const handleResourceChange = (key) => {
-        setResourceKey(key);
-        setEditingItem(null);
-    };
-
     const handleSave = async (values, editingId) => {
         const result = await save(values, editingId);
         if (result.ok) {
@@ -90,17 +90,71 @@ function AdminDashboard() {
         if (resourceKey === 'manufacturers') await refreshManufacturers();
     };
 
+    return (
+        <div className='space-y-6'>
+            <section className='bg-white border border-[#DDDDDD] rounded p-6'>
+                <h2 className='text-[18px] font-bold text-[#0F1111] mb-4'>
+                    {editingItem ? `Edit ${schema.singular}` : `Add ${schema.singular}`}
+                </h2>
+                <ResourceForm
+                    schema={schema}
+                    editingItem={editingItem}
+                    categories={categories}
+                    manufacturers={manufacturerOptions}
+                    onCancelEdit={() => setEditingItem(null)}
+                    onSave={handleSave}
+                    saving={saving}
+                />
+            </section>
+
+            <section className='bg-white border border-[#DDDDDD] rounded p-6'>
+                <div className='flex items-center justify-between mb-4'>
+                    <h2 className='text-[18px] font-bold text-[#0F1111]'>{schema.label}</h2>
+                    <span className='text-[13px] text-[#565959]'>{items.length} total</span>
+                </div>
+
+                <ResourceTable
+                    schema={schema}
+                    items={items}
+                    loading={loading}
+                    error={error}
+                    categoryLookup={resourceKey === 'products' ? categoryLookup : null}
+                    onEdit={setEditingItem}
+                    onDelete={handleDelete}
+                    deletingId={deletingId}
+                />
+            </section>
+        </div>
+    );
+}
+
+// Admins get the content editor plus the Users section; moderators get the Users section only.
+function AdminDashboard({ isAdmin }) {
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+    const [view, setView] = useState(isAdmin ? 'resources' : 'users');
+    const [resourceKey, setResourceKey] = useState(RESOURCE_ORDER[0]);
+
     const handleSignOut = async () => {
         await logout();
         navigate('/');
     };
 
+    const navButtonClass = (active) =>
+        `w-full text-left text-[14px] rounded px-3 py-2 cursor-pointer ${
+            active ? 'bg-[#FFD814] text-[#0F1111] font-medium' : 'text-[#0F1111] hover:bg-[#F0F2F2]'
+        }`;
+
     return (
         <div className='min-h-screen bg-[#EAEDED]'>
             <div className='bg-[#131921] text-white px-6 py-3 flex items-center justify-between'>
                 <div>
-                    <h1 className='text-[18px] font-bold'>IPAY Admin</h1>
-                    <p className='text-[12px] text-[#CCCCCC]'>Content playground — products, categories & media</p>
+                    <h1 className='text-[18px] font-bold'>{isAdmin ? 'IPAY Admin' : 'IPAY Moderation'}</h1>
+                    <p className='text-[12px] text-[#CCCCCC]'>
+                        {isAdmin
+                            ? 'Content playground — products, categories, media & users'
+                            : 'Users & roles'}
+                    </p>
                 </div>
                 <button
                     type='button'
@@ -114,57 +168,39 @@ function AdminDashboard() {
             <div className='max-w-[1400px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6'>
                 <nav className='bg-white border border-[#DDDDDD] rounded p-3 h-fit'>
                     <ul className='space-y-1'>
-                        {NAV_ITEMS.map(({ key, label }) => (
-                            <li key={key}>
-                                <button
-                                    type='button'
-                                    onClick={() => handleResourceChange(key)}
-                                    className={`w-full text-left text-[14px] rounded px-3 py-2 cursor-pointer ${
-                                        key === resourceKey
-                                            ? 'bg-[#FFD814] text-[#0F1111] font-medium'
-                                            : 'text-[#0F1111] hover:bg-[#F0F2F2]'
-                                    }`}
-                                >
-                                    {label}
-                                </button>
-                            </li>
-                        ))}
+                        {isAdmin &&
+                            RESOURCE_NAV.map(({ key, label }) => (
+                                <li key={key}>
+                                    <button
+                                        type='button'
+                                        onClick={() => {
+                                            setResourceKey(key);
+                                            setView('resources');
+                                        }}
+                                        className={navButtonClass(view === 'resources' && key === resourceKey)}
+                                    >
+                                        {label}
+                                    </button>
+                                </li>
+                            ))}
+                        <li className={isAdmin ? 'pt-1 mt-1 border-t border-[#EEEEEE]' : ''}>
+                            <button
+                                type='button'
+                                onClick={() => setView('users')}
+                                className={navButtonClass(view === 'users')}
+                            >
+                                Users
+                            </button>
+                        </li>
                     </ul>
                 </nav>
 
-                <div className='space-y-6'>
-                    <section className='bg-white border border-[#DDDDDD] rounded p-6'>
-                        <h2 className='text-[18px] font-bold text-[#0F1111] mb-4'>
-                            {editingItem ? `Edit ${schema.singular}` : `Add ${schema.singular}`}
-                        </h2>
-                        <ResourceForm
-                            schema={schema}
-                            editingItem={editingItem}
-                            categories={categories}
-                            manufacturers={manufacturerOptions}
-                            onCancelEdit={() => setEditingItem(null)}
-                            onSave={handleSave}
-                            saving={saving}
-                        />
-                    </section>
-
-                    <section className='bg-white border border-[#DDDDDD] rounded p-6'>
-                        <div className='flex items-center justify-between mb-4'>
-                            <h2 className='text-[18px] font-bold text-[#0F1111]'>{schema.label}</h2>
-                            <span className='text-[13px] text-[#565959]'>{items.length} total</span>
-                        </div>
-
-                        <ResourceTable
-                            schema={schema}
-                            items={items}
-                            loading={loading}
-                            error={error}
-                            categoryLookup={resourceKey === 'products' ? categoryLookup : null}
-                            onEdit={setEditingItem}
-                            onDelete={handleDelete}
-                            deletingId={deletingId}
-                        />
-                    </section>
+                <div>
+                    {view === 'users' || !isAdmin ? (
+                        <UsersPanel isAdmin={isAdmin} />
+                    ) : (
+                        <ResourceWorkspace resourceKey={resourceKey} />
+                    )}
                 </div>
             </div>
         </div>
@@ -172,11 +208,13 @@ function AdminDashboard() {
 }
 
 function Admin() {
-    // Real role check (from the logged-in user's JWT), not a shared passcode -
-    // ChangeRole (AuthController, AdminOnly policy) is how someone actually
-    // becomes an Admin. Anyone else lands on a plain 403.
-    const { isAdmin } = useAuth();
-    return isAdmin ? <AdminDashboard /> : <Forbidden />;
+    // Real role check (from the logged-in user's JWT), not a shared passcode. An admin sees everything;
+    // a moderator sees only the Users section (they can make customers sellers); anyone else gets a 403.
+    const { isAdmin, isModerator } = useAuth();
+
+    if (isAdmin) return <AdminDashboard isAdmin />;
+    if (isModerator) return <AdminDashboard isAdmin={false} />;
+    return <Forbidden />;
 }
 
 export default Admin;
