@@ -10,9 +10,19 @@ export const adminApi = {
     // Admin only. -> the updated user row.
     makeModerator: (userId) => api.post(`/admin/users/${userId}/make-moderator`),
 
+    // Admin only. Takes the moderator role away (the person becomes a customer). -> the updated user row.
+    removeModerator: (userId) => api.post(`/admin/users/${userId}/remove-moderator`),
+
+    // Admin or moderator. Turns a seller back into a customer. -> the updated user row.
+    makeCustomer: (userId) => api.post(`/admin/users/${userId}/make-customer`),
+
     getDashboardStats: () => api.get(`/admin/stats`),
     updateUser: (userId, userData) => api.put(`/admin/users/${userId}`, userData),
-    banUser: (userId) => api.put(`/admin/users/${userId}`, { isBanned: true }),
-    unbanUser: (userId) => api.put(`/admin/users/${userId}`, { isBanned: false }),
+    // Ban / unban. Admins and moderators have separate routes on the backend (each role's own rules):
+    // admins can ban anyone except admins, moderators can't ban admins or other moderators. -> the updated user row.
+    banUser: (userId, asAdmin) =>
+        api.patch(asAdmin ? `/admin/${userId}/ban` : `/admin/moderator/${userId}/ban`),
+    unbanUser: (userId, asAdmin) =>
+        api.patch(asAdmin ? `/admin/${userId}/unban` : `/admin/moderator/${userId}/unban`),
     deleteUser: (userId) => api.delete(`/admin/users/${userId}`)
 };

@@ -6,7 +6,7 @@ function Forbidden() {
             <p className='text-[64px] font-bold text-[#131921] leading-none'>403</p>
             <h1 className='text-[20px] font-bold text-[#0F1111] mt-2'>You don&apos;t have access to this page</h1>
             <p className='text-[14px] text-[#565959] mt-2 max-w-[420px]'>
-                This area is restricted to administrators. If you think this is a mistake, contact an admin.
+                This area is restricted to administrators and moderators. If you think this is a mistake, contact an admin.
             </p>
             <Link
                 to='/'

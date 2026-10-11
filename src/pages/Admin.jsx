@@ -12,8 +12,7 @@ import { manufacturersApi } from '../api/manufacturersApi.js';
 
 const RESOURCE_NAV = RESOURCE_ORDER.map((key) => ({ key, label: RESOURCE_SCHEMAS[key].label }));
 
-// The products / categories / media editor. Only mounted for admins, so moderators never
-// trigger the content-management requests below.
+// The products / categories / media editor. Shown to admins and moderators alike.
 function ResourceWorkspace({ resourceKey }) {
     const schema = RESOURCE_SCHEMAS[resourceKey];
 
@@ -128,11 +127,12 @@ function ResourceWorkspace({ resourceKey }) {
     );
 }
 
-// Admins get the content editor plus the Users section; moderators get the Users section only.
+// Admins and moderators both get the content editor plus the Users section. The one difference is
+// inside the Users section: only admins can make someone a moderator or remove a moderator (see UsersPanel).
 function AdminDashboard({ isAdmin }) {
     const { logout } = useAuth();
     const navigate = useNavigate();
-    const [view, setView] = useState(isAdmin ? 'resources' : 'users');
+    const [view, setView] = useState('resources');
     const [resourceKey, setResourceKey] = useState(RESOURCE_ORDER[0]);
 
     const handleSignOut = async () => {
@@ -151,9 +151,7 @@ function AdminDashboard({ isAdmin }) {
                 <div>
                     <h1 className='text-[18px] font-bold'>{isAdmin ? 'IPAY Admin' : 'IPAY Moderation'}</h1>
                     <p className='text-[12px] text-[#CCCCCC]'>
-                        {isAdmin
-                            ? 'Content playground — products, categories, media & users'
-                            : 'Users & roles'}
+                        Content playground — products, categories, media & users
                     </p>
                 </div>
                 <button
@@ -168,22 +166,21 @@ function AdminDashboard({ isAdmin }) {
             <div className='max-w-[1400px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6'>
                 <nav className='bg-white border border-[#DDDDDD] rounded p-3 h-fit'>
                     <ul className='space-y-1'>
-                        {isAdmin &&
-                            RESOURCE_NAV.map(({ key, label }) => (
-                                <li key={key}>
-                                    <button
-                                        type='button'
-                                        onClick={() => {
-                                            setResourceKey(key);
-                                            setView('resources');
-                                        }}
-                                        className={navButtonClass(view === 'resources' && key === resourceKey)}
-                                    >
-                                        {label}
-                                    </button>
-                                </li>
-                            ))}
-                        <li className={isAdmin ? 'pt-1 mt-1 border-t border-[#EEEEEE]' : ''}>
+                        {RESOURCE_NAV.map(({ key, label }) => (
+                            <li key={key}>
+                                <button
+                                    type='button'
+                                    onClick={() => {
+                                        setResourceKey(key);
+                                        setView('resources');
+                                    }}
+                                    className={navButtonClass(view === 'resources' && key === resourceKey)}
+                                >
+                                    {label}
+                                </button>
+                            </li>
+                        ))}
+                        <li className='pt-1 mt-1 border-t border-[#EEEEEE]'>
                             <button
                                 type='button'
                                 onClick={() => setView('users')}
@@ -196,7 +193,7 @@ function AdminDashboard({ isAdmin }) {
                 </nav>
 
                 <div>
-                    {view === 'users' || !isAdmin ? (
+                    {view === 'users' ? (
                         <UsersPanel isAdmin={isAdmin} />
                     ) : (
                         <ResourceWorkspace resourceKey={resourceKey} />
@@ -208,8 +205,8 @@ function AdminDashboard({ isAdmin }) {
 }
 
 function Admin() {
-    // Real role check (from the logged-in user's JWT), not a shared passcode. An admin sees everything;
-    // a moderator sees only the Users section (they can make customers sellers); anyone else gets a 403.
+    // Real role check (from the logged-in user's JWT), not a shared passcode. Admins and moderators both get
+    // the content editor and the Users section (only admins can make or remove moderators); anyone else gets a 403.
     const { isAdmin, isModerator } = useAuth();
 
     if (isAdmin) return <AdminDashboard isAdmin />;

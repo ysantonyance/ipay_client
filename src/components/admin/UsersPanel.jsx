@@ -23,10 +23,11 @@ const buttonClass =
 
 /**
  * The admin page's "Users" section.
- *   - Admins and moderators can make a Customer a seller.
- *   - Only admins can make a Customer or Seller a moderator.
- *   - Admins and moderators themselves are never changed here (the backend refuses it too;
- *     the buttons are just hidden so nobody clicks into an error).
+ *   - Admins and moderators can make a Customer a seller, and turn a Seller back into a Customer.
+ *   - Only admins can make a Customer or Seller a moderator, and remove the moderator role from a Moderator.
+ *   - Admins can ban and unban anyone except admins; moderators can ban and unban customers and sellers only.
+ *   - Nobody can be made an admin here, and existing admins are never changed (the backend refuses
+ *     anything else too; the buttons are just hidden so nobody clicks into an error).
  * The backend enforces every rule; hiding buttons below is only convenience.
  */
 function UsersPanel({ isAdmin }) {
@@ -67,24 +68,66 @@ function UsersPanel({ isAdmin }) {
 
     const canMakeSeller = (u) => !u.isBanned && (u.role === 'Customer' || u.role === 'Guest');
     const canMakeModerator = (u) => isAdmin && !u.isBanned && (u.role === 'Customer' || u.role === 'Seller');
+    // Demotions (banned users can be demoted too).
+    const canRemoveModerator = (u) => isAdmin && u.role === 'Moderator';
+    const canMakeCustomer = (u) => u.role === 'Seller';
+    // Admins can never be banned; moderators can't be banned by other moderators.
+    const canModerate = (u) => u.role !== 'Admin' && (isAdmin || u.role !== 'Moderator');
+    const canBan = (u) => !u.isBanned && canModerate(u);
+    const canUnban = (u) => u.isBanned && canModerate(u);
 
-    const promote = async (user, target) => {
+    // `action` is one of the keys below; each one has its own confirm text, API call and success message.
+    const ACTIONS = {
+        seller: {
+            call: adminApi.makeSeller,
+            confirm: (who) => `Make ${who} a seller?`,
+            done: (who) => `${who} is now a seller.`,
+        },
+        moderator: {
+            call: adminApi.makeModerator,
+            confirm: (who) => `Make ${who} a moderator?`,
+            done: (who) => `${who} is now a moderator.`,
+        },
+        removeModerator: {
+            call: adminApi.removeModerator,
+            confirm: (who) => `Remove the moderator role from ${who}? They will become a customer.`,
+            done: (who) => `${who} is no longer a moderator and is now a customer.`,
+        },
+        customer: {
+            call: adminApi.makeCustomer,
+            confirm: (who) => `Make ${who} a customer again? They will lose their seller role.`,
+            done: (who) => `${who} is now a customer.`,
+        },
+        ban: {
+            call: (id) => adminApi.banUser(id, isAdmin),
+            confirm: (who) => `Ban ${who}?`,
+            done: (who) => `${who} is now banned.`,
+            relogin: false,
+        },
+        unban: {
+            call: (id) => adminApi.unbanUser(id, isAdmin),
+            confirm: (who) => `Unban ${who}?`,
+            done: (who) => `${who} is no longer banned.`,
+            relogin: false,
+        },
+    };
+
+    const changeRole = async (user, action) => {
         const who = user.name || user.email || `#${user.id}`;
-        const what = target === 'moderator' ? 'a moderator' : 'a seller';
-        if (!window.confirm(`Make ${who} ${what}?`)) return;
+        const { call, confirm, done, relogin = true } = ACTIONS[action];
+        if (!window.confirm(confirm(who))) return;
 
         setBusyId(user.id);
         setNotice(null);
         try {
-            const updated =
-                target === 'moderator'
-                    ? await adminApi.makeModerator(user.id)
-                    : await adminApi.makeSeller(user.id);
+            const updated = await call(user.id);
 
             setUsers((list) => list.map((u) => (u.id === updated.id ? updated : u)));
             setNotice({
                 type: 'success',
-                text: `${who} is now ${what}. They need to sign in again before the new role applies.`,
+                text: relogin
+                    ? `${done(who)} They need to sign in again before the new role applies.`
+                    : done(who),
             });
         } catch (err) {
             console.error('Failed to change role', err);
@@ -101,8 +144,8 @@ function UsersPanel({ isAdmin }) {
                     <h2 className='text-[18px] font-bold text-[#0F1111]'>Users</h2>
                     <p className='text-[13px] text-[#565959]'>
                         {isAdmin
-                            ? 'Make a customer a seller or a moderator.'
-                            : 'Make a customer a seller.'}
+                            ? 'Change roles (seller, moderator, or back to customer) and ban or unban users.'
+                            : 'Make a customer a seller or turn a seller back into a customer, and ban or unban customers and sellers.'}
                     </p>
                 </div>
                 <span className='text-[13px] text-[#565959]'>{users.length} total</span>
@@ -182,7 +225,7 @@ function UsersPanel({ isAdmin }) {
                                                     <button
                                                         type='button'
                                                         disabled={busy}
-                                                        onClick={() => promote(u, 'seller')}
+                                                        onClick={() => changeRole(u, 'seller')}
                                                         className={buttonClass}
                                                     >
                                                         {busy ? 'Working…' : 'Make seller'}
@@ -192,10 +235,50 @@ function UsersPanel({ isAdmin }) {
                                                     <button
                                                         type='button'
                                                         disabled={busy}
-                                                        onClick={() => promote(u, 'moderator')}
+                                                        onClick={() => changeRole(u, 'moderator')}
                                                         className={buttonClass}
                                                     >
                                                         {busy ? 'Working…' : 'Make moderator'}
+                                                    </button>
+                                                )}
+                                                {canMakeCustomer(u) && (
+                                                    <button
+                                                        type='button'
+                                                        disabled={busy}
+                                                        onClick={() => changeRole(u, 'customer')}
+                                                        className={buttonClass}
+                                                    >
+                                                        {busy ? 'Working…' : 'Make customer'}
+                                                    </button>
+                                                )}
+                                                {canRemoveModerator(u) && (
+                                                    <button
+                                                        type='button'
+                                                        disabled={busy}
+                                                        onClick={() => changeRole(u, 'removeModerator')}
+                                                        className={buttonClass}
+                                                    >
+                                                        {busy ? 'Working…' : 'Remove moderator'}
+                                                    </button>
+                                                )}
+                                                {canBan(u) && (
+                                                    <button
+                                                        type='button'
+                                                        disabled={busy}
+                                                        onClick={() => changeRole(u, 'ban')}
+                                                        className={`${buttonClass} text-[#C40000]`}
+                                                    >
+                                                        {busy ? 'Working…' : 'Ban'}
+                                                    </button>
+                                                )}
+                                                {canUnban(u) && (
+                                                    <button
+                                                        type='button'
+                                                        disabled={busy}
+                                                        onClick={() => changeRole(u, 'unban')}
+                                                        className={buttonClass}
+                                                    >
+                                                        {busy ? 'Working…' : 'Unban'}
                                                     </button>
                                                 )}
                                             </div>
