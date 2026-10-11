@@ -17,8 +17,8 @@ import Sell from "./pages/Sell.jsx";
 import ProductDetails from "./pages/ProductDetails.jsx";
 import VideoDetails from "./pages/VideoDetails.jsx";
 import CustomerPreferences from "./pages/CustomerPreferences.jsx";
-import Account from "./pages/Account.jsx";
 import Orders from "./pages/Orders.jsx";
+import OrderProcess from "./pages/OrderProcess.jsx";
 import Cart from "./pages/Cart.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
@@ -83,6 +83,7 @@ function App() {
               <Route path="/your-account" element={<Account />} />
               <Route path="/your-orders" element={<Orders />} />*/}
               <Route path="/cart" element={<Cart />} />
+              <Route path="/order" element={<OrderProcess />} />
 
               {/* Anything that didn't match above - keeps the header/footer like the 403 page does. */}
               <Route path="*" element={<NotFound />} />
