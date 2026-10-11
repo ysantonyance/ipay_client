@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+# Pages with nothing useful for search results
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /profile
+Disallow: /cart
+Disallow: /order
+
+Sitemap: https://ipay-client.onrender.com/sitemap.xml

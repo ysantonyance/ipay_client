@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const team = [
     {name: 'Karina', role: 'Frontend · Scrum Manager', link: 'https://github.com/ysantonyance', photo: 'https://avatars.githubusercontent.com/u/149514654?v=4'},
     {name: 'Arsenii', role: 'Backend · ASP.NET Core API', link: 'https://github.com/Arsenii123', photo: 'https://avatars.githubusercontent.com/u/119303043?v=4'},
-    {name: 'Tymofii', role: 'Backend · Database', link: 'https://github.com/ThisIsEngineerGaming', photo: 'https://avatars.githubusercontent.com/u/115916718?v=4'},
+    {name: 'Tymofii', role: 'Frontend · Backend · Database', link: 'https://github.com/ThisIsEngineerGaming', photo: 'https://avatars.githubusercontent.com/u/115916718?v=4'},
     {name: 'Michael', role: 'Backend · ASP.NET Core API', link: 'https://github.com/IcedW', photo: 'https://avatars.githubusercontent.com/u/117010225?v=4'},
 ];
 
