@@ -24,6 +24,7 @@ import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import Admin from "./pages/Admin.jsx";
 import Profile from "./pages/Profile.jsx";
+import NotFound from "./pages/NotFound.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
 import {CartProvider} from "./context/CartContext.jsx";
 
@@ -78,6 +79,9 @@ function App() {
               <Route path="/your-account" element={<Account />} />
               <Route path="/your-orders" element={<Orders />} />*/}
               <Route path="/cart" element={<Cart />} />
+
+              {/* Anything that didn't match above - keeps the header/footer like the 403 page does. */}
+              <Route path="*" element={<NotFound />} />
 
             </Route>
 
