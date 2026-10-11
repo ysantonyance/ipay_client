@@ -1,10 +1,11 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useCart} from "../context/CartContext.jsx";
 import {imagesApi} from "../api/imagesApi.js";
 
 function Cart() {
     const {items, setQty, remove, total} = useCart();
     const count = items.reduce((n, i) => n + i.qty, 0);
+    const navigate = useNavigate();
 
     if (items.length === 0)
         return (
@@ -106,7 +107,9 @@ function Cart() {
                     <p className='text-lg'>
                         Subtotal ({count} item{count === 1 ? '' : 's'}): <span className='font-bold'>${total.toFixed(2)}</span>
                     </p>
-                    <button className='w-full mt-4 bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 cursor-pointer'>
+                    <button
+                        onClick={() => navigate('/order')}
+                        className='w-full mt-4 bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 cursor-pointer'>
                         Proceed to checkout
                     </button>
                 </div>

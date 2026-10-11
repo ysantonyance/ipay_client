@@ -17,7 +17,6 @@ import Sell from "./pages/Sell.jsx";
 import ProductDetails from "./pages/ProductDetails.jsx";
 import VideoDetails from "./pages/VideoDetails.jsx";
 import CustomerPreferences from "./pages/CustomerPreferences.jsx";
-import Account from "./pages/Account.jsx";
 import Orders from "./pages/Orders.jsx";
 import Cart from "./pages/Cart.jsx";
 import Register from "./pages/Register.jsx";
@@ -27,6 +26,7 @@ import Profile from "./pages/Profile.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
 import {CartProvider} from "./context/CartContext.jsx";
+import OrderProcess from "./pages/OrderProcess.jsx";
 
 function MainLayout() {
   return (
@@ -63,7 +63,8 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/profile" element={<Profile />} />
 
-{/*              <Route path="/amazon-video" element={<AmazonVideo />} />
+              <Route path="/amazon-video" element={<AmazonVideo />} />
+{/*
               <Route path="/yourstore/home" element={<UserAmazon />} />
               <Route path="/coupons" element={<Coupons />} />
               <Route path="/contact-us" element={<CustomerService />} />
@@ -76,9 +77,10 @@ function App() {
               <Route path="/video/:id" element={<VideoDetails />} />
 
               <Route path="/customer-preferences" element={<CustomerPreferences />} />
-              <Route path="/your-account" element={<Account />} />
-              <Route path="/your-orders" element={<Orders />} />*/}
+              <Route path="/your-orders" element={<Orders />} />
+*/}
               <Route path="/cart" element={<Cart />} />
+              <Route path="/order" element={<OrderProcess />} />
 
               {/* Anything that didn't match above - keeps the header/footer like the 403 page does. */}
               <Route path="*" element={<NotFound />} />
