@@ -27,6 +27,8 @@ import NotFound from "./pages/NotFound.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
 import {CartProvider} from "./context/CartContext.jsx";
 import {RatingsProvider} from "./context/RatingsContext.jsx";
+import VideoCategories from "./pages/VideoCategories.jsx";
+import VideoCategory from "./pages/VideoCategory.jsx";
 
 function MainLayout() {
   return (
@@ -66,8 +68,10 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/sell" element={<Sell />} />
 
-{/*              <Route path="/amazon-video" element={<AmazonVideo />} />
-              <Route path="/yourstore/home" element={<UserAmazon />} />
+              <Route path="/amazon-video" element={<AmazonVideo />} />
+              <Route path="/amazon-video/categories" element={<VideoCategories />} />
+              <Route path="/amazon-video/categories/:genreId" element={<VideoCategory />} />
+              {/*<Route path="/yourstore/home" element={<UserAmazon />} />
               <Route path="/coupons" element={<Coupons />} />
               <Route path="/contact-us" element={<CustomerService />} />
               <Route path="/history" element={<History />} />

@@ -3,6 +3,7 @@ import axios from 'axios';
 // In development the Vite dev server proxies "/api" to the ASP.NET backend (see vite.config.js),
 // so the browser only talks to its own origin. For a deployed build, set VITE_API_URL
 // (e.g. https://your-backend.example.com/api) in the environment.
+import.meta.env.VITE_API_URL = 'https://localhost:7137/api';
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || '/api',
     timeout: 10000,
