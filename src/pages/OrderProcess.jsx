@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useCart} from "../context/CartContext.jsx";
+import {useAuth} from "../context/AuthContext.jsx";
 import {ordersApi} from "../api/ordersApi.js";
 
 const FREE_SHIPPING_OVER = 50;   // placeholder fee rules, change to your own
@@ -221,7 +222,8 @@ function CardModal({onSave, onClose}) {
 }
 
 function OrderProcess() {
-    const {items, total} = useCart();
+    const {items, total, clear} = useCart();
+    const {isLoggedIn} = useAuth();
     const navigate = useNavigate();
     const [address, setAddress] = useState(null);
     const [card, setCard] = useState(null);
@@ -267,20 +269,22 @@ function OrderProcess() {
                                     Shop today's deals
                                 </Link>
                             </div>
-                            <div className='space-x-2 flex py-3'>
-                                <Link
-                                    className='block bg-[#FFD814] hover:bg-[#FFCE12] rounded-2xl px-2 py-1'
-                                    to='/login'
-                                >
-                                    Sign in to your account
-                                </Link>
-                                <Link
-                                    className='block border border-[#898D8E] hover:bg-[#F6FAFB] rounded-2xl px-2 py-1'
-                                    to='/register'
-                                >
-                                    Sign up now
-                                </Link>
-                            </div>
+                            {!isLoggedIn && (
+                                <div className='space-x-2 flex py-3'>
+                                    <Link
+                                        className='block bg-[#FFD814] hover:bg-[#FFCE12] rounded-2xl px-2 py-1'
+                                        to='/login'
+                                    >
+                                        Sign in to your account
+                                    </Link>
+                                    <Link
+                                        className='block border border-[#898D8E] hover:bg-[#F6FAFB] rounded-2xl px-2 py-1'
+                                        to='/register'
+                                    >
+                                        Sign up now
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -295,6 +299,12 @@ function OrderProcess() {
                 shippingAddress: `${address.fullName}, ${address.streetNumber} ${address.streetName}, ${address.city}, ${address.state} ${address.zip}, ${address.country}`,
                 items: items.map(i => ({productId: i.id, quantity: i.qty}))
             });
+            // The order is in, so empty the cart. If clearing fails the order still went through.
+            try {
+                await clear();
+            } catch (err) {
+                console.error('Could not clear the cart after ordering', err);
+            }
             setPlaced(true);
         } catch (err) {
             console.error(err);

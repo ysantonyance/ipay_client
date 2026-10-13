@@ -61,10 +61,16 @@ export function CartProvider({children}) {
         setItems(prev => prev.map(i => i.id === id ? {...i, qty} : i));
     };
 
+    // Empties the cart (used after an order is placed). Logged in: clears it on the server too.
+    const clear = async () => {
+        if (isLoggedIn) await cartApi.delete();
+        setItems([]);
+    };
+
     const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
 
     return (
-        <CartContext.Provider value={{items, add, setQty, remove, total}}>
+        <CartContext.Provider value={{items, add, setQty, remove, clear, total}}>
             {children}
         </CartContext.Provider>
     );

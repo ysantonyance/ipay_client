@@ -1,9 +1,11 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useCart} from "../context/CartContext.jsx";
+import {useAuth} from "../context/AuthContext.jsx";
 import {imagesApi} from "../api/imagesApi.js";
 
 function Cart() {
     const {items, setQty, remove, total} = useCart();
+    const {isLoggedIn} = useAuth();
     const count = items.reduce((n, i) => n + i.qty, 0);
     const navigate = useNavigate();
 
@@ -27,20 +29,22 @@ function Cart() {
                                     Shop today's deals
                                 </Link>
                             </div>
-                            <div className='flex flex-wrap gap-2 py-3'>
-                                <Link
-                                    className='block bg-[#FFD814] hover:bg-[#FFCE12] rounded-2xl px-2 py-1'
-                                    to='/login'
-                                >
-                                    Sign in to your account
-                                </Link>
-                                <Link
-                                    className='block border border-[#898D8E] hover:bg-[#F6FAFB] rounded-2xl px-2 py-1'
-                                    to='/register'
-                                >
-                                    Sign up now
-                                </Link>
-                            </div>
+                            {!isLoggedIn && (
+                                <div className='flex flex-wrap gap-2 py-3'>
+                                    <Link
+                                        className='block bg-[#FFD814] hover:bg-[#FFCE12] rounded-2xl px-2 py-1'
+                                        to='/login'
+                                    >
+                                        Sign in to your account
+                                    </Link>
+                                    <Link
+                                        className='block border border-[#898D8E] hover:bg-[#F6FAFB] rounded-2xl px-2 py-1'
+                                        to='/register'
+                                    >
+                                        Sign up now
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
