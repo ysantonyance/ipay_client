@@ -1,5 +1,6 @@
 import {Link, useNavigate} from "react-router-dom";
 import SearchBar from "./SearchBar.jsx";
+import NavMenu from "./NavMenu.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
 import {useCart} from "../../context/CartContext.jsx";
 
@@ -125,18 +126,7 @@ function Header() {
 
             <div className='bg-[#232F3E] text-white text-[14px] px-3 overflow-x-auto whitespace-nowrap scrollbar-none'>
                 <div className='flex flex-row items-center space-x-3 py-1 sm:py-0'>
-                    <div className='flex flex-row items-center pr-2 border border-transparent hover:border-white cursor-pointer shrink-0'>
-                        <button
-                            type="button"
-                            aria-label="Toggle navigation"
-                            className="p-1.5 text-white rounded-md focus:outline-none cursor-pointer"
-                        >
-                            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </button>
-                        <b>All</b>
-                    </div>
+                    <NavMenu />
 
                     <Link
                         className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
