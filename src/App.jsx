@@ -86,6 +86,7 @@ function App() {
               <Route path="/customer-preferences" element={<CustomerPreferences />} />
               <Route path="/your-account" element={<Account />} />
               <Route path="/your-orders" element={<Orders />} />*/}
+              <Route path="/orders" element={<Orders />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/order" element={<OrderProcess />} />
 
