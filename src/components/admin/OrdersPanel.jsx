@@ -25,15 +25,15 @@ function formatDate(value) {
 }
 
 /**
- * The admin page's "Orders" section: every order, with a Pending / Not pending filter, and a status
- * dropdown on each row. Shown to admins and moderators (the Admin page already blocks everyone else).
+ * The admin page's "Orders" section: every order, with Pending / Not pending / Cancelled / All tabs, a status
+ * dropdown and a Cancel order button on each row. Shown to admins and moderators (the Admin page already blocks everyone else).
  */
 function OrdersPanel() {
     const [orders, setOrders] = useState([]);
     const [userLookup, setUserLookup] = useState({});
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState('');
-    const [filter, setFilter] = useState('Pending'); // 'Pending' | 'NotPending' | 'All'
+    const [filter, setFilter] = useState('Pending'); // 'Pending' | 'NotPending' | 'Cancelled' | 'All'
     const [busyId, setBusyId] = useState(null);
     const [notice, setNotice] = useState(null); // { type: 'success' | 'error', text }
     const [expandedId, setExpandedId] = useState(null);
@@ -68,17 +68,25 @@ function OrdersPanel() {
         load();
     }, [load]);
 
-    const pendingCount = useMemo(
-        () => orders.filter((o) => normalizeStatus(o.status) === 'Pending').length,
-        [orders]
-    );
+    const counts = useMemo(() => {
+        const c = { Pending: 0, NotPending: 0, Cancelled: 0, All: orders.length };
+        for (const o of orders) {
+            const s = normalizeStatus(o.status);
+            if (s === 'Pending') c.Pending += 1;
+            else if (s === 'Cancelled') c.Cancelled += 1;
+            else c.NotPending += 1;
+        }
+        return c;
+    }, [orders]);
+    const pendingCount = counts.Pending;
 
     const visible = useMemo(
         () =>
             orders.filter((o) => {
-                const isPending = normalizeStatus(o.status) === 'Pending';
-                if (filter === 'Pending') return isPending;
-                if (filter === 'NotPending') return !isPending;
+                const s = normalizeStatus(o.status);
+                if (filter === 'Pending') return s === 'Pending';
+                if (filter === 'NotPending') return s !== 'Pending' && s !== 'Cancelled';
+                if (filter === 'Cancelled') return s === 'Cancelled';
                 return true;
             }),
         [orders, filter]
@@ -113,27 +121,39 @@ function OrdersPanel() {
                 <div>
                     <h2 className='text-[18px] font-bold text-[#0F1111]'>Orders</h2>
                     <p className='text-[13px] text-[#565959]'>
-                        {orders.length} total, {pendingCount} pending.
+                        {orders.length} total, {pendingCount} pending, {counts.Cancelled} cancelled.
                     </p>
                 </div>
 
                 <div className='flex items-center gap-3'>
-                    <label className='flex items-center gap-2 text-[13px] text-[#565959]'>
-                        Show
-                        <select
-                            value={filter}
-                            onChange={(e) => setFilter(e.target.value)}
-                            className='border border-[#a6a6a6] rounded px-2 py-1 bg-white text-[#0F1111] cursor-pointer'
-                        >
-                            <option value='Pending'>Pending only</option>
-                            <option value='NotPending'>Not pending</option>
-                            <option value='All'>All orders</option>
-                        </select>
-                    </label>
                     <button type='button' onClick={load} disabled={loading} className={buttonClass}>
                         {loading ? 'Loading…' : 'Refresh'}
                     </button>
                 </div>
+            </div>
+
+            <div className='flex flex-wrap gap-2 mb-4' role='tablist' aria-label='Order filter'>
+                {[
+                    ['Pending', 'Pending'],
+                    ['NotPending', 'Not pending'],
+                    ['Cancelled', 'Cancelled'],
+                    ['All', 'All orders'],
+                ].map(([key, label]) => (
+                    <button
+                        key={key}
+                        type='button'
+                        role='tab'
+                        aria-selected={filter === key}
+                        onClick={() => setFilter(key)}
+                        className={`px-3 py-1 text-[13px] rounded border cursor-pointer ${
+                            filter === key
+                                ? 'bg-[#232F3E] text-white border-[#232F3E]'
+                                : 'bg-white text-[#0F1111] border-[#D5D9D9] hover:bg-[#F7FAFA]'
+                        }`}
+                    >
+                        {label} ({counts[key]})
+                    </button>
+                ))}
             </div>
 
             {notice && (
@@ -166,7 +186,9 @@ function OrdersPanel() {
                         ? 'No orders have been placed yet.'
                         : filter === 'Pending'
                           ? 'No pending orders.'
-                          : 'No orders match this filter.'}
+                          : filter === 'Cancelled'
+                            ? 'No cancelled orders.'
+                            : 'No orders match this filter.'}
                 </p>
             )}
 
@@ -228,6 +250,16 @@ function OrdersPanel() {
                                                         </option>
                                                     ))}
                                                 </select>
+                                                {status !== 'Cancelled' && (
+                                                    <button
+                                                        type='button'
+                                                        disabled={busy}
+                                                        onClick={() => changeStatus(o, 'Cancelled')}
+                                                        className={`${buttonClass} ml-2 text-[#C40000]`}
+                                                    >
+                                                        Cancel order
+                                                    </button>
+                                                )}
                                                 {busy && <span className='ml-2 text-[12px] text-[#565959]'>Saving…</span>}
                                             </td>
                                         </tr>

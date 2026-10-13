@@ -57,10 +57,12 @@ function StatusTracker({status}) {
     );
 }
 
-function OrderCard({order, onRefresh, refreshing, checkedAt, checkError}) {
+function OrderCard({order, onRefresh, refreshing, checkedAt, checkError, onCancel, cancelling, cancelError}) {
     const [open, setOpen] = useState(false);
     const status = normalizeStatus(order.status);
     const info = STATUS_INFO[status];
+    // Customers can cancel until the order ships.
+    const canCancel = status === 'Pending' || status === 'Paid';
     const items = order.items ?? [];
     const count = order.totalQuantity ?? items.reduce((n, i) => n + i.quantity, 0);
     const total = order.totalAmount ?? items.reduce((s, i) => s + (i.totalPrice ?? i.price * i.quantity), 0);
@@ -101,6 +103,17 @@ function OrderCard({order, onRefresh, refreshing, checkedAt, checkError}) {
                         ) : checkedAt && (
                             <p className='text-xs text-gray-500 mt-1'>Last checked {formatTime(checkedAt)}</p>
                         )}
+                        {canCancel && (
+                            <div className='mt-2'>
+                                <button type='button' onClick={() => onCancel(order.id)} disabled={cancelling}
+                                        className='border border-[#B12704] text-[#B12704] bg-white hover:bg-[#FDF0F0] rounded-full px-4 py-1.5 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'>
+                                    {cancelling ? 'Cancelling…' : 'Cancel order'}
+                                </button>
+                                {cancelError && (
+                                    <p role='alert' className='text-xs text-[#D32F2F] mt-1'>{cancelError}</p>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -139,6 +152,8 @@ function Orders() {
     const [error, setError] = useState('');
     const [refreshingId, setRefreshingId] = useState(null);
     const [checks, setChecks] = useState({}); // orderId -> {at: Date, error?: string}
+    const [cancellingId, setCancellingId] = useState(null);
+    const [cancelErrors, setCancelErrors] = useState({}); // orderId -> message
     const [filter, setFilter] = useState('All');
 
     const load = useCallback(async () => {
@@ -176,6 +191,23 @@ function Orders() {
             setChecks(prev => ({...prev, [id]: {at: new Date(), error: getErrorMessage(err, 'Could not check this order.')}}));
         } finally {
             setRefreshingId(null);
+        }
+    };
+
+    // The person cancelling their own order. The server only allows it before the order ships.
+    const cancelOrder = async id => {
+        if (!window.confirm(`Cancel order #${id}? This can't be undone.`)) return;
+
+        setCancellingId(id);
+        setCancelErrors(prev => ({...prev, [id]: ''}));
+        try {
+            const updated = await ordersApi.cancel(id);
+            setOrders(prev => prev.map(o =>
+                o.id === id ? (updated?.id ? updated : {...o, status: 'Cancelled'}) : o));
+        } catch (err) {
+            setCancelErrors(prev => ({...prev, [id]: getErrorMessage(err, 'Could not cancel this order.')}));
+        } finally {
+            setCancellingId(null);
         }
     };
 
@@ -249,7 +281,10 @@ function Orders() {
                                    onRefresh={checkStatus}
                                    refreshing={refreshingId === o.id}
                                    checkedAt={checks[o.id]?.at}
-                                   checkError={checks[o.id]?.error}/>
+                                   checkError={checks[o.id]?.error}
+                                   onCancel={cancelOrder}
+                                   cancelling={cancellingId === o.id}
+                                   cancelError={cancelErrors[o.id]}/>
                     ))}
                 </div>
             )}
