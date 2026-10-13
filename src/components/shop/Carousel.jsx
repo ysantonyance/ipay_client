@@ -5,27 +5,39 @@ function Carousel({ children, visibleCount = 5 }) {
     const [index, setIndex] = useState(0);
 
     const slides = Children.toArray(children);
-    const maxIndex = Math.max(0, slides.length - visibleCount);
+    const maxIndex = Math.max(0, Math.ceil(slides.length - visibleCount));
 
-    useEffect(() => {
-        if (index > maxIndex) {
-            scrollToIndex(maxIndex);
-        }
-    }, [visibleCount, maxIndex]);
+    const getStep = () => {
+        const track = trackRef.current;
+        const item = track?.children[0];
+        if (!item) return 0;
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        return item.offsetWidth + gap;
+    };
 
     const scrollToIndex = (target) => {
         const clamped = Math.min(Math.max(target, 0), maxIndex);
         setIndex(clamped);
+        trackRef.current?.scrollTo({ left: clamped * getStep(), behavior: 'smooth' });
+    };
 
+    useEffect(() => {
+        if (index > maxIndex) setIndex(maxIndex);
+    }, [index, maxIndex]);
+
+    const latest = useRef({ index, maxIndex });
+    latest.current = { index, maxIndex };
+
+    useEffect(() => {
         const track = trackRef.current;
         if (!track) return;
-        const item = track.children[0];
-        if (!item) return;
-
-        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-        const step = item.offsetWidth + gap;
-        track.scrollTo({ left: clamped * step, behavior: 'smooth' });
-    };
+        const ro = new ResizeObserver(() => {
+            const { index, maxIndex } = latest.current;
+            track.scrollTo({ left: Math.min(index, maxIndex) * getStep(), behavior: 'instant' });
+        });
+        ro.observe(track);
+        return () => ro.disconnect();
+    }, []);
 
     const gapRem = 0.75;
     const totalGaps = visibleCount - 1;
