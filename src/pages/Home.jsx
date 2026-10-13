@@ -5,7 +5,14 @@ import {useSearch} from "../context/SearchContext.jsx";
 import TodaysDeal from "./TodaysDeal.jsx";
 
 function Home() {
-    const {setSearch} = useSearch();
+    const {setSearch: setSearchText} = useSearch();
+    const navigate = useNavigate();
+    // Every card on this page calls setSearch(term): fill the header search box and open /products filtered by that term.
+    const setSearch = (term) => {
+        const value = (term || '').trim();
+        setSearchText(value);
+        navigate(value ? `/products?q=${encodeURIComponent(value)}` : '/products');
+    };
     const [carouselCount, setCarouselCount] = useState(
         window.innerWidth < 900 ? (window.innerWidth < 600 ? 1.85 : 3) : 5
     );
@@ -96,7 +103,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Best seller in electronics'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('electronics'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -163,7 +170,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('computers and accessories'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('computers'); }}
                                 href=''
                                 className='tracking-tight'>
                                 Score the top PCs & Accessories
@@ -201,14 +208,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('external hard drives'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/217Arq+nObL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('external hard drives'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
                                     href="">Hard Drives</a>
                             </div>
 
@@ -229,7 +236,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Best sellers in fitness'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('fitness'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -361,7 +368,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('home and kitchen'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -399,14 +406,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen and dining'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41bvMGlDk4L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen and dining'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
                                     href="">Dining</a>
                             </div>
 
@@ -427,7 +434,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('women beauty accessories'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -493,7 +500,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('beauty and personal care'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -559,7 +566,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Best sellers in computers'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('computers'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -625,7 +632,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Best sellers in Shoes'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('shoes'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -691,7 +698,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('home and kitchen'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -714,14 +721,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home sofa living room'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('sofa'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41cXdDKGU6L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home sofa living room'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('sofa'); }}
                                     href="">
                                     Home comfort
                                 </a>
@@ -823,7 +830,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Best sellers in pets'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('pets'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -833,27 +840,27 @@ function Home() {
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('pet dog supplies'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('dog'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41eLkFePVUL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('pet dog supplies'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('dog'); }}
                                     href=''>Dogs</a>
                             </div>
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('pet cats supplies'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('cat'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41OERaEZuaL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('pet cats supplies'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('cat'); }}
                                     href="">
                                     Cats
                                 </a>
@@ -861,14 +868,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('small pet supplies'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('small pet'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/410BX1Aby0L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('small pet supplies'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('small pet'); }}
                                     href="">Small pets</a>
                             </div>
 
@@ -888,7 +895,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Video games & accessories'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('games'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -954,7 +961,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('toys and games'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('toys'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -964,14 +971,14 @@ function Home() {
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('outdoor play toys'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('outdoor'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31uBBG+KvtL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('outdoor play toys'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('outdoor'); }}
                                     href=''>Outdoor Play Sets</a>
                             </div>
 
@@ -1005,14 +1012,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Pretend Play Toys'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('pretend play'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/416Kr1IKmgL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Pretend Play Toys'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('pretend play'); }}
                                     href="">Pretend Play Toys</a>
                             </div>
                         </div>
@@ -1153,14 +1160,14 @@ function Home() {
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen and dining'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41I85MytToL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen and dining'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
                                     href=''>Kitchen & dining</a>
                             </div>
 
@@ -1194,14 +1201,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('bedding and bath'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('bath'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/417HmRJ2WJL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('bedding and bath'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('bath'); }}
                                     href="">Bedding & bath</a>
                             </div>
                         </div>
@@ -1274,7 +1281,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('wellness fashion accessories'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('accessories'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -1312,14 +1319,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('health and beauty'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('health'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41IIOwmruhL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('health and beauty'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('health'); }}
                                     href="">Health and beauty</a>
                             </div>
 
@@ -1406,7 +1413,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('beauty and personal care'); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -1589,14 +1596,14 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Storage organization'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('storage'); }}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41wRrAnGAJL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Storage organization'); }}
+                                    onClick={(e) => { e.preventDefault(); setSearch('storage'); }}
                                     href="">Storage organization</a>
                             </div>
                         </div>
