@@ -13,6 +13,18 @@ function Home() {
         setSearchText(value);
         navigate(value ? `/products?q=${encodeURIComponent(value)}` : '/products');
     };
+    // Cards that just open the products page showing only top-rated items (4 stars & up), with no search term.
+    const goTopRated = (e) => {
+        e.preventDefault();
+        setSearchText('');
+        navigate('/products?rating=4');
+    };
+    // The pets card opens the products page on the pets category.
+    const goPets = (e) => {
+        e.preventDefault();
+        setSearchText('');
+        navigate('/products?category=pets');
+    };
     const [carouselCount, setCarouselCount] = useState(
         window.innerWidth < 900 ? (window.innerWidth < 600 ? 1.85 : 3) : 5
     );
@@ -830,7 +842,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch('pets'); }}
+                                onClick={goPets}
                                 href=''
                                 className='tracking-tight'
                             >
@@ -840,27 +852,27 @@ function Home() {
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('dog'); }}
+                                    onClick={goPets}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41eLkFePVUL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('dog'); }}
+                                    onClick={goPets}
                                     href=''>Dogs</a>
                             </div>
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('cat'); }}
+                                    onClick={goPets}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41OERaEZuaL._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('cat'); }}
+                                    onClick={goPets}
                                     href="">
                                     Cats
                                 </a>
@@ -868,26 +880,26 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('small pet'); }}
+                                    onClick={goPets}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/410BX1Aby0L._SR210,210_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('small pet'); }}
+                                    onClick={goPets}
                                     href="">Small pets</a>
                             </div>
 
                             <div>
-                                <Link to='/labordaysale'
+                                <Link to='/products?category=pets' onClick={() => setSearchText('')}
                                       href=""
                                 >
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/4172LJHm7gL._SR210,210_.jpg" alt=""/>
                                 </Link>
-                                <Link to='/labordaysale'
+                                <Link to='/products?category=pets' onClick={() => setSearchText('')}
                                       href="">Deals</Link>
                             </div>
                         </div>
@@ -1092,7 +1104,7 @@ function Home() {
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
-                            <Link to='/labordaysale'
+                            <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                   href=''
                                   className='tracking-tight'
                             >
@@ -1101,48 +1113,48 @@ function Home() {
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41GibUzBeXL._SR210,210_.jpg" alt=""/>
                                 </Link>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href=''>Books</Link>
                             </div>
 
                             <div>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41YDpSUai3L._SR210,210_.jpg" alt=""/>
                                 </Link>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">
                                     Fashion
                                 </Link>
                             </div>
 
                             <div>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41qG08jk3ML._SR210,210_.jpg" alt=""/>
                                 </Link>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">PC</Link>
                             </div>
 
                             <div>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/41QFxGoW7IL._SR210,210_.jpg" alt=""/>
                                 </Link>
-                                <Link to='/labordaysale'
+                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">Beauty</Link>
                             </div>
                         </div>
@@ -1215,7 +1227,7 @@ function Home() {
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem]'>
-                            <Link to='/labordaysale'
+                            <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                   href=''
                                   className='tracking-tight'
                             >
@@ -1225,27 +1237,27 @@ function Home() {
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('electronics'); }}
+                                    onClick={goTopRated}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31zLfxfdJ1L._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('electronics'); }}
+                                    onClick={goTopRated}
                                     href=''>Electronics</a>
                             </div>
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home'); }}
+                                    onClick={goTopRated}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/31cU8R+ZNFL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home'); }}
+                                    onClick={goTopRated}
                                     href="">
                                     Home
                                 </a>
@@ -1253,27 +1265,27 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
+                                    onClick={goTopRated}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21vZBVKPsDL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
+                                    onClick={goTopRated}
                                     href="">Beauty</a>
                             </div>
 
                             <div>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fashion'); }}
+                                    onClick={goTopRated}
                                     href="">
                                     <img
                                         className='rounded-xl w-[140px] h-[140px] sm:w-[176px] sm:h-[176px] object-cover'
                                         src="https://m.media-amazon.com/images/I/21X3TF86YFL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fashion'); }}
+                                    onClick={goTopRated}
                                     href="">Fashion</a>
                             </div>
                         </div>

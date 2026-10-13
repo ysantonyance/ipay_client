@@ -140,7 +140,8 @@ function Products() {
         }, { replace: true });
     const query = searchParams.get('q') ?? '';
     const setQuery = (value) => updateParam('q', value);
-    const categoryId = searchParams.get('category') ?? '';
+    // ?category= accepts either a category id or a category name (e.g. ?category=pets); it is resolved to an id below.
+    const rawCategory = searchParams.get('category') ?? '';
     const setCategoryId = (value) => updateParam('category', value);
     const [sort, setSort] = useState('featured');
 
@@ -148,6 +149,16 @@ function Products() {
     // state above so a hiccup loading products doesn't also blank the filters.
     const [categories, setCategories] = useState([]);
     const [manufacturerOptions, setManufacturerOptions] = useState([]);
+
+    const categoryId = useMemo(() => {
+        if (!rawCategory) return '';
+        if (categories.some((c) => String(c.id) === rawCategory)) return rawCategory;
+        const wanted = rawCategory.toLowerCase();
+        const byName =
+            categories.find((c) => (c.name || '').toLowerCase() === wanted) ??
+            categories.find((c) => (c.name || '').toLowerCase().includes(wanted));
+        return byName ? String(byName.id) : rawCategory;
+    }, [rawCategory, categories]);
 
     useEffect(() => {
         let ignore = false;
@@ -169,7 +180,9 @@ function Products() {
     }, []);
 
     const [manufacturer, setManufacturer] = useState('');
-    const [minRating, setMinRating] = useState(0);
+    // The minimum rating lives in the URL (?rating=4) too, so links (e.g. from the home page) can preselect it.
+    const minRating = Number(searchParams.get('rating')) || 0;
+    const setMinRating = (value) => updateParam('rating', value > 0 ? String(value) : '');
     const [priceMin, setPriceMin] = useState('');
     const [priceMax, setPriceMax] = useState('');
 
