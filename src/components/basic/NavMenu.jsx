@@ -7,9 +7,9 @@ import {useSearch} from "../../context/SearchContext.jsx";
 const MAX_CATEGORIES = 8;
 
 /**
- * The "All" button in the header's second row plus the slide-out menu it opens.
- * The menu lists a few product categories (each opens /products filtered by that category)
- * and, pinned at the bottom, a sign-in button when logged out or a profile button when logged in.
+ - The "All" button in the header's second row plus the slide-out menu it opens.
+ - The menu lists a few product categories (each opens /products filtered by that category)
+ - and, pinned at the bottom, a sign-in button when logged out or a profile button when logged in.
  */
 function NavMenu() {
     const {isLoggedIn, userName} = useAuth();
@@ -76,67 +76,75 @@ function NavMenu() {
                 <b>All</b>
             </button>
 
-            {open && (
-                <div className='fixed inset-0 z-50 flex'>
-                    <aside
-                        role='dialog'
-                        aria-label='Menu'
-                        className='relative w-[300px] max-w-[85vw] h-full bg-white text-[#0F1111] flex flex-col shadow-xl'
-                    >
-                        <div className='bg-[#232F3E] text-white px-5 py-3 text-[18px] font-bold shrink-0'>
-                            Hello, {isLoggedIn ? (userName || 'there') : 'sign in'}
+            {/* Overlay Container: always mounted for transition, toggles pointer-events & opacity */}
+            <div
+                className={`fixed inset-0 z-50 flex transition-opacity duration-300 ease-in-out ${
+                    open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
+                aria-hidden={!open}
+            >
+                {/* Slide-out Drawer */}
+                <aside
+                    role='dialog'
+                    aria-label='Menu'
+                    className={`relative w-[300px] max-w-[85vw] h-full bg-white text-[#0F1111] flex flex-col shadow-2xl transform transition-transform duration-300 ease-in-out ${
+                        open ? 'translate-x-0' : '-translate-x-full'
+                    }`}
+                >
+                    <div className='bg-[#232F3E] text-white px-5 py-3 text-[18px] font-bold shrink-0'>
+                        Hello, {isLoggedIn ? (userName || 'there') : 'sign in'}
+                    </div>
+
+                    <nav className='flex-1 overflow-y-auto py-2'>
+                        <h2 className='px-5 pt-2 pb-1 text-[16px] font-bold'>Shop by category</h2>
+
+                        {!loaded && <p className='px-5 py-3 text-[13px] text-[#565959]'>Loading…</p>}
+                        {loaded && categories.length === 0 && (
+                            <p className='px-5 py-3 text-[13px] text-[#565959]'>No categories to show.</p>
+                        )}
+
+                        {categories.map(c => (
+                            <Link key={c.id} to={`/products?category=${c.id}`} onClick={pick} className={rowCls}>
+                                {c.name}
+                            </Link>
+                        ))}
+
+                        <div className='border-t border-[#D5D9D9] mt-2 pt-2'>
+                            <Link to='/products' onClick={pick} className={rowCls}>
+                                All products
+                            </Link>
                         </div>
+                    </nav>
 
-                        <nav className='flex-1 overflow-y-auto py-2'>
-                            <h2 className='px-5 pt-2 pb-1 text-[16px] font-bold'>Shop by category</h2>
+                    <div className='border-t border-[#D5D9D9] p-4 shrink-0'>
+                        {isLoggedIn ? (
+                            <Link
+                                to='/profile'
+                                onClick={close}
+                                className='block w-full text-center bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 text-[14px]'
+                            >
+                                Your profile
+                            </Link>
+                        ) : (
+                            <Link
+                                to='/login'
+                                onClick={close}
+                                className='block w-full text-center bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 text-[14px]'
+                            >
+                                Sign in
+                            </Link>
+                        )}
+                    </div>
+                </aside>
 
-                            {!loaded && <p className='px-5 py-3 text-[13px] text-[#565959]'>Loading…</p>}
-                            {loaded && categories.length === 0 && (
-                                <p className='px-5 py-3 text-[13px] text-[#565959]'>No categories to show.</p>
-                            )}
-
-                            {categories.map(c => (
-                                <Link key={c.id} to={`/products?category=${c.id}`} onClick={pick} className={rowCls}>
-                                    {c.name}
-                                </Link>
-                            ))}
-
-                            <div className='border-t border-[#D5D9D9] mt-2 pt-2'>
-                                <Link to='/products' onClick={pick} className={rowCls}>
-                                    All products
-                                </Link>
-                            </div>
-                        </nav>
-
-                        <div className='border-t border-[#D5D9D9] p-4 shrink-0'>
-                            {isLoggedIn ? (
-                                <Link
-                                    to='/profile'
-                                    onClick={close}
-                                    className='block w-full text-center bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 text-[14px]'
-                                >
-                                    Your profile
-                                </Link>
-                            ) : (
-                                <Link
-                                    to='/login'
-                                    onClick={close}
-                                    className='block w-full text-center bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 text-[14px]'
-                                >
-                                    Sign in
-                                </Link>
-                            )}
-                        </div>
-                    </aside>
-
-                    <button
-                        type='button'
-                        aria-label='Close menu'
-                        onClick={close}
-                        className='flex-1 bg-black/50 cursor-default'
-                    />
-                </div>
-            )}
+                {/* Backdrop button */}
+                <button
+                    type='button'
+                    aria-label='Close menu'
+                    onClick={close}
+                    className='flex-1 bg-black/60 cursor-default focus:outline-none'
+                />
+            </div>
         </>
     );
 }
