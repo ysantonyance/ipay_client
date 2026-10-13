@@ -63,6 +63,7 @@ function SettingRow({
     submitLabel = 'Save changes',
     note = '',
     disabledReason = '',
+    actionLabel = 'Edit',
     children,
     last = false,
 }) {
@@ -87,7 +88,7 @@ function SettingRow({
                     disabled={Boolean(disabledReason)}
                     className='shrink-0 px-6 py-1 bg-white hover:bg-[#F7FAFA] border border-[#D5D9D9] rounded-xl text-[13px] text-[#111] cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
                 >
-                    {isOpen ? 'Cancel' : 'Edit'}
+                    {isOpen ? 'Cancel' : actionLabel}
                 </button>
             </div>
 
@@ -436,7 +437,9 @@ function EmailSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) 
     );
 }
 
-function PasswordSection({ profile, isOpen, onToggle, onClose }) {
+function PasswordSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) {
+    // Google-only accounts have no password yet: they can create one through the emailed-link flow.
+    const creating = !profile.hasPassword;
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -550,7 +553,12 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
 
             localStorage.removeItem(PENDING_PASSWORD_KEY);
             setWaiting(false);
-            setSuccess('Your password was updated.');
+            setSuccess(
+                creating
+                    ? 'Your password was created. You can now sign in with it or with Google.'
+                    : 'Your password was updated.',
+            );
+            onProfileChanged?.({ hasPassword: true });
             onClose();
         } catch (err) {
             setError(describeError(err, 'We could not confirm your new password. Please try again.'));
@@ -559,35 +567,43 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
         }
     };
 
+    // Creating a password always goes through the emailed link: there is no current password to type.
+    const activeMode = creating ? 'email' : mode;
+
     return (
         <SettingRow
             title='Password'
-            value='••••••••'
+            value={creating ? 'Not set' : '••••••••'}
+            actionLabel={creating ? 'Create password' : 'Edit'}
             isOpen={isOpen}
             onToggle={onToggle}
-            onSubmit={mode === 'direct' ? changeDirect : waiting ? confirmChange : sendLink}
+            onSubmit={activeMode === 'direct' ? changeDirect : waiting ? confirmChange : sendLink}
             busy={busy}
             error={error}
             success={success}
             submitLabel={
-                mode === 'direct'
+                activeMode === 'direct'
                     ? 'Save password'
                     : waiting
-                      ? 'I have set the new password'
-                      : 'Send reset email'
-            }
-            disabledReason={
-                profile.hasPassword ? '' : 'This account signs in with Google, so it has no password to change.'
+                      ? creating
+                          ? 'I have created the password'
+                          : 'I have set the new password'
+                      : creating
+                        ? 'Send email'
+                        : 'Send reset email'
             }
             note={
-                mode === 'direct'
+                activeMode === 'direct'
                     ? 'At least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.'
                     : waiting
                       ? 'Finish within 30 minutes of opening the link. New password: at least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.'
-                      : 'We will email a password reset link to your current address. You do not need your current password: your password only changes after you set a new one through the link.'
+                      : creating
+                        ? 'We will email a link to your address. Open it to choose a password, then come back here and enter the same password to finish. You can keep signing in with Google too.'
+                        : 'We will email a password reset link to your current address. You do not need your current password: your password only changes after you set a new one through the link.'
             }
             last
         >
+            {!creating && (
             <div className='flex flex-wrap gap-2'>
                 {[
                     ['direct', 'Use current password'],
@@ -607,8 +623,9 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
                     </button>
                 ))}
             </div>
+            )}
 
-            {mode === 'direct' && (
+            {activeMode === 'direct' && (
                 <>
                     <Field
                         id='currentPassword'
@@ -637,7 +654,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose }) {
                 </>
             )}
 
-            {mode === 'email' && waiting && (
+            {activeMode === 'email' && waiting && (
                 <>
                     <p className='text-[13px]'>
                         We sent a reset link to <strong className='break-all'>{profile.email}</strong>. Open it and
@@ -777,6 +794,7 @@ function Profile() {
                                 isOpen={openSection === 'password'}
                                 onToggle={() => toggle('password')}
                                 onClose={close}
+                                onProfileChanged={mergeProfile}
                             />
                         </>
                     )}
