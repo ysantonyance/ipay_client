@@ -242,9 +242,14 @@ function OrderProcess() {
                 <div className='bg-white rounded p-10 text-center'>
                     <h1 className='text-2xl font-bold text-[#067D62] mb-2'>Order placed, thank you!</h1>
                     <p className='text-sm mb-6'>Your order was successful.</p>
-                    <Link to='/products' className='bg-[#FFD814] hover:bg-[#F7CA00] rounded-full px-6 py-2 text-sm'>
-                        Continue shopping
-                    </Link>
+                    <div className='flex flex-wrap justify-center gap-3'>
+                        <Link to='/orders' className='bg-[#FFD814] hover:bg-[#F7CA00] rounded-full px-6 py-2 text-sm'>
+                            View your orders
+                        </Link>
+                        <Link to='/products' className='border border-[#898D8E] hover:bg-[#F6FAFB] rounded-full px-6 py-2 text-sm'>
+                            Continue shopping
+                        </Link>
+                    </div>
                 </div>
             </div>
         );

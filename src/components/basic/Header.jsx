@@ -107,10 +107,12 @@ function Header() {
                             </Link>
                         )}
 
-                        <div className='hidden lg:flex h-[50px] border border-transparent hover:border-white px-2 flex-col justify-center cursor-pointer'>
+                        <Link
+                            to='/orders'
+                            className='hidden lg:flex h-[50px] border border-transparent hover:border-white px-2 flex-col justify-center cursor-pointer'>
                             <p className='text-[#CCCCCC]'>Returns</p>
                             <b>& Orders</b>
-                        </div>
+                        </Link>
 
                         <Link
                             to='/cart'
