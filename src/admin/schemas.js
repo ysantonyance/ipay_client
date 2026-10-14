@@ -4,6 +4,7 @@ import { genresApi } from '../api/genresApi.js';
 import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
 import { productsApi } from '../api/productsApi.js';
+import { omdbGenreIds } from '../utils/omdbGenres.js';
 
 /**
  * One entry per resource the admin playground can manage.
@@ -73,7 +74,18 @@ export const RESOURCE_SCHEMAS = {
             { key: 'ageRating', label: 'Age rating' },
             { key: 'posterUrl', label: 'Poster', image: true },
         ],
-        buildPayload: (values) => ({ ...values, episodeIds: [], genreIds: [] }),
+        // Genres come from OMDb: the film is looked up by name and its genres are linked to the
+        // matching genres we already have. Genres picked earlier and episodes are kept on edit.
+        buildPayload: async (values, existing) => {
+            const fromOmdb = await omdbGenreIds(values.name, values.year);
+            return {
+                ...values,
+                episodeIds: existing?.episodeIds ?? [],
+                genreIds: [...new Set([...(existing?.genreIds ?? []), ...fromOmdb])],
+            };
+        },
+        // A series stores its genreIds, and each genre also stores its series ids - keep both sides in sync.
+        afterSave: (id, payload) => Promise.all(payload.genreIds.map((genreId) => genresApi.addSeries(genreId, id))),
     },
     episodes: {
         label: 'Episodes',

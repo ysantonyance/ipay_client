@@ -1,5 +1,20 @@
 import {useEffect, useState} from "react";
 import useVideos from "../../hooks/useFilms.js";
+import {useOmdb} from "../../hooks/useOmdb.js";
+
+// Result tile: the name comes from our database, poster and year from OMDb.
+function SearchTile({s}) {
+    const film = useOmdb(s);
+    return (
+        <div>
+            {film.posterUrl
+                ? <img src={film.posterUrl} alt={film.name} className='aspect-video w-full rounded-lg object-cover object-[50%_25%]' />
+                : <div className='aspect-video w-full rounded-lg bg-[#33373E]' />}
+            <p className='mt-2 text-sm font-bold line-clamp-2'>{film.name}</p>
+            <p className='text-xs text-gray-400'>{film.year}</p>
+        </div>
+    );
+}
 
 function SearchModal({onClose}) {
     const {series} = useVideos();
@@ -49,15 +64,7 @@ function SearchModal({onClose}) {
                             </div>
 
                             <div className='mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4'>
-                                {matches.slice(0, 4).map(s => (
-                                    <div key={s.id}>
-                                        {s.posterUrl
-                                            ? <img src={s.posterUrl} alt={s.name} className='aspect-video w-full rounded-lg object-cover' />
-                                            : <div className='aspect-video w-full rounded-lg bg-[#33373E]' />}
-                                        <p className='mt-2 text-sm font-bold line-clamp-2'>{s.name}</p>
-                                        <p className='text-xs text-gray-400'>{s.year}</p>
-                                    </div>
-                                ))}
+                                {matches.slice(0, 4).map(s => <SearchTile key={s.id} s={s} />)}
                             </div>
                         </>
                     )}

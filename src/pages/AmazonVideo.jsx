@@ -10,7 +10,7 @@ function AmazonVideo() {
     const series = type === 'movie' ? all.filter(isMovie)
         : type === 'tv' ? all.filter(s => !isMovie(s))
             : all;
-    const featured = series.filter(s => s.posterUrl).slice(0, 5);
+    const featured = series.slice(0, 5); // visuals come from OMDb, not a stored posterUrl
     const topRated = [...series].sort((a, b) => b.rating - a.rating);
 
     return (

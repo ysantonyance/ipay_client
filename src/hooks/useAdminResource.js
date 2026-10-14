@@ -40,12 +40,24 @@ function useAdminResource(schema) {
             setSaving(true);
             try {
                 const values = coerceValues(schema.fields, rawValues);
-                const payload = schema.buildPayload ? schema.buildPayload(values) : values;
+                const existing = editingId != null ? items.find((i) => i.id === editingId) : undefined;
+                const payload = schema.buildPayload ? await schema.buildPayload(values, existing) : values;
 
+                let savedId = editingId;
                 if (editingId != null) {
                     await schema.api.update(editingId, payload);
                 } else {
-                    await schema.api.create(payload);
+                    const created = await schema.api.create(payload);
+                    savedId = created?.id;
+                }
+
+                // Optional follow-up once the record exists (e.g. linking genres). Never fails the save.
+                if (schema.afterSave && savedId != null) {
+                    try {
+                        await schema.afterSave(savedId, payload);
+                    } catch (err) {
+                        console.error(`afterSave failed for ${schema.singular}`, err);
+                    }
                 }
                 await load();
                 return { ok: true };
@@ -56,7 +68,7 @@ function useAdminResource(schema) {
                 setSaving(false);
             }
         },
-        [schema, load]
+        [schema, load, items]
     );
 
     const remove = useCallback(
