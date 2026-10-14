@@ -21,10 +21,10 @@ function CategoryRow({title, to, items}) {
 
                 <div
                     ref={ref}
-                    className='flex gap-4 overflow-x-auto pb-40 -mb-32 pr-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+                    className='flex gap-4 overflow-x-auto pb-40 -mb-32 pr-8 pointer-events-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
                 >
                     {items.map(s => (
-                        <div key={s.id} className='shrink-0'>
+                        <div key={s.id} className='shrink-0 pointer-events-auto'>
                             <VideoCard {...s} />
                         </div>
                     ))}
