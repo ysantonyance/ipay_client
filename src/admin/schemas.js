@@ -4,7 +4,7 @@ import { genresApi } from '../api/genresApi.js';
 import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
 import { productsApi } from '../api/productsApi.js';
-import { omdbGenreIds } from '../utils/omdbGenres.js';
+import { resolveFilmFromOmdb } from '../utils/omdbGenres.js';
 
 /**
  * One entry per resource the admin playground can manage.
@@ -65,23 +65,24 @@ export const RESOURCE_SCHEMAS = {
         singular: 'series',
         api: seriesApi,
         list: () => seriesApi.getAll(),
+        // Only the name is entered. Title, year and genres are resolved from OMDb on save, and the
+        // poster, plot and rating are fetched from OMDb by the movie page, so they are not stored here.
         fields: [
-            { key: 'name', label: 'Name', required: true },
-            { key: 'description', label: 'Description', type: 'textarea' },
-            { key: 'year', label: 'Year', type: 'number' },
-            { key: 'rating', label: 'Rating', type: 'number', step: '0.1', min: 0, max: 10 },
-            { key: 'director', label: 'Director' },
-            { key: 'ageRating', label: 'Age rating' },
-            { key: 'posterUrl', label: 'Poster', image: true },
+            { key: 'name', label: 'Film name', required: true },
         ],
-        // Genres come from OMDb: the film is looked up by name and its genres are linked to the
-        // matching genres we already have. Genres picked earlier and episodes are kept on edit.
         buildPayload: async (values, existing) => {
-            const fromOmdb = await omdbGenreIds(values.name, values.year);
+            const film = await resolveFilmFromOmdb(values.name); // throws a readable error if OMDb can't find it
+            const keep = existing ?? {}; // editing keeps whatever the record already had
             return {
-                ...values,
-                episodeIds: existing?.episodeIds ?? [],
-                genreIds: [...new Set([...(existing?.genreIds ?? []), ...fromOmdb])],
+                name: film.name,
+                year: film.year, // the backend requires a valid release year, so it is filled from OMDb
+                description: keep.description ?? '',
+                rating: keep.rating ?? 0,
+                director: keep.director ?? '',
+                ageRating: keep.ageRating ?? '',
+                posterUrl: keep.posterUrl ?? '',
+                episodeIds: keep.episodeIds ?? [],
+                genreIds: [...new Set([...(keep.genreIds ?? []), ...film.genreIds])],
             };
         },
         // A series stores its genreIds, and each genre also stores its series ids - keep both sides in sync.

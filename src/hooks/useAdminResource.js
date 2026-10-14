@@ -63,7 +63,7 @@ function useAdminResource(schema) {
                 return { ok: true };
             } catch (err) {
                 console.error(`Failed to save ${schema.singular}`, err);
-                return { ok: false, message: getErrorMessage(err, `Could not save this ${schema.singular}.`) };
+                return { ok: false, message: err?.userMessage ?? getErrorMessage(err, `Could not save this ${schema.singular}.`) };
             } finally {
                 setSaving(false);
             }

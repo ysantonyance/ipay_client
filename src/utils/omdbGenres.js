@@ -5,16 +5,14 @@ const norm = s => (s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 // OMDb says "Sci-Fi"; a genre may have been created as "Science Fiction".
 const canon = s => (norm(s) === 'science fiction' ? 'sci fi' : norm(s));
 
-/**
- * Looks a film up in OMDb by name and returns the ids of OUR genres that match its genre list.
- * Only existing genres are linked - missing ones are not created (logged to the console instead).
- * Never throws: if OMDb is unreachable the film simply saves without genres.
- */
-export async function omdbGenreIds(name, year) {
-    if (!name) return [];
+// An error whose text can be shown directly in the admin form.
+const userError = message => Object.assign(new Error(message), {userMessage: message});
+
+// Ids of OUR genres that match OMDb's genre list. Only existing genres are linked - missing
+// ones are not created (logged to the console instead). Never throws: no genres is acceptable.
+async function matchGenreIds(omdbGenre) {
     try {
-        const film = await fetchOmdbByName(name, year);
-        const names = film?.genre?.split(',').map(g => g.trim()).filter(Boolean) ?? [];
+        const names = omdbGenre?.split(',').map(g => g.trim()).filter(Boolean) ?? [];
         if (!names.length) return [];
 
         const genres = await genresApi.getAll();
@@ -25,7 +23,31 @@ export async function omdbGenreIds(name, year) {
 
         return [...new Set(names.map(n => idByName.get(canon(n))).filter(id => id != null))];
     } catch (err) {
-        console.error('Could not fetch genres from OMDb', err);
+        console.error('Could not load genres', err);
         return [];
     }
+}
+
+/**
+ * Resolves a film typed by name against OMDb. Returns the canonical title, the release year
+ * (the backend requires one) and the ids of our genres matching OMDb's genres.
+ * Throws an error with a readable `userMessage` if OMDb can't identify the film.
+ */
+export async function resolveFilmFromOmdb(name) {
+    const typed = (name ?? '').trim();
+    if (!typed) throw userError('Enter a film name.');
+
+    let film;
+    try {
+        film = await fetchOmdbByName(typed);
+    } catch (err) {
+        console.error('OMDb lookup failed', err);
+        throw userError('Could not reach OMDb. Check the backend is running and its OMDb key is set.');
+    }
+    if (!film) throw userError(`"${typed}" was not found in OMDb. Check the spelling of the title.`);
+
+    const year = parseInt(film.year?.slice(0, 4) ?? '', 10);
+    if (!year) throw userError(`OMDb has no release year for "${film.title}", so it can't be saved.`);
+
+    return {name: film.title ?? typed, year, genreIds: await matchGenreIds(film.genre)};
 }
