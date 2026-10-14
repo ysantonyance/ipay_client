@@ -78,7 +78,7 @@ function NavMenu() {
 
             {/* Overlay Container: always mounted for transition, toggles pointer-events & opacity */}
             <div
-                className={`fixed inset-0 z-50 flex transition-opacity duration-300 ease-in-out ${
+                className={`fixed inset-0 z-[70] flex transition-opacity duration-300 ease-in-out ${
                     open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                 }`}
                 aria-hidden={!open}

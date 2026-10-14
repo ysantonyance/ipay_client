@@ -38,7 +38,7 @@ function VideoHeader() {
                         className='block p-3 flex items-center'
                         to='/movies'
                     >
-                        <b>pay video</b>
+                        <b style={{fontFamily: "'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive"}}>pay video</b>
                     </Link>
 
                     {tabs.map(tab => (
