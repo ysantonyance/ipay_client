@@ -8,8 +8,8 @@ function SearchTile({s}) {
     return (
         <div>
             {film.posterUrl
-                ? <img src={film.posterUrl} alt={film.name} className='aspect-video w-full rounded-lg object-cover object-[50%_25%]' />
-                : <div className='aspect-video w-full rounded-lg bg-[#33373E]' />}
+                ? <img src={film.posterUrl} alt={film.name} className='aspect-[2/3] w-full rounded-lg object-cover' />
+                : <div className='aspect-[2/3] w-full rounded-lg bg-[#33373E]' />}
             <p className='mt-2 text-sm font-bold line-clamp-2'>{film.name}</p>
             <p className='text-xs text-gray-400'>{film.year}</p>
         </div>

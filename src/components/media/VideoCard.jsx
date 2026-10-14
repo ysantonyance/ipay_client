@@ -12,12 +12,12 @@ function VideoCard(props) {
         <div
             ref={ref}
             onMouseEnter={() => setHovered(true)}
-            className='relative w-[300px] group cursor-pointer origin-top-left transition-transform duration-300 hover:scale-150 hover:z-10'
+            className='relative w-[200px] group cursor-pointer origin-top-left transition-transform duration-300 hover:scale-150 hover:z-10'
         >
             {posterUrl
-                ? <img src={posterUrl} alt={name} loading='lazy' className='min-w-[300px] h-[170px] rounded-lg object-cover object-[50%_25%]' />
+                ? <img src={posterUrl} alt={name} loading='lazy' className='block w-[200px] aspect-[2/3] rounded-lg object-cover bg-[#141921]' />
                 : (
-                    <div className={`min-w-[300px] h-[170px] rounded-lg bg-[#141921] flex items-center justify-center p-4 text-center font-bold ${loading || !seen ? 'animate-pulse' : ''}`}>
+                    <div className={`w-[200px] aspect-[2/3] rounded-lg bg-[#141921] flex items-center justify-center p-4 text-center font-bold ${loading || !seen ? 'animate-pulse' : ''}`}>
                         {seen && !loading && name}
                     </div>
                 )}
