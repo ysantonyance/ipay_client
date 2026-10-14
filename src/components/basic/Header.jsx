@@ -139,6 +139,12 @@ function Header() {
                         Pay Video
                     </Link>
 
+                    <Link
+                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
+                        to='/orders'
+                    >
+                        orders
+                    </Link>
 
                     <Link
                         className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
