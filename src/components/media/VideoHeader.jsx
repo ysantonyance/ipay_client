@@ -91,7 +91,7 @@ function VideoHeader() {
                         </div>
                     </div>
 
-                    <Link to='your-account'>
+                    <Link to='/profile'>
                         <div className='w-[35px] h-[35px] hover:bg-white rounded-3xl group p-2'>
                             <img
                                 className='group-hover:brightness-0'
