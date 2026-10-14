@@ -17,7 +17,7 @@ function SearchTile({s}) {
 }
 
 function SearchModal({onClose}) {
-    const {series} = useVideos();
+    const {series, genres} = useVideos();
     const [q, setQ] = useState('');
 
     useEffect(() => {
@@ -32,7 +32,13 @@ function SearchModal({onClose}) {
     }, [onClose]);
 
     const term = q.trim().toLowerCase();
-    const matches = term ? series.filter(s => s.name.toLowerCase().includes(term)) : [];
+    // A title matches by its name or by the name of any of its genres (e.g. typing "drama").
+    const genreNameById = new Map(genres.map(g => [g.id, g.name.toLowerCase()]));
+    const matches = term
+        ? series.filter(s =>
+            s.name.toLowerCase().includes(term) ||
+            (s.genreIds ?? []).some(id => genreNameById.get(id)?.includes(term)))
+        : [];
 
     return (
         <div className='fixed inset-0 z-[60] overflow-y-auto bg-black/70'>
@@ -42,11 +48,28 @@ function SearchModal({onClose}) {
                         autoFocus
                         value={q}
                         onChange={e => setQ(e.target.value)}
-                        placeholder='Search movies and TV shows'
+                        placeholder='Search movies, TV shows and genres'
                         className='w-full rounded-xl bg-[#33373E] px-4 py-3 outline-none focus:ring-2 focus:ring-white/60'
                     />
 
-                    {!term && <p className='mt-4 text-sm text-gray-400'>Start typing to search.</p>}
+                    {!term && (
+                        <>
+                            <p className='mt-4 text-sm text-gray-400'>Start typing to search, or pick a genre.</p>
+                            {genres.length > 0 && (
+                                <div className='mt-3 flex flex-wrap gap-2'>
+                                    {genres.map(g => (
+                                        <button
+                                            key={g.id}
+                                            onClick={() => setQ(g.name)}
+                                            className='rounded-full bg-[#33373E] px-3 py-1 text-sm font-bold hover:bg-white hover:text-black cursor-pointer'
+                                        >
+                                            {g.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
                     {term && matches.length === 0 && <p className='mt-4 text-sm text-gray-400'>No results for "{q}".</p>}
 
                     {matches.length > 0 && (
@@ -64,7 +87,7 @@ function SearchModal({onClose}) {
                             </div>
 
                             <div className='mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4'>
-                                {matches.slice(0, 4).map(s => <SearchTile key={s.id} s={s} />)}
+                                {matches.slice(0, 8).map(s => <SearchTile key={s.id} s={s} />)}
                             </div>
                         </>
                     )}

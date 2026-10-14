@@ -1,5 +1,4 @@
 import { seriesApi } from '../api/seriesApi.js';
-import { episodesApi } from '../api/episodesApi.js';
 import { genresApi } from '../api/genresApi.js';
 import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
@@ -88,21 +87,6 @@ export const RESOURCE_SCHEMAS = {
         // A series stores its genreIds, and each genre also stores its series ids - keep both sides in sync.
         afterSave: (id, payload) => Promise.all(payload.genreIds.map((genreId) => genresApi.addSeries(genreId, id))),
     },
-    episodes: {
-        label: 'Episodes',
-        singular: 'episode',
-        api: episodesApi,
-        list: () => episodesApi.getAll(),
-        fields: [
-            { key: 'name', label: 'Name', required: true },
-            { key: 'description', label: 'Description', type: 'textarea' },
-            { key: 'rating', label: 'Rating', type: 'number', step: '0.1', min: 0, max: 10 },
-            { key: 'director', label: 'Director' },
-            { key: 'posterUrl', label: 'Poster', image: true },
-            { key: 'videoUrl', label: 'Video URL' },
-            { key: 'serialId', label: 'Series ID', type: 'number' },
-        ],
-    },
     genres: {
         label: 'Genres',
         singular: 'genre',
@@ -115,4 +99,4 @@ export const RESOURCE_SCHEMAS = {
     },
 };
 
-export const RESOURCE_ORDER = ['products', 'categories', 'manufacturers', 'series', 'episodes', 'genres'];
+export const RESOURCE_ORDER = ['products', 'categories', 'manufacturers', 'series', 'genres'];

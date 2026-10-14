@@ -8,8 +8,8 @@ const canon = s => (norm(s) === 'science fiction' ? 'sci fi' : norm(s));
 // An error whose text can be shown directly in the admin form.
 const userError = message => Object.assign(new Error(message), {userMessage: message});
 
-// Ids of OUR genres that match OMDb's genre list. Only existing genres are linked - missing
-// ones are not created (logged to the console instead). Never throws: no genres is acceptable.
+// Ids of OUR genres that match OMDb's genre list. Genres that don't exist yet are created
+// automatically (named exactly as OMDb spells them). Never throws: no genres is acceptable.
 async function matchGenreIds(omdbGenre) {
     try {
         const names = omdbGenre?.split(',').map(g => g.trim()).filter(Boolean) ?? [];
@@ -18,8 +18,17 @@ async function matchGenreIds(omdbGenre) {
         const genres = await genresApi.getAll();
         const idByName = new Map(genres.map(g => [canon(g.name), g.id]));
 
-        const missing = names.filter(n => !idByName.has(canon(n)));
-        if (missing.length) console.info(`OMDb genres with no matching genre in the database: ${missing.join(', ')}`);
+        // Create the genres we don't have yet, one at a time (so two saves can't race into duplicates
+        // within this call). A failed create just skips that genre.
+        for (const name of names) {
+            if (idByName.has(canon(name))) continue;
+            try {
+                const created = await genresApi.create({name: name.slice(0, 50), filmIds: [], serialIds: []});
+                if (created?.id != null) idByName.set(canon(name), created.id);
+            } catch (err) {
+                console.warn(`Could not create genre "${name}"`, err);
+            }
+        }
 
         return [...new Set(names.map(n => idByName.get(canon(n))).filter(id => id != null))];
     } catch (err) {
