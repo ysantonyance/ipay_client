@@ -142,9 +142,9 @@ function Header() {
 
                     <Link
                         className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
-                        to='/amazon-video'
+                        to='/movies'
                     >
-                        Prime Video
+                        Pay Video
                     </Link>
 
                     <Link
