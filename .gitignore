@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 .env.local
 /.vs
-/package-lock.json
-/package.json
+
