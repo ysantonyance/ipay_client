@@ -69,10 +69,10 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/sell" element={<Sell />} />
 
-              <Route path="/amazon-video" element={<AmazonVideo />} />
-              <Route path="/amazon-video/categories" element={<VideoCategories />} />
-              <Route path="/amazon-video/categories/:genreId" element={<VideoCategory />} />
-              <Route path="/amazon-video/title/:id" element={<VideoDetails />} />
+              <Route path="/movies" element={<AmazonVideo />} />
+              <Route path="/movies/categories" element={<VideoCategories />} />
+              <Route path="/movies/categories/:genreId" element={<VideoCategory />} />
+              <Route path="/movies/title/:id" element={<VideoDetails />} />
               {/*<Route path="/yourstore/home" element={<UserAmazon />} />
               <Route path="/coupons" element={<Coupons />} />
               <Route path="/contact-us" element={<CustomerService />} />

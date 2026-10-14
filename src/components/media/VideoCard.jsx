@@ -13,7 +13,7 @@ function VideoCard(props) {
     return (
         <Link
             ref={ref}
-            to={`/amazon-video/title/${props.id}`}
+            to={`/movies/title/${props.id}`}
             onMouseEnter={() => setHovered(true)}
             className='block relative w-[200px] group cursor-pointer origin-top-left transition-transform duration-300 hover:scale-150 hover:z-10'
         >

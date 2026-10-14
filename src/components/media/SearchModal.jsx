@@ -7,7 +7,7 @@ import {useOmdb} from "../../hooks/useOmdb.js";
 function SearchTile({s, onPick}) {
     const film = useOmdb(s);
     return (
-        <Link to={`/amazon-video/title/${s.id}`} onClick={onPick} className='block'>
+        <Link to={`/movies/title/${s.id}`} onClick={onPick} className='block'>
             {film.posterUrl
                 ? <img src={film.posterUrl} alt={film.name} className='aspect-[2/3] w-full rounded-lg object-cover' />
                 : <div className='aspect-[2/3] w-full rounded-lg bg-[#33373E]' />}

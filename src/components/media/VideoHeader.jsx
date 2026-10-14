@@ -4,15 +4,17 @@ import {genresApi} from "../../api/genresApi.js";
 import SearchModal from "./SearchModal.jsx";
 
 const tabs = [
-    {label: 'Home', to: '/amazon-video', type: null},
-    {label: 'Movies', to: '/amazon-video?type=movie', type: 'movie'},
-    {label: 'TV shows', to: '/amazon-video?type=tv', type: 'tv'},
+    {label: 'Home', to: '/movies', type: null},
+    {label: 'Movies', to: '/movies?type=movie', type: 'movie'},
+    {label: 'TV shows', to: '/movies?type=tv', type: 'tv'},
 ];
 
 function VideoHeader() {
     const [scrolled, setScrolled] = useState(false);
     const [params] = useSearchParams();
     const type = params.get('type');
+    // Browsing genres from the Movies / TV shows tab stays inside that tab.
+    const typeQuery = type === 'movie' || type === 'tv' ? `?type=${type}` : '';
     const [searchOpen, setSearchOpen] = useState(false);
 
     const [genres, setGenres] = useState([]);
@@ -34,9 +36,9 @@ function VideoHeader() {
                 <div className='flex space-x-2'>
                     <Link
                         className='block p-3 flex items-center'
-                        to='/amazon-video'
+                        to='/movies'
                     >
-                        <b>prime video</b>
+                        <b>pay video</b>
                     </Link>
 
                     {tabs.map(tab => (
@@ -67,7 +69,7 @@ function VideoHeader() {
                     </button>
 
                     <div className='relative group/cat'>
-                        <Link to='/amazon-videos/categories'>
+                        <Link to={`/movies/categories${typeQuery}`}>
                             <div className='w-[35px] h-[35px] hover:bg-white rounded-3xl group p-2'>
                                 <img
                                     className='group-hover:brightness-0'
@@ -81,7 +83,7 @@ function VideoHeader() {
                                 {genres.map(g => (
                                     <Link
                                         key={g.id}
-                                        to={`/amazon-videos/categories/${g.id}`}
+                                        to={`/movies/categories/${g.id}${typeQuery}`}
                                         className='block px-3 py-2 rounded-lg text-sm font-bold hover:bg-white hover:text-black'
                                     >
                                         {g.name}

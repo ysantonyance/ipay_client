@@ -2,7 +2,7 @@ import {useEffect, useMemo, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import VideoHeader from "../components/media/VideoHeader.jsx";
 import CategoryRow from "../components/media/CategoryRow.jsx";
-import useVideos, {isMovie} from "../hooks/useFilms.js";
+import useVideos from "../hooks/useFilms.js";
 import {useOmdb} from "../hooks/useOmdb.js";
 import {seriesApi} from "../api/seriesApi.js";
 
@@ -20,7 +20,7 @@ function Fact({label, children}) {
 
 function VideoDetails() {
     const {id} = useParams();
-    const {series, genres} = useVideos();
+    const {series, genres, kindOf} = useVideos();
     const [item, setItem] = useState(null);
     const [status, setStatus] = useState('loading'); // 'loading' | 'ready' | 'notFound' | 'error'
 
@@ -46,7 +46,8 @@ function VideoDetails() {
     // Poster, year, plot, rating and age rating come from OMDb (looked up by the stored name), like on the cards.
     const film = useOmdb(item ?? {}, {full: true});
 
-    const movie = item ? isMovie(item) : true;
+    // Movie or TV show, as OMDb classifies it (a title still being looked up counts as a movie for a moment).
+    const movie = item ? kindOf(item) !== 'tv' : true;
     const genreList = useMemo(
         () => (item?.genreIds ?? []).map(gid => genres.find(g => g.id === gid)).filter(Boolean),
         [item, genres]
@@ -59,12 +60,12 @@ function VideoDetails() {
             .map(genre => ({
                 genre,
                 items: series
-                    .filter(s => s.id !== item.id && isMovie(s) === movie && s.genreIds?.includes(genre.id))
+                    .filter(s => s.id !== item.id && kindOf(s) === (movie ? 'movie' : 'tv') && s.genreIds?.includes(genre.id))
                     .sort((a, b) => (b.rating || 0) - (a.rating || 0))
                     .slice(0, ROW_LIMIT),
             }))
             .filter(r => r.items.length > 0);
-    }, [item, genreList, series, movie]);
+    }, [item, genreList, series, movie, kindOf]);
 
     const meta = [film.year, film.ageRating, movie ? 'Movie' : 'TV show'].filter(Boolean).join(' · ');
 
@@ -73,8 +74,8 @@ function VideoDetails() {
             <VideoHeader/>
 
             <div className='mx-13 mt-6'>
-                <Link to='/amazon-video' className='text-sm text-gray-300 hover:text-white hover:underline'>
-                    ‹ Back to Prime Video
+                <Link to={movie ? '/movies?type=movie' : '/movies?type=tv'} className='text-sm text-gray-300 hover:text-white hover:underline'>
+                    ‹ Back to {movie ? 'movies' : 'TV shows'}
                 </Link>
 
                 {status === 'loading' && (
@@ -85,8 +86,8 @@ function VideoDetails() {
                     <div className='mt-4 rounded-xl bg-[#141921] p-10 text-center'>
                         <h1 className='text-2xl font-bold mb-2'>Title not found</h1>
                         <p className='text-gray-300 mb-4'>This title doesn't exist or is no longer available.</p>
-                        <Link to='/amazon-video' className='inline-block rounded-full bg-white text-black font-bold px-6 py-2'>
-                            Browse Prime Video
+                        <Link to='/movies' className='inline-block rounded-full bg-white text-black font-bold px-6 py-2'>
+                            Browse Pay Video
                         </Link>
                     </div>
                 )}
@@ -150,7 +151,7 @@ function VideoDetails() {
                                                     {genreList.map(g => (
                                                         <Link
                                                             key={g.id}
-                                                            to={`/amazon-video/categories/${g.id}`}
+                                                            to={`/movies/categories/${g.id}?type=${movie ? 'movie' : 'tv'}`}
                                                             className='rounded-full bg-[#33373E] px-3 py-0.5 font-bold hover:bg-white hover:text-black'
                                                         >
                                                             {g.name}
@@ -169,7 +170,7 @@ function VideoDetails() {
                                 <CategoryRow
                                     key={r.genre.id}
                                     title={`More ${movie ? 'movies' : 'TV shows'} in ${r.genre.name}`}
-                                    to={`/amazon-video/categories/${r.genre.id}`}
+                                    to={`/movies/categories/${r.genre.id}?type=${movie ? 'movie' : 'tv'}`}
                                     items={r.items}
                                 />
                             ))}

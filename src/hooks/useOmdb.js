@@ -6,7 +6,8 @@ import {filmsApi} from "../api/filmsApi.js";
 //
 // Lookups are cached in memory and in localStorage so each film costs OMDb requests only once.
 
-const STORE_KEY = 'omdb-cache-v1';
+// v2: lookups now also remember OMDb's "Type" (movie / series), so older cached entries are dropped.
+const STORE_KEY = 'omdb-cache-v2';
 let store = {search: {}, details: {}};
 try {
     store = {...store, ...JSON.parse(localStorage.getItem(STORE_KEY) ?? '{}')};
@@ -50,6 +51,7 @@ const fromSearchItem = i => ({
     title: clean(i.Title),
     year: clean(i.Year),
     poster: clean(i.Poster),
+    type: clean(i.Type),
 });
 
 const fromDetails = d => ({
@@ -63,6 +65,7 @@ const fromDetails = d => ({
     director: clean(d.Director),
     genre: clean(d.Genre),
     runtime: clean(d.Runtime),
+    type: clean(d.Type),
 });
 
 function lookupByName(name, year) {
@@ -79,6 +82,19 @@ function lookupByName(name, year) {
 
 const lookupDetails = imdbId =>
     cached('details', imdbId, async () => fromDetails(await filmsApi.getByImdbId(imdbId)));
+
+// What kind of title this is: 'tv' (OMDb says "series"), 'movie' (anything else OMDb knows),
+// or 'unknown' (OMDb couldn't find it). Callers treat 'unknown' like a movie.
+const kindOf = hit => (!hit ? 'unknown' : hit.type === 'series' ? 'tv' : 'movie');
+
+// Instant answer from the cache, or undefined if this title hasn't been looked up yet.
+export function peekOmdbKind(name, year) {
+    const hit = store.search[`${norm(name)}|${year || ''}`];
+    return hit === undefined ? undefined : kindOf(hit);
+}
+
+// Looks the title up (once; cached) and says whether it is a movie or a TV show.
+export const fetchOmdbKind = (name, year) => lookupByName(name, year).then(kindOf);
 
 // Non-hook lookup (name -> full OMDb details, including the genre list). Used when saving a film.
 export async function fetchOmdbByName(name, year) {
