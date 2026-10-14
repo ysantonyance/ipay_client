@@ -72,6 +72,7 @@ function App() {
               <Route path="/amazon-video" element={<AmazonVideo />} />
               <Route path="/amazon-video/categories" element={<VideoCategories />} />
               <Route path="/amazon-video/categories/:genreId" element={<VideoCategory />} />
+              <Route path="/amazon-video/title/:id" element={<VideoDetails />} />
               {/*<Route path="/yourstore/home" element={<UserAmazon />} />
               <Route path="/coupons" element={<Coupons />} />
               <Route path="/contact-us" element={<CustomerService />} />

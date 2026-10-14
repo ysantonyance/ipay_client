@@ -1,18 +1,19 @@
 import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 import useVideos from "../../hooks/useFilms.js";
 import {useOmdb} from "../../hooks/useOmdb.js";
 
 // Result tile: the name comes from our database, poster and year from OMDb.
-function SearchTile({s}) {
+function SearchTile({s, onPick}) {
     const film = useOmdb(s);
     return (
-        <div>
+        <Link to={`/amazon-video/title/${s.id}`} onClick={onPick} className='block'>
             {film.posterUrl
                 ? <img src={film.posterUrl} alt={film.name} className='aspect-[2/3] w-full rounded-lg object-cover' />
                 : <div className='aspect-[2/3] w-full rounded-lg bg-[#33373E]' />}
             <p className='mt-2 text-sm font-bold line-clamp-2'>{film.name}</p>
             <p className='text-xs text-gray-400'>{film.year}</p>
-        </div>
+        </Link>
     );
 }
 
@@ -87,7 +88,7 @@ function SearchModal({onClose}) {
                             </div>
 
                             <div className='mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4'>
-                                {matches.slice(0, 8).map(s => <SearchTile key={s.id} s={s} />)}
+                                {matches.slice(0, 8).map(s => <SearchTile key={s.id} s={s} onPick={onClose} />)}
                             </div>
                         </>
                     )}
