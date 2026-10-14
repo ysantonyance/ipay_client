@@ -121,7 +121,6 @@ function Home() {
                             >
                                 Plug in with our electronics
                             </a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -187,7 +186,6 @@ function Home() {
                                 className='tracking-tight'>
                                 Score the top PCs & Accessories
                             </a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -253,7 +251,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Gear up to get fit</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -319,7 +316,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Apparel under $25</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -385,7 +381,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Fantastic Finds for Home</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -451,7 +446,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Shine brighter with your fashion faves</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -517,7 +511,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Unveil your radiance</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -583,7 +576,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Level up your PC here</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -649,7 +641,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Fashion trends in Shoes</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -715,7 +706,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Home harmony</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -781,7 +771,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Shoes under $50</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -847,7 +836,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 What you need for furry friends</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -912,7 +900,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Video games & accessories</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -978,7 +965,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Have more fun with the family</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1044,7 +1030,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Finds in Home</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1109,7 +1094,6 @@ function Home() {
                                   className='tracking-tight'
                             >
                                 Deals on top categories</Link>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1167,7 +1151,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 New home arrivals under $50</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1232,7 +1215,6 @@ function Home() {
                                   className='tracking-tight'
                             >
                                 Discover the latest arrivals</Link>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1298,7 +1280,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Accessorize your life</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1364,7 +1345,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Step into style</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1430,7 +1410,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Level up your beauty routine</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1496,7 +1475,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Handpicked home theater</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1562,7 +1540,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Curate your space</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1628,7 +1605,6 @@ function Home() {
                                 className='tracking-tight'
                             >
                                 Look your best this season</a>
-                            <span>›</span>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>

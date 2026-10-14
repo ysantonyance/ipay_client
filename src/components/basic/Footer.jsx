@@ -19,82 +19,12 @@ function Footer() {
             </div>
 
             <div className='bg-[#232F3E]'>
-                <div className='text-white flex flex-col md:flex-row justify-center items-start p-6 md:p-10 gap-8 md:gap-20'>
-                    <div>
-                        <b className='block pb-2'>Get to Know Us</b>
-                        <div className='text-[#DDDDDD] flex flex-col space-y-2 text-[14px]'>
-                            <a className='hover:underline' href="">Careers</a>
-                            <a className='hover:underline' href="">Blog</a>
-                            <a className='hover:underline' href="">About Ipay</a>
-                            <a className='hover:underline' href="">Investor Relations</a>
-                            <a className='hover:underline' href="">Ipay Devices</a>
-                            <a className='hover:underline' href="">Ipay Science</a>
-                        </div>
-                    </div>
-
-                    <div>
-                        <b className='block pb-2'>Make Money with Us</b>
-                        <div className='text-[#DDDDDD] flex flex-col space-y-2 text-[14px]'>
-                            <a className='hover:underline' href="">Sell products on Ipay</a>
-                            <a className='hover:underline' href="">Sell on Ipay Business</a>
-                            <a className='hover:underline' href="">Sell apps on Ipay</a>
-                            <a className='hover:underline' href="">Become an Affiliate</a>
-                            <a className='hover:underline' href="">Advertise Your Products</a>
-                            <a className='hover:underline' href="">Self-Publish with Us</a>
-                            <a className='hover:underline' href="">Host an Ipay Hub</a>
-                            <a className='hover:underline' href="">› See More Make Money <br className='hidden md:inline'/> with Us</a>
-                        </div>
-                    </div>
-
-                    <div>
-                        <b className='block pb-2'>Ipay Payment Products</b>
-                        <div className='text-[#DDDDDD] flex flex-col space-y-2 text-[14px]'>
-                            <a className='hover:underline' href="">Ipay Business Card</a>
-                            <a className='hover:underline' href="">Shop with Points</a>
-                            <a className='hover:underline' href="">Reload Your Balance</a>
-                            <a className='hover:underline' href="">Ipay Currency Converter</a>
-                        </div>
-                    </div>
-
-                    <div>
-                        <b className='block pb-2'>Let Us Help You</b>
-                        <div className='text-[#DDDDDD] flex flex-col space-y-2 text-[14px]'>
-                            <a className='hover:underline' href="">Your Account</a>
-                            <a className='hover:underline' href="">Your Orders</a>
-                            <a className='hover:underline' href="">Shipping Rates & <br className='hidden md:inline'/> Policies</a>
-                            <a className='hover:underline' href="">Returns & <br className='hidden md:inline'/> Replacements</a>
-                            <a className='hover:underline' href="">Manage Your <br className='hidden md:inline'/> Content and Devices</a>
-                            <a className='hover:underline' href="">Help</a>
-                        </div>
-                    </div>
-                </div>
-
-                <hr className='border-[#3A4553] border'/>
-
-                <div className='p-6 md:p-10 flex flex-col md:flex-row justify-center items-center gap-6 md:gap-20'>
+                <div className='p-6 md:p-10 flex justify-center items-center'>
                     <Link to='/'>
                         <img
                             className='w-[75px] h-[25px] object-contain cursor-pointer'
                             src="/amazon-logo-white.png" alt="amazon-logo"/>
                     </Link>
-
-                    <div className='text-white text-[14px] flex flex-wrap justify-center gap-2'>
-                        <Link
-                            className='block border border-[#848688] rounded p-2 hover:border-[#8D9098] cursor-pointer'
-                            to='/customer-preference'>
-                            English
-                        </Link>
-                        <Link
-                            className='block border border-[#848688] rounded p-2 hover:border-[#8D9098] cursor-pointer'
-                            to='/customer-preference'>
-                            USD - U.S. Dollar
-                        </Link>
-                        <Link
-                            className='block border border-[#848688] rounded p-2 hover:border-[#8D9098] cursor-pointer'
-                            to='/customer-preference'>
-                            United States
-                        </Link>
-                    </div>
                 </div>
             </div>
 
@@ -122,15 +52,7 @@ function Footer() {
                     </div>
                 </div>
 
-                <div className='text-[12px] space-y-2'>
-                    <div className='flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center'>
-                        <a className='hover:underline' href="">Conditions of Use</a>
-                        <a className='hover:underline' href="">Privacy Notice</a>
-                        <a className='hover:underline' href="">Consumer Health Data Privacy Disclosure</a>
-                        <a className='hover:underline' href="">Your Ads Privacy Choices</a>
-                    </div>
-                    <p className='text-center text-[#999999]'>© 1996-2026, Ipay.com, Inc. or its affiliates</p>
-                </div>
+                <p className='text-center text-[12px] text-[#999999]'>© 1996-2026, Ipay.com, Inc. or its affiliates</p>
             </div>
         </>
     )

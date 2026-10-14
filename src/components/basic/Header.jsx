@@ -26,14 +26,6 @@ function Header() {
                                  alt="amazon-logo"/>
                         </Link>
 
-                        <div className='hidden md:flex h-[50px] border border-transparent hover:border-white flex-col justify-center cursor-pointer px-2 shrink-0'>
-                            <p className='text-[#CCCCCC]'>Deliver to</p>
-                            <div>
-                                <img src="" alt=""/>
-                                <b>Country</b>
-                            </div>
-                        </div>
-
                         <div className='flex items-center gap-1 sm:hidden'>
                             <div className='h-[40px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
                                 <img src="" alt=""/>
@@ -147,40 +139,6 @@ function Header() {
                         Pay Video
                     </Link>
 
-                    <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
-                        to='/coupons'
-                    >
-                        Coupons
-                    </Link>
-
-                    <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
-                        to='/contact-us'
-                    >
-                        Customer Service
-                    </Link>
-
-                    <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
-                        to='/labordaysale'
-                    >
-                        Today's Deal
-                    </Link>
-
-                    <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
-                        to='/registries'
-                    >
-                        Registry
-                    </Link>
-
-                    <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
-                        to='/gift-cards'
-                    >
-                        Gift Cards
-                    </Link>
 
                     <Link
                         className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
