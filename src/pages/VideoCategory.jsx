@@ -19,7 +19,7 @@ function VideoCategory() {
     return (
         <div className='bg-[#00050D] text-white min-h-screen'>
             <VideoHeader/>
-            <div className='mx-9 mt-6'>
+            <div className='mx-4 sm:mx-13 mt-6'>
                 <h1 className='text-3xl font-bold mb-6'>
                     {genre?.name ?? 'Category'}
                     {kindLabel && <span className='text-xl font-normal text-gray-400'> · {kindLabel}</span>}
@@ -32,7 +32,7 @@ function VideoCategory() {
 
                 <div className='flex flex-wrap justify-center gap-x-4 gap-y-6 pb-40'>
                     {visible.map(s => (
-                        <div key={s.id} className='w-[200px] sm:w-[320px]'>
+                        <div key={s.id} className='w-[140px] sm:w-[220px]'>
                             <VideoCard {...s} />
                         </div>
                     ))}

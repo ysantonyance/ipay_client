@@ -5,7 +5,8 @@ import VideoCard from "./VideoCard.jsx";
 function CategoryRow({title, to, items}) {
     const ref = useRef(null);
     const scroll = dir => ref.current.scrollBy({left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth'});
-    const arrow = 'absolute top-0 h-[180px] w-12 z-20 bg-black/60 text-3xl opacity-0 group-hover/row:opacity-100 transition-opacity cursor-pointer flex items-center justify-center';
+    // Arrow height matches vertical poster proportions (~210px height on desktop)
+    const arrow = 'absolute top-0 h-[210px] w-12 z-20 bg-black/60 text-3xl opacity-0 group-hover/row:opacity-100 transition-opacity cursor-pointer flex items-center justify-center';
 
     if (items.length === 0) return null;
 
@@ -24,7 +25,7 @@ function CategoryRow({title, to, items}) {
                     className='flex gap-4 overflow-x-auto pb-40 -mb-32 pr-8 pointer-events-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
                 >
                     {items.map(s => (
-                        <div key={s.id} className='shrink-0 w-[200px] sm:w-[320px] pointer-events-auto'>
+                        <div key={s.id} className='shrink-0 w-[140px] sm:w-[220px] pointer-events-auto'>
                             <VideoCard {...s} />
                         </div>
                     ))}
