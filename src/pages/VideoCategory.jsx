@@ -6,7 +6,8 @@ import useInfiniteList from "../hooks/useInfiniteList.js";
 
 function VideoCategory() {
     const {genreId} = useParams();
-    const type = useSearchParams()[0].get('type');
+    const [searchParams] = useSearchParams();
+    const type = searchParams.get('type');
     const kind = type === 'movie' ? 'movie' : type === 'tv' ? 'tv' : null;
     const {series, genres, kindOf, kindsLoading} = useVideos();
     const genre = genres.find(g => String(g.id) === genreId);
@@ -18,7 +19,7 @@ function VideoCategory() {
     return (
         <div className='bg-[#00050D] text-white min-h-screen'>
             <VideoHeader/>
-            <div className='mx-13 mt-6'>
+            <div className='mx-9 mt-6'>
                 <h1 className='text-3xl font-bold mb-6'>
                     {genre?.name ?? 'Category'}
                     {kindLabel && <span className='text-xl font-normal text-gray-400'> · {kindLabel}</span>}
@@ -29,8 +30,12 @@ function VideoCategory() {
                     </p>
                 )}
 
-                <div className='flex flex-wrap gap-x-4 gap-y-6 pb-40'>
-                    {visible.map(s => <VideoCard key={s.id} {...s} />)}
+                <div className='flex flex-wrap justify-center gap-x-4 gap-y-6 pb-40'>
+                    {visible.map(s => (
+                        <div key={s.id} className='w-[200px] sm:w-[320px]'>
+                            <VideoCard {...s} />
+                        </div>
+                    ))}
                 </div>
 
                 {hasMore && <div ref={sentinelRef} className='h-10' />}
