@@ -9,20 +9,13 @@ function HeroSlide({item}) {
     return (
         <>
             {s.posterUrl && (
-                <div
-                    className='absolute -inset-8 bg-cover bg-center blur-2xl opacity-60'
-                    style={{backgroundImage: `url(${s.posterUrl})`}}
-                />
-            )}
-            <div className='absolute inset-0 bg-[linear-gradient(to_right,#00050D_10%,rgba(0,5,13,0.5)_50%,transparent)]' />
-
-            {s.posterUrl && (
                 <img
                     src={s.posterUrl}
-                    alt={s.name}
-                    className='absolute right-24 top-1/2 -translate-y-1/2 h-[340px] rounded-lg shadow-2xl hidden md:block'
+                    alt=''
+                    className='absolute inset-0 h-full w-full object-cover'
                 />
             )}
+            <div className='absolute inset-0 bg-black/40 md:bg-transparent bg-[linear-gradient(to_right,#00050D_10%,rgba(0,5,13,0.5)_50%,transparent)]' />
 
             <div className='absolute inset-0 flex flex-col justify-center gap-3 px-16 max-w-xl'>
                 <h1 className='text-4xl font-bold'>{s.name}</h1>
