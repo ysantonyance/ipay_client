@@ -3,11 +3,13 @@ import SearchBar from "./SearchBar.jsx";
 import NavMenu from "./NavMenu.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
 import {useCart} from "../../context/CartContext.jsx";
+import {useLanguage, languages} from "../../context/LanguageContext.jsx";
 
 function Header() {
-    const {isLoggedIn, userName, logout} = useAuth();
+    const { language, changeLanguage, t } = useLanguage();
+    const { isLoggedIn, userName, logout } = useAuth();
     const navigate = useNavigate();
-    const {items} = useCart();
+    const { items } = useCart();
     const cartCount = items.reduce((n,i) => n + i.qty, 0);
 
     const handleSignOut = async () => {
@@ -27,10 +29,12 @@ function Header() {
                         </Link>
 
                         <div className='flex items-center gap-1 sm:hidden'>
-                            <div className='h-[40px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
-                                <img src="" alt=""/>
-                                EN
-                            </div>
+                            <label className='h-[40px] border border-transparent hover:border-white px-2 flex items-center gap-1 cursor-pointer' aria-label='Choose language'>
+                                <span aria-hidden='true'>{languages.find(item => item.code === language)?.flag}</span>
+                                <select value={language} onChange={event => changeLanguage(event.target.value)} aria-label='Choose language' className='bg-transparent text-white cursor-pointer outline-none w-[100px]'>
+                                    {languages.map(item => <option key={item.code} value={item.code} className='text-black'>{item.label}</option>)}
+                                </select>
+                            </label>
                             {isLoggedIn ? (
                                 <>
                                     <Link
@@ -61,7 +65,7 @@ function Header() {
                                     <span className='text-[#F08804] font-bold leading-none translate-y-1.5'>{cartCount}</span>
                                     <img className='w-[30px] h-[30px]' src="https://img.icons8.com/?size=100&id=ySRi3OLgoOJX&format=png&color=FFFFFF" alt=""/>
                                 </div>
-                                <b className='ml-1'>Cart</b>
+                                <b className='ml-1'>{t("Cart")}</b>
                             </Link>
                         </div>
                     </div>
@@ -71,41 +75,43 @@ function Header() {
                     </div>
 
                     <div className='hidden sm:flex items-center gap-2 shrink-0'>
-                        <div className='h-[50px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'>
-                            <img src="" alt=""/>
-                            EN
-                        </div>
+                        <label className='h-[50px] border border-transparent hover:border-white px-2 flex items-center gap-1 cursor-pointer' aria-label='Choose language'>
+                            <span aria-hidden='true'>{languages.find(item => item.code === language)?.flag}</span>
+                            <select value={language} onChange={event => changeLanguage(event.target.value)} aria-label='Choose language' className='bg-transparent text-white cursor-pointer outline-none w-[100px]'>
+                                {languages.map(item => <option key={item.code} value={item.code} className='text-black'>{item.label}</option>)}
+                            </select>
+                        </label>
 
                         {isLoggedIn ? (
                             <>
                                 <Link
                                     to='/profile'
                                     className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
-                                    <p>Hello, {userName}</p>
-                                    <b>Your profile</b>
+                                    <p>{t("Hello,")} {userName}</p>
+                                    <b>{t("Your profile")}</b>
                                 </Link>
                                 <button
                                     type='button'
                                     onClick={handleSignOut}
                                     className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
-                                    <p className='text-[#CCCCCC]'>Not you?</p>
-                                    <b>Sign out</b>
+                                    <p className='text-[#CCCCCC]'>{t("Not you?")}</p>
+                                    <b>{t("Sign out")}</b>
                                 </button>
                             </>
                         ) : (
                             <Link
                                 to='/login'
                                 className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer'>
-                                <p>Hello, sign in</p>
-                                <b>Accounts & Lists</b>
+                                <p>{t("Hello, sign in")}</p>
+                                <b>{t("Accounts & Lists")}</b>
                             </Link>
                         )}
 
                         <Link
                             to='/orders'
                             className='hidden lg:flex h-[50px] border border-transparent hover:border-white px-2 flex-col justify-center cursor-pointer'>
-                            <p className='text-[#CCCCCC]'>Returns</p>
-                            <b>& Orders</b>
+                            <p className='text-[#CCCCCC]'>{t("Returns")}</p>
+                            <b>{t("& Orders")}</b>
                         </Link>
 
                         <Link
@@ -117,7 +123,7 @@ function Header() {
                                 <img className='w-[30px] h-[30px]' src="https://img.icons8.com/?size=100&id=ySRi3OLgoOJX&format=png&color=FFFFFF" alt=""/>
                             </div>
 
-                            <b className='ml-1'>Cart</b>
+                            <b className='ml-1'>{t("Cart")}</b>
                         </Link>
                     </div>
                 </div>

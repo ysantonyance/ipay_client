@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const team = [
     {name: 'Karina', role: 'Frontend · Scrum Manager', link: 'https://github.com/ysantonyance', photo: 'https://avatars.githubusercontent.com/u/149514654?v=4'},
@@ -8,6 +9,7 @@ const team = [
 ];
 
 function Footer() {
+    const {t} = useLanguage();
     return (
         <>
             <div
@@ -30,7 +32,7 @@ function Footer() {
 
             <div className='bg-[#131A22] text-white p-6 md:p-10'>
                 <div className='max-w-6xl mx-auto mb-8'>
-                    <h3 className='text-center text-[16px] font-bold mb-1'>Meet the team behind Ipay</h3>
+                    <h3 className='text-center text-[16px] font-bold mb-1'>{t("Meet the team behind Ipay")}</h3>
                     <p className='text-center text-[12px] text-[#999999] mb-6'>
                         Built as a team project with React, ASP.NET Core and Firestore
                     </p>

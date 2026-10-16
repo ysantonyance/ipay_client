@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {categoriesApi} from "../../api/categoriesApi.js";
 import {useAuth} from "../../context/AuthContext.jsx";
 import {useSearch} from "../../context/SearchContext.jsx";
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const MAX_CATEGORIES = 8;
 
@@ -14,6 +15,7 @@ const MAX_CATEGORIES = 8;
 function NavMenu() {
     const {isLoggedIn, userName} = useAuth();
     const {setSearch} = useSearch();
+    const {t} = useLanguage();
     const [open, setOpen] = useState(false);
     const [categories, setCategories] = useState([]);
     const [loaded, setLoaded] = useState(false);
@@ -64,7 +66,7 @@ function NavMenu() {
             <button
                 type='button'
                 onClick={() => setOpen(true)}
-                aria-label='Open menu'
+                aria-label={t('Open menu')}
                 aria-expanded={open}
                 className='flex flex-row items-center pr-2 border border-transparent hover:border-white cursor-pointer shrink-0 text-white'
             >
@@ -73,7 +75,7 @@ function NavMenu() {
                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M4 6h16M4 12h16M4 18h16'></path>
                     </svg>
                 </span>
-                <b>All</b>
+                <b>{t("All")}</b>
             </button>
 
             {/* Overlay Container: always mounted for transition, toggles pointer-events & opacity */}
@@ -86,7 +88,7 @@ function NavMenu() {
                 {/* Slide-out Drawer */}
                 <aside
                     role='dialog'
-                    aria-label='Menu'
+                    aria-label={t('Menu')}
                     className={`relative w-[300px] max-w-[85vw] h-full bg-white text-[#0F1111] flex flex-col shadow-2xl transform transition-transform duration-300 ease-in-out ${
                         open ? 'translate-x-0' : '-translate-x-full'
                     }`}
@@ -96,11 +98,11 @@ function NavMenu() {
                     </div>
 
                     <nav className='flex-1 overflow-y-auto py-2'>
-                        <h2 className='px-5 pt-2 pb-1 text-[16px] font-bold'>Shop by category</h2>
+                        <h2 className='px-5 pt-2 pb-1 text-[16px] font-bold'>{t("Shop by category")}</h2>
 
-                        {!loaded && <p className='px-5 py-3 text-[13px] text-[#565959]'>Loading…</p>}
+                        {!loaded && <p className='px-5 py-3 text-[13px] text-[#565959]'>{t("Loading…")}</p>}
                         {loaded && categories.length === 0 && (
-                            <p className='px-5 py-3 text-[13px] text-[#565959]'>No categories to show.</p>
+                            <p className='px-5 py-3 text-[13px] text-[#565959]'>{t("No categories to show.")}</p>
                         )}
 
                         {categories.map(c => (
@@ -140,7 +142,7 @@ function NavMenu() {
                 {/* Backdrop button */}
                 <button
                     type='button'
-                    aria-label='Close menu'
+                    aria-label={t('Close menu')}
                     onClick={close}
                     className='flex-1 bg-black/60 cursor-default focus:outline-none'
                 />

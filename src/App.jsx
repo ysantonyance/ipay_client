@@ -28,6 +28,7 @@ import NotFound from "./pages/NotFound.jsx";
 import {SearchProvider} from "./context/SearchContext.jsx";
 import {CartProvider} from "./context/CartContext.jsx";
 import {RatingsProvider} from "./context/RatingsContext.jsx";
+import {LanguageProvider} from "./context/LanguageContext.jsx";
 import VideoCategories from "./pages/VideoCategories.jsx";
 import VideoCategory from "./pages/VideoCategory.jsx";
 
@@ -58,6 +59,7 @@ function CleanLayout() {
 
 function App() {
   return (
+      <LanguageProvider>
       <div className="App">
         <main>
           <Routes>
@@ -106,6 +108,7 @@ function App() {
           </Routes>
         </main>
       </div>
+      </LanguageProvider>
   );
 }
 
