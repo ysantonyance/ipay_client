@@ -5,21 +5,81 @@ import {useSearch} from "../context/SearchContext.jsx";
 import TodaysDeal from "./TodaysDeal.jsx";
 import {useLanguage} from "../context/LanguageContext.jsx";
 
+// Categories from the admin Categories table. Every card on this page must open one of these.
+const CATEGORIES = [
+    {id: 11, name: 'fitness'},
+    {id: 12, name: 'Trending Fashion'},
+    {id: 13, name: 'shoes'},
+    {id: 14, name: 'pets'},
+    {id: 15, name: 'games'},
+    {id: 16, name: 'home bedding'},
+    {id: 17, name: 'accessories'},
+    {id: 18, name: 'apparel'},
+    {id: 19, name: 'theater'},
+    {id: 2, name: 'kitchen'},
+    {id: 20, name: 'home'},
+    {id: 3, name: 'beauty'},
+    {id: 4, name: 'fashion clothing'},
+    {id: 5, name: 'toys'},
+    {id: 6, name: 'pc'},
+    {id: 7, name: 'books'},
+    {id: 8, name: 'electronics'},
+    {id: 9, name: 'computers'},
+];
+
+// Which category each card's old search term belongs to (keys are lower-case, single-spaced).
+const CATEGORY_BY_TERM = {
+    // carousel
+    'kitchen appliances': 2, 'beauty': 3, 'fashion clothing': 4, 'toys': 5, 'pc': 6, 'good books': 7,
+    // electronics / computers / pc
+    'electronics': 8, 'headphones': 8, 'electronic tablets': 8, 'speakers': 8,
+    'gaming equipment': 15,
+    'computers': 9, 'laptops': 9, 'hard drives': 9, 'computer monitors': 9,
+    'desktop computers': 6, 'computer accessories': 6, 'desktop pcs': 6,
+    // fitness
+    'fitness': 11, 'fitness clothing': 11, 'fitness trackers': 11, 'fitness equipment': 11, 'sports': 11,
+    // fashion / apparel / accessories
+    'trending fashion': 12,
+    'women clothing': 4, 'men clothing': 4, 'girls fashion': 4, 'boys fashion': 4,
+    'apparel': 18, 'women apparel': 18, 'men apparel': 18, 'teen apparel': 18, 'kids apparel': 18,
+    'accessories': 17, 'fashion accessories': 17, 'men accessories': 17, 'jewelry': 17, 'handbags': 17,
+    // shoes
+    'shoes': 13, 'women shoes': 13, 'men shoes': 13, 'kid shoes': 13,
+    'women footwear': 13, 'men footwear': 13, 'girls footwear': 13, 'boys footwear': 13,
+    // beauty
+    'hair care': 3, 'fragrances': 3, 'make up': 3, 'makeup': 3, 'skin care': 3,
+    'makeup brushes': 3, 'makeup sponge': 3, 'makeup mirror': 3, 'health': 3,
+    // kitchen / home / bedding
+    'kitchen': 2, 'kitchen essentials': 2, 'dining': 2,
+    'home': 20, 'home decor': 20, 'smart home': 20, 'sofa': 20, 'home improvement': 20,
+    'candles': 20, 'indoor gardening': 20, 'storage': 20,
+    'home bedding': 16, 'bedsheets': 16, 'pillows': 16, 'duvet covers': 16, 'throws': 16,
+    'bath': 16, 'stylish pillows': 16,
+    // theater
+    'home theater': 19, 'television': 19, 'soundbars': 19, 'projectors': 19,
+    // games / toys
+    'games': 15, 'xbox controller': 15, 'nintendo': 15, 'vr headset': 15, 'ps5 accessories': 15,
+    'outdoor': 5, 'learning toys': 5, 'action figures': 5, 'pretend play': 5,
+};
+
 function Home() {
     const {t} = useLanguage();
     const {setSearch: setSearchText} = useSearch();
     const navigate = useNavigate();
-    // Every card on this page calls setSearch(term): fill the header search box and open /products filtered by that term.
+    // Every card on this page calls setSearch(term). The term is looked up in CATEGORY_BY_TERM and the card opens
+    // /products on that category (the same ?category=<id> link the header search bar uses), never on a bare text search.
     const setSearch = (term) => {
         const value = (term || '').trim();
-        setSearchText(value);
-        navigate(value ? `/products?q=${encodeURIComponent(value)}` : '/products');
+        const id = CATEGORY_BY_TERM[value.toLowerCase().replace(/\s+/g, ' ')];
+        const category = CATEGORIES.find((c) => c.id === id);
+        setSearchText(category ? category.name : value);
+        navigate(id ? `/products?category=${id}` : value ? `/products?q=${encodeURIComponent(value)}` : '/products');
     };
-    // Cards that just open the products page showing only top-rated items (4 stars & up), with no search term.
-    const goTopRated = (e) => {
+    // Opens the products page on one category by id - for the cards that don't go through setSearch.
+    const goCategory = (id) => (e) => {
         e.preventDefault();
-        setSearchText('');
-        navigate('/products?rating=4');
+        setSearchText(CATEGORIES.find((c) => c.id === id)?.name ?? '');
+        navigate(`/products?category=${id}`);
     };
     // The pets card opens the products page on the pets category.
     const goPets = (e) => {
@@ -1212,7 +1272,7 @@ function Home() {
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <Link to='/products?rating=4' onClick={() => setSearchText('')}
+                            <Link to='/products?category=8' onClick={() => setSearchText('electronics')}
                                   href=''
                                   className='tracking-tight'
                             >
@@ -1221,27 +1281,27 @@ function Home() {
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(8)}
                                     href="">
                                     <img
                                         className='rounded-xl w-full aspect-square object-cover'
                                         src="https://m.media-amazon.com/images/I/31zLfxfdJ1L._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(8)}
                                     href='' className='block leading-tight min-h-[2.5rem]'>{t("Electronics")}</a>
                             </div>
 
                             <div>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(20)}
                                     href="">
                                     <img
                                         className='rounded-xl w-full aspect-square object-cover'
                                         src="https://m.media-amazon.com/images/I/31cU8R+ZNFL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(20)}
                                     href="" className='block leading-tight min-h-[2.5rem]'>
                                     {t("Home")}
                                 </a>
@@ -1249,27 +1309,27 @@ function Home() {
 
                             <div>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(3)}
                                     href="">
                                     <img
                                         className='rounded-xl w-full aspect-square object-cover'
                                         src="https://m.media-amazon.com/images/I/21vZBVKPsDL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(3)}
                                     href="" className='block leading-tight min-h-[2.5rem]'>{t("Beauty")}</a>
                             </div>
 
                             <div>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(4)}
                                     href="">
                                     <img
                                         className='rounded-xl w-full aspect-square object-cover'
                                         src="https://m.media-amazon.com/images/I/21X3TF86YFL._SR100,100_.jpg" alt=""/>
                                 </a>
                                 <a
-                                    onClick={goTopRated}
+                                    onClick={goCategory(4)}
                                     href="" className='block leading-tight min-h-[2.5rem]'>{t("Fashion")}</a>
                             </div>
                         </div>
@@ -1537,7 +1597,7 @@ function Home() {
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
                         <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
-                                onClick={(e) => { e.preventDefault(); setSearch(''); }}
+                                onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
                                 href=''
                                 className='tracking-tight'
                             >
