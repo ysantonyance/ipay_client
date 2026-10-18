@@ -1,9 +1,9 @@
+import { useLanguage } from "../../context/LanguageContext.jsx";
 // Builds the list of page buttons to show, e.g. [1, '…', 4, 5, 6, '…', 20].
 // Always shows the first page, the last page, and one neighbour on each side of the current page.
 function getPageItems(current, total) {
     if (total <= 7) {
         return Array.from({ length: total }, (_, i) => i + 1);
-import {useLanguage} from "../../context/LanguageContext.jsx";
     }
 
     const pages = new Set([1, total, current - 1, current, current + 1]);
@@ -21,7 +21,7 @@ import {useLanguage} from "../../context/LanguageContext.jsx";
 }
 
 function Pagination({ page, totalPages, onPageChange }) {
-    const {t} = useLanguage();
+    const { t } = useLanguage();
     if (totalPages <= 1) return null;
 
     const items = getPageItems(page, totalPages);
