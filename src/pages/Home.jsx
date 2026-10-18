@@ -1,92 +1,278 @@
 import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 import Carousel from "../components/shop/Carousel.jsx";
-import {Link, useNavigate} from "react-router-dom";
 import {useSearch} from "../context/SearchContext.jsx";
-import TodaysDeal from "./TodaysDeal.jsx";
 import {useLanguage} from "../context/LanguageContext.jsx";
 
-// Categories from the admin Categories table. Every card on this page must open one of these.
-const CATEGORIES = [
-    {id: 11, name: 'fitness'},
-    {id: 12, name: 'Trending Fashion'},
-    {id: 13, name: 'shoes'},
-    {id: 14, name: 'pets'},
-    {id: 15, name: 'games'},
-    {id: 16, name: 'home bedding'},
-    {id: 17, name: 'accessories'},
-    {id: 18, name: 'apparel'},
-    {id: 19, name: 'theater'},
-    {id: 2, name: 'kitchen'},
-    {id: 20, name: 'home'},
-    {id: 3, name: 'beauty'},
-    {id: 4, name: 'fashion clothing'},
-    {id: 5, name: 'toys'},
-    {id: 6, name: 'pc'},
-    {id: 7, name: 'books'},
-    {id: 8, name: 'electronics'},
-    {id: 9, name: 'computers'},
+// Every card on this page links to one of these categories (ids/names from the admin Categories table),
+// except the "Deals on top categories" card, which links to the 4-stars-and-up filter.
+const CATEGORY_NAMES = {
+    2: 'kitchen',
+    3: 'beauty',
+    4: 'fashion clothing',
+    5: 'toys',
+    6: 'pc',
+    7: 'books',
+    8: 'electronics',
+    9: 'computers',
+    11: 'fitness',
+    12: 'Trending Fashion',
+    13: 'shoes',
+    14: 'pets',
+    15: 'games',
+    16: 'home bedding',
+    17: 'accessories',
+    18: 'apparel',
+    19: 'theater',
+    20: 'home',
+};
+const TOP_RATED = 'top-rated';
+
+const linkTo = (target) => target === TOP_RATED ? '/products?rating=4' : `/products?category=${target}`;
+
+const image = (file) => `https://m.media-amazon.com/images/I/${file}`;
+const bigImage = (id, height) =>
+    image(`${id}._AC_AIweblab1431263,T1_FMavif_SF1282.5,${height}_QL54_.jpg?aicid=homepage-single-creative-card`);
+
+const item = (label, category, file) => ({label, category, src: image(file)});
+
+// The big cards in the top carousel: [title, category, image]
+const CAROUSEL = [
+    {title: "Shop kitchen must-haves", category: 2, src: bigImage('51l7ZOsRo7L', 2052)},
+    {title: "Shop all things beauty", category: 3, src: bigImage('61Ld77LHXQL', 1981.5)},
+    {title: "Start looking sharp", category: 4, src: bigImage('61R7G24e7dL', 1981.5)},
+    {title: "Toys for little ones", category: 5, src: bigImage('61upHi2gzaL', 2052)},
+    {title: "Level up your PC here", category: 6, src: bigImage('714RPvHc4LL', 1981.5)},
+    {title: "Discover books you can't put down", category: 7, src: bigImage('613fnGHLTYL', 1981.5)},
 ];
 
-// Which category each card's old search term belongs to (keys are lower-case, single-spaced).
-const CATEGORY_BY_TERM = {
-    // carousel
-    'kitchen appliances': 2, 'beauty': 3, 'fashion clothing': 4, 'toys': 5, 'pc': 6, 'good books': 7,
-    // electronics / computers / pc
-    'electronics': 8, 'headphones': 8, 'electronic tablets': 8, 'speakers': 8,
-    'gaming equipment': 15,
-    'computers': 9, 'laptops': 9, 'hard drives': 9, 'computer monitors': 9,
-    'desktop computers': 6, 'computer accessories': 6, 'desktop pcs': 6,
-    // fitness
-    'fitness': 11, 'fitness clothing': 11, 'fitness trackers': 11, 'fitness equipment': 11, 'sports': 11,
-    // fashion / apparel / accessories
-    'trending fashion': 12,
-    'women clothing': 4, 'men clothing': 4, 'girls fashion': 4, 'boys fashion': 4,
-    'apparel': 18, 'women apparel': 18, 'men apparel': 18, 'teen apparel': 18, 'kids apparel': 18,
-    'accessories': 17, 'fashion accessories': 17, 'men accessories': 17, 'jewelry': 17, 'handbags': 17,
-    // shoes
-    'shoes': 13, 'women shoes': 13, 'men shoes': 13, 'kid shoes': 13,
-    'women footwear': 13, 'men footwear': 13, 'girls footwear': 13, 'boys footwear': 13,
-    // beauty
-    'hair care': 3, 'fragrances': 3, 'make up': 3, 'makeup': 3, 'skin care': 3,
-    'makeup brushes': 3, 'makeup sponge': 3, 'makeup mirror': 3, 'health': 3,
-    // kitchen / home / bedding
-    'kitchen': 2, 'kitchen essentials': 2, 'dining': 2,
-    'home': 20, 'home decor': 20, 'smart home': 20, 'sofa': 20, 'home improvement': 20,
-    'candles': 20, 'indoor gardening': 20, 'storage': 20,
-    'home bedding': 16, 'bedsheets': 16, 'pillows': 16, 'duvet covers': 16, 'throws': 16,
-    'bath': 16, 'stylish pillows': 16,
-    // theater
-    'home theater': 19, 'television': 19, 'soundbars': 19, 'projectors': 19,
-    // games / toys
-    'games': 15, 'xbox controller': 15, 'nintendo': 15, 'vr headset': 15, 'ps5 accessories': 15,
-    'outdoor': 5, 'learning toys': 5, 'action figures': 5, 'pretend play': 5,
-};
+// The 2x2 cards below it: a title (links to `category`) and four items, each with its own category.
+const CARDS = [
+    {
+        title: "Plug in with our electronics", category: 8,
+        items: [
+            item("Headphones", 8, '417NhPd56zL._SR210,210_.jpg'),
+            item("Tablets", 8, '41dMYqsSuGL._SR210,210_.jpg'),
+            item("Gaming", 15, '41gk0-eoy4L._SR210,210_.jpg'),
+            item("Speakers", 8, '41uuEMle6TL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Score the top PCs & Accessories", category: 9,
+        items: [
+            item("Desktops", 6, '31aw+nYkUmL._SR210,210_.jpg'),
+            item("Laptops", 9, '31hqkoNqvTL._SR210,210_.jpg'),
+            item("Hard Drives", 9, '217Arq+nObL._SR210,210_.jpg'),
+            item("PC Accessories", 6, '312z6VjcSmL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Gear up to get fit", category: 11,
+        items: [
+            item("Clothing", 11, '41CutKsrzNL._SR210,210_.jpg'),
+            item("Trackers", 11, '41RKKF01YxL._SR210,210_.jpg'),
+            item("Equipment", 11, '41MjMjLh9BL._SR210,210_.jpg'),
+            item("Deals", 11, '41idnUIEIZL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Apparel under $25", category: 12,
+        items: [
+            item("Women", 4, '41DNYos4L1L._SR210,210_.jpg'),
+            item("Men", 4, '31-zpA1B2zL._SR210,210_.jpg'),
+            item("Girl", 4, '41J+KoaCycL._SR210,210_.jpg'),
+            item("Boys", 4, '31YRD7rRprL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Fantastic Finds for Home", category: 2,
+        items: [
+            item("Kitchen", 2, '41opB3I6bHL._SR210,210_.jpg'),
+            item("Home Decor", 20, '31zR9dINh6L._SR210,210_.jpg'),
+            item("Dining", 2, '41bvMGlDk4L._SR210,210_.jpg'),
+            item("Smart Home", 20, '314AasupNAL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Shine brighter with your fashion faves", category: 3,
+        items: [
+            item("Jewelry", 17, '31iAfM94Q1L._SR210,210_.jpg'),
+            item("Handbags", 17, '41RsxdVi8QL._SR210,210_.jpg'),
+            item("Footwear", 13, '41wBvSYrvWL._SR210,210_.jpg'),
+            item("Beauty", 3, '41Tsj3W9JHL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Unveil your radiance", category: 3,
+        items: [
+            item("Hair Care", 3, '41+i4d+1YXL._SR210,210_.jpg'),
+            item("Fragrances", 3, '4115ssxY8RL._SR210,210_.jpg'),
+            item("Make-up", 3, '51F8Stay1iL._SR210,210_.jpg'),
+            item("Skin Care", 3, '41hBTWbTOvL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Level up your PC here", category: 9,
+        items: [
+            item("Laptops", 9, '41SeoNqumwL._SR210,210_.jpg'),
+            item("PCs", 6, '41hls0IW3XL._SR210,210_.jpg'),
+            item("Hard Drives", 9, '41DUMIpCRRL._SR210,210_.jpg'),
+            item("Monitors", 9, '410RcCBLHIL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Fashion trends in Shoes", category: 13,
+        items: [
+            item("Women's", 13, '41yqgtOqxPL._SR210,210_.jpg'),
+            item("Men's", 13, '41wfXsKdqEL._SR210,210_.jpg'),
+            item("Kid's", 13, '41-zOL2WhXL._SR210,210_.jpg'),
+            item("All Shoes", 13, '4103VPrZvIL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Home harmony", category: 2,
+        items: [
+            item("Kitchen essentials", 2, '41dEpCmTRFL._SR210,210_.jpg'),
+            item("Home comfort", 20, '41cXdDKGU6L._SR210,210_.jpg'),
+            item("Decorate with elegance", 20, '41EvbQ64I2L._SR210,210_.jpg'),
+            item("Light it Right", 20, '41hJC3LJ2aL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Shoes under $50", category: 13,
+        items: [
+            item("Women's", 13, '31U967D6S3L._SR210,210_.jpg'),
+            item("Men's", 13, '31Wut-0nWqL._SR210,210_.jpg'),
+            item("Girl's", 13, '31JVbBrAgDL._SR210,210_.jpg'),
+            item("Boy's", 13, '41DEKPASTNL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "What you need for furry friends", category: 14,
+        items: [
+            item("Dogs", 14, '41eLkFePVUL._SR210,210_.jpg'),
+            item("Cats", 14, '41OERaEZuaL._SR210,210_.jpg'),
+            item("Small pets", 14, '410BX1Aby0L._SR210,210_.jpg'),
+            item("Deals", 14, '4172LJHm7gL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Video games & accessories", category: 15,
+        items: [
+            item("Xbox controllers", 15, '21HndQWZivL._SR100,100_.jpg'),
+            item("Nintendo", 15, '31L8hlUOKfL._SR100,100_.jpg'),
+            item("VR headsets", 15, '21+Ccbv5f5L._SR100,100_.jpg'),
+            item("PS5 accessories", 15, '21DOO2U+rQL._SR100,100_.jpg'),
+        ],
+    },
+    {
+        title: "Have more fun with the family", category: 5,
+        items: [
+            item("Outdoor Play Sets", 5, '31uBBG+KvtL._SR210,210_.jpg'),
+            item("Learning Toys", 5, '31QJz8+ereL._SR210,210_.jpg'),
+            item("Action Figures", 5, '310Ke5y4pBL._SR210,210_.jpg'),
+            item("Pretend Play Toys", 5, '416Kr1IKmgL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Finds in Home", category: 16,
+        items: [
+            item("Bedsheets", 16, '319RC1dCFNL._SR210,210_.jpg'),
+            item("Pillows", 16, '41+4Tvu3E0L._SR210,210_.jpg'),
+            item("Duvet Covers", 16, '41u90AplYLL._SR210,210_.jpg'),
+            item("Throws", 16, '41iRkfbZX6L._SR210,210_.jpg'),
+        ],
+    },
+    {
+        // Not a category: shows only top-rated products (4 stars and up).
+        title: "Deals on top categories", category: TOP_RATED,
+        items: [
+            item("Books", TOP_RATED, '41GibUzBeXL._SR210,210_.jpg'),
+            item("Fashion", TOP_RATED, '41YDpSUai3L._SR210,210_.jpg'),
+            item("PC", TOP_RATED, '41qG08jk3ML._SR210,210_.jpg'),
+            item("Beauty", TOP_RATED, '41QFxGoW7IL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "New home arrivals under $50", category: 20,
+        items: [
+            item("Kitchen & dining", 2, '41I85MytToL._SR210,210_.jpg'),
+            item("Home improvement", 20, '41mb6AUCJSL._SR210,210_.jpg'),
+            item("Décor", 20, '41J1-iazq6L._SR210,210_.jpg'),
+            item("Bedding & bath", 16, '417HmRJ2WJL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Discover the latest arrivals", category: 8,
+        items: [
+            item("Electronics", 8, '31zLfxfdJ1L._SR100,100_.jpg'),
+            item("Home", 20, '31cU8R+ZNFL._SR100,100_.jpg'),
+            item("Beauty", 3, '21vZBVKPsDL._SR100,100_.jpg'),
+            item("Fashion", 4, '21X3TF86YFL._SR100,100_.jpg'),
+        ],
+    },
+    {
+        title: "Accessorize your life", category: 17,
+        items: [
+            item("Fashion accessories", 17, '413lM0C0PEL._SR210,210_.jpg'),
+            item("Men's accessories", 17, '410LHEUGZ5L._SR210,210_.jpg'),
+            item("Health and beauty", 3, '41IIOwmruhL._SR210,210_.jpg'),
+            item("Sports", 11, '31KVFrr1USL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Step into style", category: 18,
+        items: [
+            item("Women's clothing", 18, '41Ty8UTzIFL._SR210,210_.jpg'),
+            item("Women's shoes", 13, '41WzZLqiLEL._SR210,210_.jpg'),
+            item("Men's clothing", 18, '31oxb92GmqL._SR170,170_.jpg'),
+            item("Men's shoes", 13, '41iPIZIMh2L._SR170,170_.jpg'),
+        ],
+    },
+    {
+        title: "Level up your beauty routine", category: 3,
+        items: [
+            item("Makeup", 3, '31aJyAdILmL._SR210,210_.jpg'),
+            item("Brushes", 3, '41MIeNiwdhL._SR210,210_.jpg'),
+            item("Sponges", 3, '31wSz8gA5wL._SR210,210_.jpg'),
+            item("Mirrors", 3, '21xHtP1ZnlL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Handpicked home theater", category: 19,
+        items: [
+            item("Televisions", 19, '41Nldn0FGML._SR210,210_.jpg'),
+            item("Speakers", 8, '4198T9z6hjL._SR210,210_.jpg'),
+            item("Soundbars", 19, '41Z1yvPi2rL._SR210,210_.jpg'),
+            item("Projectors", 19, '41J5MFD8nnL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Curate your space", category: 20,
+        items: [
+            item("Candles", 20, '415fShfBidL._SR210,210_.jpg'),
+            item("Stylish pillows", 16, '41eHYxK1H4L._SR210,210_.jpg'),
+            item("Indoor gardening", 20, '41RqiI-5T5L._SR210,210_.jpg'),
+            item("Storage organization", 20, '41wRrAnGAJL._SR210,210_.jpg'),
+        ],
+    },
+    {
+        title: "Look your best this season", category: 18,
+        items: [
+            item("For Her", 18, '41u9C4AnoaL._SR210,210_.jpg'),
+            item("For Him", 18, '41mhTFj8EhL._SR210,210_.jpg'),
+            item("For Teens", 18, '41VUN4-BMYL._SR210,210_.jpg'),
+            item("For Kids", 18, '413w78Z-7PL._SR210,210_.jpg'),
+        ],
+    },
+];
 
 function Home() {
     const {t} = useLanguage();
-    const {setSearch: setSearchText} = useSearch();
-    const navigate = useNavigate();
-    // Every card on this page calls setSearch(term). The term is looked up in CATEGORY_BY_TERM and the card opens
-    // /products on that category (the same ?category=<id> link the header search bar uses), never on a bare text search.
-    const setSearch = (term) => {
-        const value = (term || '').trim();
-        const id = CATEGORY_BY_TERM[value.toLowerCase().replace(/\s+/g, ' ')];
-        const category = CATEGORIES.find((c) => c.id === id);
-        setSearchText(category ? category.name : value);
-        navigate(id ? `/products?category=${id}` : value ? `/products?q=${encodeURIComponent(value)}` : '/products');
-    };
-    // Opens the products page on one category by id - for the cards that don't go through setSearch.
-    const goCategory = (id) => (e) => {
-        e.preventDefault();
-        setSearchText(CATEGORIES.find((c) => c.id === id)?.name ?? '');
-        navigate(`/products?category=${id}`);
-    };
-    // The pets card opens the products page on the pets category.
-    const goPets = (e) => {
-        e.preventDefault();
-        setSearchText('');
-        navigate('/products?category=pets');
-    };
+    const {setSearch} = useSearch();
+    // Clicking a card fills the header search box with the category name (or clears it) and follows the link.
+    const onOpen = (target) => () => setSearch(CATEGORY_NAMES[target] ?? '');
+
     const [carouselCount, setCarouselCount] = useState(
         window.innerWidth < 640 ? 1.85 : window.innerWidth < 1024 ? 3 : 5
     );
@@ -97,1633 +283,57 @@ function Home() {
         window.addEventListener('resize', updateCount);
         return () => window.removeEventListener('resize', updateCount);
     }, []);
+
     return (
         <>
             <div className='px-0 sm:px-0 lg:px-15 bg-[#E3E6E6]'>
                 <div className='bg-white px-4 py-2'>
                     <Carousel visibleCount={carouselCount}>
-
-                        <div className='relative '>
-                            <a
-                                onClick={(e) => { e.preventDefault(); console.log('clicked'); setSearch('kitchen appliances'); }}
-                                href="">
-                                <img
-                                    className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
-                                    src="https://m.media-amazon.com/images/I/51l7ZOsRo7L._AC_AIweblab1431263,T1_FMavif_SF1282.5,2052_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
-                            </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Shop kitchen must-haves")}</h1>
-                        </div>
-
-                        <div className='relative '>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
-                                href="">
-                                <img
-                                    className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
-                                    src="https://m.media-amazon.com/images/I/61Ld77LHXQL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
-                            </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Shop all things beauty")}</h1>
-                        </div>
-
-                        <div className='relative '>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('fashion clothing'); }}
-                                href="">
-                                <img
-                                    className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
-                                    src="https://m.media-amazon.com/images/I/61R7G24e7dL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
-                            </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Start looking sharp")}</h1>
-                        </div>
-
-                        <div className='relative '>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('toys'); }}
-                                href="">
-                                <img
-                                    className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
-                                    src="https://m.media-amazon.com/images/I/61upHi2gzaL._AC_AIweblab1431263,T1_FMavif_SF1282.5,2052_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
-                            </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Toys for little ones")}</h1>
-                        </div>
-
-                        <div className='relative '>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('pc'); }}
-                                href="">
-                                <img
-                                    className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
-                                    src="https://m.media-amazon.com/images/I/714RPvHc4LL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
-                            </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Level up your PC here")}</h1>
-                        </div>
-
-                        <div className='relative '>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('good books'); }}
-                                href="">
-                                <img
-                                    className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
-                                    src="https://m.media-amazon.com/images/I/613fnGHLTYL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
-                            </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Discover books you can't put down")}</h1>
-                        </div>
-
+                        {CAROUSEL.map((card) => (
+                            <div key={card.title} className='relative '>
+                                <Link to={linkTo(card.category)} onClick={onOpen(card.category)}>
+                                    <img
+                                        className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
+                                        src={card.src} alt=""/>
+                                </Link>
+                                <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t(card.title)}</h1>
+                            </div>
+                        ))}
                     </Carousel>
                 </div>
 
                 <div className='bg-white px-4 py-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6'>
-
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('electronics'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Plug in with our electronics")}
-                            </a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('headphones'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/417NhPd56zL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('headphones'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Headphones")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('electronic tablets'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41dMYqsSuGL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('electronic tablets'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Tablets")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('gaming equipment'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41gk0-eoy4L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('gaming equipment'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Gaming")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41uuEMle6TL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Speakers")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('computers'); }}
-                                href=''
-                                className='tracking-tight'>
-                                {t("Score the top PCs & Accessories")}
-                            </a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('desktop computers'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31aw+nYkUmL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('desktop computers'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Desktops")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31hqkoNqvTL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Laptops")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/217Arq+nObL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Hard Drives")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('computer accessories'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/312z6VjcSmL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('computer accessories'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("PC Accessories")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('fitness'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Gear up to get fit")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness clothing'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41CutKsrzNL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness clothing'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Clothing")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness trackers'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41RKKF01YxL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness trackers'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Trackers")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness equipment'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41MjMjLh9BL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness equipment'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Equipment")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41idnUIEIZL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fitness'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Deals")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Trending Fashion'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Apparel under $25")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Women Clothing'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41DNYos4L1L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Women Clothing'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men Clothing'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31-zpA1B2zL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men Clothing'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Men")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Girls Fashion'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41J+KoaCycL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Girls Fashion'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Girl")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Boys Fashion'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31YRD7rRprL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Boys Fashion'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Boys")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Fantastic Finds for Home")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41opB3I6bHL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Kitchen")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31zR9dINh6L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Home Decor")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41bvMGlDk4L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Dining")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('smart home'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/314AasupNAL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('smart home'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Smart Home")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Shine brighter with your fashion faves")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('jewelry'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31iAfM94Q1L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('jewelry'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Jewelry")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('handbags'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41RsxdVi8QL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('handbags'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Handbags")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41wBvSYrvWL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Footwear")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41Tsj3W9JHL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Beauty")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Unveil your radiance")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('hair care'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41+i4d+1YXL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('hair care'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Hair Care")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fragrances'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/4115ssxY8RL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fragrances'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Fragrances")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Make up'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/51F8Stay1iL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Make up'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Make-up")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('skin care'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41hBTWbTOvL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('skin care'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Skin Care")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('computers'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Level up your PC here")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41SeoNqumwL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Laptops")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('desktop PCs'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41hls0IW3XL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('desktop PCs'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("PCs")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41DUMIpCRRL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Hard Drives")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('computer monitors'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/410RcCBLHIL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('computer monitors'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Monitors")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('shoes'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Fashion trends in Shoes")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Women Shoes'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41yqgtOqxPL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Women Shoes'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women's")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men Shoes'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41wfXsKdqEL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men Shoes'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Men's")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Kid Shoes'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41-zOL2WhXL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Kid Shoes'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Kid's")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Shoes'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/4103VPrZvIL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Shoes'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("All Shoes")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Home harmony")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen essentials'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41dEpCmTRFL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kitchen essentials'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Kitchen essentials")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('sofa'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41cXdDKGU6L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('sofa'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Home comfort")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41EvbQ64I2L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Decorate with elegance")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Home decor'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41hJC3LJ2aL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Home decor'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Light it Right")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('Shoes'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Shoes under $50")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31U967D6S3L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women's")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('men footwear'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31Wut-0nWqL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('men footwear'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Men's")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('girls footwear'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31JVbBrAgDL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('girls footwear'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Girl's")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('boys footwear'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41DEKPASTNL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('boys footwear'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Boy's")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={goPets}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("What you need for furry friends")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={goPets}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41eLkFePVUL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={goPets}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Dogs")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={goPets}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41OERaEZuaL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={goPets}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Cats")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={goPets}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/410BX1Aby0L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={goPets}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Small pets")}</a>
-                            </div>
-
-                            <div>
-                                <Link to='/products?category=pets' onClick={() => setSearchText('')}
-                                      href=""
+                    {CARDS.map((card) => (
+                        <div key={card.title} className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
+                            <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
+                                <Link
+                                    to={linkTo(card.category)}
+                                    onClick={onOpen(card.category)}
+                                    className='tracking-tight'
                                 >
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/4172LJHm7gL._SR210,210_.jpg" alt=""/>
-                                </Link>
-                                <Link to='/products?category=pets' onClick={() => setSearchText('')}
-                                      href="">{t("Deals")}</Link>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('games'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Video games & accessories")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('xbox controller'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/21HndQWZivL._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('xbox controller'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Xbox controllers")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Nintendo'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31L8hlUOKfL._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Nintendo'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Nintendo")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('vr headset'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/21+Ccbv5f5L._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('vr headset'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("VR headsets")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('PS5 accessories'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/21DOO2U+rQL._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('PS5 accessories'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("PS5 accessories")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('toys'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Have more fun with the family")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('outdoor'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31uBBG+KvtL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('outdoor'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Outdoor Play Sets")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('learning toys'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31QJz8+ereL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('learning toys'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Learning Toys")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('action figures'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/310Ke5y4pBL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('action figures'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Action Figures")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('pretend play'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/416Kr1IKmgL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('pretend play'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Pretend Play Toys")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('home bedding'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Finds in Home")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Bedsheets'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/319RC1dCFNL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Bedsheets'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Bedsheets")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Pillows'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41+4Tvu3E0L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Pillows'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Pillows")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('duvet covers'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41u90AplYLL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('duvet covers'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Duvet Covers")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Throws'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41iRkfbZX6L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Throws'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Throws")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                  href=''
-                                  className='tracking-tight'
-                            >
-                                {t("Deals on top categories")}</Link>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41GibUzBeXL._SR210,210_.jpg" alt=""/>
-                                </Link>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href=''>{t("Books")}</Link>
-                            </div>
-
-                            <div>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41YDpSUai3L._SR210,210_.jpg" alt=""/>
-                                </Link>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">
-                                    {t("Fashion")}
+                                    {t(card.title)}
                                 </Link>
                             </div>
-
-                            <div>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41qG08jk3ML._SR210,210_.jpg" alt=""/>
-                                </Link>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">{t("PC")}</Link>
-                            </div>
-
-                            <div>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41QFxGoW7IL._SR210,210_.jpg" alt=""/>
-                                </Link>
-                                <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">{t("Beauty")}</Link>
+                            <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
+                                {card.items.map((entry) => (
+                                    <div key={entry.label}>
+                                        <Link to={linkTo(entry.category)} onClick={onOpen(entry.category)}>
+                                            <img
+                                                className='rounded-xl w-full aspect-square object-cover'
+                                                src={entry.src} alt=""/>
+                                        </Link>
+                                        <Link
+                                            to={linkTo(entry.category)}
+                                            onClick={onOpen(entry.category)}
+                                            className='block leading-tight min-h-[2.5rem]'
+                                        >
+                                            {t(entry.label)}
+                                        </Link>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('home'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("New home arrivals under $50")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41I85MytToL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Kitchen & dining")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home improvement'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41mb6AUCJSL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home improvement'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Home improvement")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41J1-iazq6L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('home decor '); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Décor")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('bath'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/417HmRJ2WJL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('bath'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Bedding & bath")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <Link to='/products?category=8' onClick={() => setSearchText('electronics')}
-                                  href=''
-                                  className='tracking-tight'
-                            >
-                                {t("Discover the latest arrivals")}</Link>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={goCategory(8)}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31zLfxfdJ1L._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={goCategory(8)}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Electronics")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={goCategory(20)}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31cU8R+ZNFL._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={goCategory(20)}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Home")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={goCategory(3)}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/21vZBVKPsDL._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={goCategory(3)}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Beauty")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={goCategory(4)}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/21X3TF86YFL._SR100,100_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={goCategory(4)}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Fashion")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('accessories'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Accessorize your life")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fashion accessories'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/413lM0C0PEL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('fashion accessories'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Fashion accessories")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('men accessories'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/410LHEUGZ5L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('men accessories'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Men's accessories")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('health'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41IIOwmruhL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('health'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Health and beauty")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Sports'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31KVFrr1USL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Sports'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Sports")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('apparel'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Step into style")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41Ty8UTzIFL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women's clothing")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Women shoes'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41WzZLqiLEL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Women shoes'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Women's shoes")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men apparel'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31oxb92GmqL._SR170,170_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men apparel    '); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Men's clothing")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men shoes'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41iPIZIMh2L._SR170,170_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Men shoes'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Men's shoes")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Level up your beauty routine")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31aJyAdILmL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Makeup")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup brushes'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41MIeNiwdhL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup brushes'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Brushes")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup sponge'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/31wSz8gA5wL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup sponge'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Sponges")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup mirror'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/21xHtP1ZnlL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('makeup mirror'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Mirrors")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('home theater'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Handpicked home theater")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('television'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41Nldn0FGML._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('television'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Televisions")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/4198T9z6hjL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Speakers")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('soundbars'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41Z1yvPi2rL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('soundbars'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Soundbars")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('projectors'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41J5MFD8nnL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('projectors'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Projectors")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Curate your space")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Candles'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/415fShfBidL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('Candles'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Candles")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('stylish pillows'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41eHYxK1H4L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('stylish pillows'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("Stylish pillows")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('indoor gardening'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41RqiI-5T5L._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('indoor gardening'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Indoor gardening")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('storage'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41wRrAnGAJL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('storage'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Storage organization")}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
-                            <a
-                                onClick={(e) => { e.preventDefault(); setSearch('apparel'); }}
-                                href=''
-                                className='tracking-tight'
-                            >
-                                {t("Look your best this season")}</a>
-                        </div>
-                        <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41u9C4AnoaL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
-                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("For Her")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('men apparel'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41mhTFj8EhL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('men apparel'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>
-                                    {t("For Him")}
-                                </a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('teen apparel'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/41VUN4-BMYL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('teen apparel'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("For Teens")}</a>
-                            </div>
-
-                            <div>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kids apparel'); }}
-                                    href="">
-                                    <img
-                                        className='rounded-xl w-full aspect-square object-cover'
-                                        src="https://m.media-amazon.com/images/I/413w78Z-7PL._SR210,210_.jpg" alt=""/>
-                                </a>
-                                <a
-                                    onClick={(e) => { e.preventDefault(); setSearch('kids apparel'); }}
-                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("For Kids")}</a>
-                            </div>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </>
