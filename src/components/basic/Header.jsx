@@ -59,13 +59,13 @@ function Header() {
 
                             <Link
                                 to='/cart'
+                                aria-label={t("Cart")}
                                 className='h-[40px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'
                             >
                                 <div className='flex flex-col justify-center items-center'>
                                     <span className='text-[#F08804] font-bold leading-none translate-y-1.5'>{cartCount}</span>
                                     <img className='w-[30px] h-[30px]' src="https://img.icons8.com/?size=100&id=ySRi3OLgoOJX&format=png&color=FFFFFF" alt=""/>
                                 </div>
-                                <b className='ml-1'>{t("Cart")}</b>
                             </Link>
                         </div>
                     </div>
@@ -116,14 +116,14 @@ function Header() {
 
                         <Link
                             to='/cart'
-                            className='h-[50px] w-[84px] shrink-0 border border-transparent hover:border-white px-2 flex items-center cursor-pointer whitespace-nowrap'
+                            aria-label={t("Cart")}
+                            className='h-[50px] shrink-0 border border-transparent hover:border-white px-2 flex items-center cursor-pointer whitespace-nowrap'
                         >
                             <div className='flex flex-col justify-center items-center'>
                                 <span className='text-[#F08804] font-bold leading-none translate-y-1.5'>{cartCount}</span>
                                 <img className='w-[30px] h-[30px]' src="https://img.icons8.com/?size=100&id=ySRi3OLgoOJX&format=png&color=FFFFFF" alt=""/>
                             </div>
 
-                            <b className='ml-1 truncate min-w-0'>{t("Cart")}</b>
                         </Link>
                     </div>
                 </div>

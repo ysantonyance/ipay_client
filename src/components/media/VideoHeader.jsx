@@ -5,7 +5,7 @@ import SearchModal from "./SearchModal.jsx";
 import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const tabs = [
-    {label: 'Home', to: '/movies', type: null},
+    {label: 'Home page', to: '/movies', type: null},
     {label: 'Movies', to: '/movies?type=movie', type: 'movie'},
     {label: 'TV shows', to: '/movies?type=tv', type: 'tv'},
 ];
@@ -65,7 +65,7 @@ function VideoHeader() {
                                     : 'hover:bg-white hover:text-black'
                             }`}
                         >
-                            <b>{tab.label}</b>
+                            <b>{t(tab.label)}</b>
                         </Link>
                     ))}
                 </div>

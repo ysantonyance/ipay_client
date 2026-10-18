@@ -51,7 +51,7 @@ function SearchModal({onClose}) {
                         autoFocus
                         value={q}
                         onChange={e => setQ(e.target.value)}
-                        placeholder='Search movies, TV shows and genres'
+                        placeholder={t('Search movies, TV shows and genres')}
                         className='w-full rounded-xl bg-[#33373E] px-4 py-3 outline-none focus:ring-2 focus:ring-white/60'
                     />
 
