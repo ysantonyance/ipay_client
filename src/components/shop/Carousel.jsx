@@ -1,6 +1,8 @@
 import { Children, useRef, useState, useEffect } from 'react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 function Carousel({ children, visibleCount = 5 }) {
+    const { t } = useLanguage();
     const trackRef = useRef(null);
     const [index, setIndex] = useState(0);
 
@@ -66,7 +68,7 @@ function Carousel({ children, visibleCount = 5 }) {
                 <button
                     onClick={() => scrollToIndex(index - 1)}
                     disabled={index <= 0}
-                    aria-label="Previous"
+                    aria-label={t("Previous")}
                     className="hidden sm:flex absolute top-1/2 -left-4.5 -translate-y-1/2 h-[100px] w-[48px] rounded-md border border-[#888C8C] border-l-0 items-center justify-center bg-white text-lg disabled:opacity-100 cursor-pointer shadow-md"
                 >
                     ‹
@@ -77,7 +79,7 @@ function Carousel({ children, visibleCount = 5 }) {
                 <button
                     onClick={() => scrollToIndex(index + 1)}
                     disabled={index >= maxIndex}
-                    aria-label="Next"
+                    aria-label={t("Next")}
                     className="hidden sm:flex absolute top-1/2 -right-4.5 -translate-y-1/2 h-[100px] w-[48px] rounded-md border border-[#888C8C] border-r-0 items-center justify-center bg-white text-lg disabled:opacity-100 cursor-pointer shadow-md"
                 >
                     ›

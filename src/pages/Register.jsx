@@ -3,8 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { authApi } from '../api/authApi.js';
 import { getErrorMessage } from '../api/api.js';
 import { getFirebaseErrorMessage, sendVerificationEmail } from '../api/firebaseAuth.js';
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 function Register() {
+    const {t} = useLanguage();
     const navigate = useNavigate();
 
     const initialFormState = {
@@ -94,10 +96,10 @@ function Register() {
             let notice;
             try {
                 await sendVerificationEmail(formState.email.trim(), formState.password);
-                notice = `Account created! We sent a verification email to ${formState.email.trim()}. Click the link in it, then sign in.`;
+                notice = t('Account created! We sent a verification email to {email}. Click the link in it, then sign in.', { email: formState.email.trim() });
             } catch (verificationError) {
                 const reason = getFirebaseErrorMessage(verificationError, '');
-                notice = `Account created, but we could not send the verification email${reason ? ` (${reason})` : ''}. Sign in and choose "Resend verification email".`;
+                notice = t('Account created, but we could not send the verification email{reason}. Sign in and choose "Resend verification email".', { reason: reason ? ` (${t(reason)})` : '' });
             }
 
             navigate('/login', { state: { notice } });
@@ -118,24 +120,24 @@ function Register() {
                 />
             </Link>
             <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm mt-8'>
-                <h1 className='text-[28px] font-normal mb-4'>Create account</h1>
+                <h1 className='text-[28px] font-normal mb-4'>{t("Create account")}</h1>
 
                 {errors.server && (
                     <div className='p-2 mb-3 bg-[#fdf2f2] border border-[#d32f2f] rounded-lg text-[#d32f2f] text-[13px]'>
-                        {errors.server}
+                        {t(errors.server)}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
                     <div className='flex flex-col'>
                         <label htmlFor='fullname' className='text-[13px] font-bold mb-1'>
-                            Your name
+                            {t("Your name")}
                         </label>
                         <input
                             type='text'
                             id='fullname'
                             name='fullname'
-                            placeholder='First and last name'
+                            placeholder={t('First and last name')}
                             value={formState.fullname}
                             onChange={handleInputChange}
                             disabled={loading}
@@ -144,13 +146,13 @@ function Register() {
                             }`}
                         />
                         {errors.fullname && (
-                            <span className='text-[#d32f2f] text-[12px] mt-1'>{errors.fullname}</span>
+                            <span className='text-[#d32f2f] text-[12px] mt-1'>{t(errors.fullname)}</span>
                         )}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor='email' className='text-[13px] font-bold mb-1'>
-                            Email
+                            {t("Email")}
                         </label>
                         <input
                             type='email'
@@ -164,19 +166,19 @@ function Register() {
                             }`}
                         />
                         {errors.email && (
-                            <span className='text-[#d32f2f] text-[12px] mt-1'>{errors.email}</span>
+                            <span className='text-[#d32f2f] text-[12px] mt-1'>{t(errors.email)}</span>
                         )}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor='phone' className='text-[13px] font-bold mb-1'>
-                            Mobile number (optional)
+                            {t("Mobile number (optional)")}
                         </label>
                         <input
                             type='tel'
                             id='phone'
                             name='phone'
-                            placeholder='e.g. +380630300035'
+                            placeholder={t('e.g. +380630300035')}
                             value={formState.phone}
                             onChange={handleInputChange}
                             disabled={loading}
@@ -185,19 +187,19 @@ function Register() {
                             }`}
                         />
                         {errors.phone && (
-                            <span className='text-[#d32f2f] text-[12px] mt-1'>{errors.phone}</span>
+                            <span className='text-[#d32f2f] text-[12px] mt-1'>{t(errors.phone)}</span>
                         )}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor='password' className='text-[13px] font-bold mb-1'>
-                            Password
+                            {t("Password")}
                         </label>
                         <input
                             type='password'
                             id='password'
                             name='password'
-                            placeholder='At least 8 characters'
+                            placeholder={t('At least 8 characters')}
                             value={formState.password}
                             onChange={handleInputChange}
                             autoComplete='new-password'
@@ -207,17 +209,17 @@ function Register() {
                             }`}
                         />
                         {errors.password ? (
-                            <span className='text-[#d32f2f] text-[12px] mt-1'>{errors.password}</span>
+                            <span className='text-[#d32f2f] text-[12px] mt-1'>{t(errors.password)}</span>
                         ) : (
                             <span className='text-[11px] text-[#555] mt-1'>
-                                Passwords must be at least 8+ characters, at least 1 uppercase letter, 1 lowercase letter, 1 digit, AND 1 special character (e.g., @, #, !, $)
+                                {t("Passwords must be at least 8+ characters, at least 1 uppercase letter, 1 lowercase letter, 1 digit, AND 1 special character (e.g., @, #, !, $)")}
                             </span>
                         )}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor='confirmPassword' className='text-[13px] font-bold mb-1'>
-                            Re-enter password
+                            {t("Re-enter password")}
                         </label>
                         <input
                             type='password'
@@ -232,7 +234,7 @@ function Register() {
                             }`}
                         />
                         {errors.confirmPassword && (
-                            <span className='text-[#d32f2f] text-[12px] mt-1'>{errors.confirmPassword}</span>
+                            <span className='text-[#d32f2f] text-[12px] mt-1'>{t(errors.confirmPassword)}</span>
                         )}
                     </div>
 
@@ -241,18 +243,18 @@ function Register() {
                         disabled={loading}
                         className='w-full py-1.5 mt-3 bg-[#FFD814] hover:bg-[#FFCE12] border border-[#FCD200] rounded-xl text-[13px] cursor-pointer active:bg-[#F0B800] font-medium disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        {loading ? 'Creating account...' : 'Create your Amazon account'}
+                        {loading ? t('Creating account...') : t('Create your Amazon account')}
                     </button>
                 </form>
 
                 <p className='text-[12px] text-[#111] mt-4 leading-normal'>
-                    By creating an account, you agree to Ipay's{' '}
+                    {t("By creating an account, you agree to Ipay's")}{' '}
                     <a href='#' className='text-[#2162A1] hover:underline'>
-                        Conditions of Use
+                        {t("Conditions of Use")}
                     </a>{' '}
-                    and{' '}
+                    {t('and')}{' '}
                     <a href='#' className='text-[#2162A1] hover:underline'>
-                        Privacy Notice
+                        {t("Privacy Notice")}
                     </a>
                     .
                 </p>
@@ -260,9 +262,9 @@ function Register() {
                 <hr className='my-4 border-[#D5D9D9]' />
 
                 <p className='text-[13px]'>
-                    Already have an account?{' '}
+                    {t("Already have an account?")}{' '}
                     <Link to='/login' className='text-[#2162A1] hover:underline'>
-                        Sign in
+                        {t("Sign in")}
                     </Link>
                 </p>
             </div>

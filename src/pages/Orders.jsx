@@ -4,6 +4,7 @@ import {useAuth} from "../context/AuthContext.jsx";
 import {ordersApi} from "../api/ordersApi.js";
 import {getErrorMessage} from "../api/api.js";
 import {normalizeStatus} from "../utils/orderStatus.js";
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 const STATUS_INFO = {
     Pending:   {label: 'Order placed',        text: "We've received your order and are waiting for payment to clear.", badge: 'bg-[#FFF4D6] text-[#8A5A00]'},
@@ -18,19 +19,20 @@ const STEP_LABELS = {Pending: 'Placed', Paid: 'Paid', Shipped: 'Shipped', Delive
 
 const money = v => `$${Number(v ?? 0).toFixed(2)}`;
 
-const formatDate = d => {
+const formatDate = (d, locale) => {
     if (!d) return '';
     // The API sends UTC without a "Z" suffix, so add one before parsing.
     const date = new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(d) ? d : `${d}Z`);
     if (Number.isNaN(date.getTime())) return '';
-    return date.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'});
+    return date.toLocaleDateString(locale, {year: 'numeric', month: 'long', day: 'numeric'});
 };
 
-const formatTime = d => d.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+const formatTime = (d, locale) => d.toLocaleTimeString(locale, {hour: '2-digit', minute: '2-digit', second: '2-digit'});
 
 function StatusTracker({status}) {
+    const {t} = useLanguage();
     if (status === 'Cancelled')
-        return <p className='text-sm text-[#B12704] font-semibold'>This order was cancelled.</p>;
+        return <p className='text-sm text-[#B12704] font-semibold'>{t("This order was cancelled.")}</p>;
 
     const current = STEPS.indexOf(status);
 
@@ -48,7 +50,7 @@ function StatusTracker({status}) {
                             {done ? '✓' : idx + 1}
                         </span>
                         <span className={`mt-1 text-xs text-center ${idx === current ? 'font-bold' : 'text-gray-600'}`}>
-                            {STEP_LABELS[step]}
+                            {t(STEP_LABELS[step])}
                         </span>
                     </li>
                 );
@@ -58,6 +60,7 @@ function StatusTracker({status}) {
 }
 
 function OrderCard({order, onRefresh, refreshing, checkedAt, checkError, onCancel, cancelling, cancelError}) {
+    const {t, locale} = useLanguage();
     const [open, setOpen] = useState(false);
     const status = normalizeStatus(order.status);
     const info = STATUS_INFO[status];
@@ -71,18 +74,18 @@ function OrderCard({order, onRefresh, refreshing, checkedAt, checkError, onCance
         <div className='bg-white rounded border border-[#D5D9D9] overflow-hidden'>
             <div className='bg-[#F0F2F2] px-4 py-3 flex flex-wrap gap-x-8 gap-y-2 text-xs text-gray-600'>
                 <div>
-                    <p className='uppercase'>Order placed</p>
-                    <p className='text-sm text-black'>{formatDate(order.createdAt)}</p>
+                    <p className='uppercase'>{t("Order placed")}</p>
+                    <p className='text-sm text-black'>{formatDate(order.createdAt, locale)}</p>
                 </div>
                 <div>
-                    <p className='uppercase'>Total</p>
+                    <p className='uppercase'>{t("Total")}</p>
                     <p className='text-sm text-black'>{money(total)}</p>
                 </div>
                 <div className='sm:ml-auto'>
-                    <p className='uppercase'>Order # {order.id}</p>
+                    <p className='uppercase'>{t('Order #{id}', {id: order.id})}</p>
                     <button type='button' onClick={() => setOpen(o => !o)}
                             className='text-sm text-[#007185] hover:underline cursor-pointer'>
-                        {open ? 'Hide details' : 'View order details'}
+                        {open ? t('Hide details') : t('View order details')}
                     </button>
                 </div>
             </div>
@@ -90,27 +93,27 @@ function OrderCard({order, onRefresh, refreshing, checkedAt, checkError, onCance
             <div className='p-4 space-y-4'>
                 <div className='flex flex-wrap items-center justify-between gap-2'>
                     <div>
-                        <span className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${info.badge}`}>{info.label}</span>
-                        <p className='text-sm mt-2'>{info.text}</p>
+                        <span className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${info.badge}`}>{t(info.label)}</span>
+                        <p className='text-sm mt-2'>{t(info.text)}</p>
                     </div>
                     <div className='text-right'>
                         <button type='button' onClick={() => onRefresh(order.id)} disabled={refreshing}
                                 className='bg-[#FFD814] hover:bg-[#F7CA00] rounded-full px-4 py-1.5 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'>
-                            {refreshing ? 'Checking…' : 'Check status'}
+                            {refreshing ? t('Checking…') : t('Check status')}
                         </button>
                         {checkError ? (
-                            <p className='text-xs text-[#D32F2F] mt-1'>{checkError}</p>
+                            <p className='text-xs text-[#D32F2F] mt-1'>{t(checkError)}</p>
                         ) : checkedAt && (
-                            <p className='text-xs text-gray-500 mt-1'>Last checked {formatTime(checkedAt)}</p>
+                            <p className='text-xs text-gray-500 mt-1'>{t('Last checked {time}', {time: formatTime(checkedAt, locale)})}</p>
                         )}
                         {canCancel && (
                             <div className='mt-2'>
                                 <button type='button' onClick={() => onCancel(order.id)} disabled={cancelling}
                                         className='border border-[#B12704] text-[#B12704] bg-white hover:bg-[#FDF0F0] rounded-full px-4 py-1.5 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'>
-                                    {cancelling ? 'Cancelling…' : 'Cancel order'}
+                                    {cancelling ? t('Cancelling…') : t('Cancel order')}
                                 </button>
                                 {cancelError && (
-                                    <p role='alert' className='text-xs text-[#D32F2F] mt-1'>{cancelError}</p>
+                                    <p role='alert' className='text-xs text-[#D32F2F] mt-1'>{t(cancelError)}</p>
                                 )}
                             </div>
                         )}
@@ -121,19 +124,19 @@ function OrderCard({order, onRefresh, refreshing, checkedAt, checkError, onCance
 
                 {open && (
                     <div className='border-t border-[#E7E7E7] pt-3'>
-                        <h3 className='font-bold text-sm mb-2'>Items ({count})</h3>
+                        <h3 className='font-bold text-sm mb-2'>{t('Items ({count})', {count})}</h3>
                         {items.length === 0 ? (
-                            <p className='text-sm text-gray-500'>No item details available.</p>
+                            <p className='text-sm text-gray-500'>{t("No item details available.")}</p>
                         ) : items.map(i => (
                             <div key={i.id} className='flex justify-between gap-4 py-2 border-b border-[#F0F2F2] last:border-0 text-sm'>
                                 <div className='min-w-0'>
                                     {i.productId ? (
                                         <Link to={`/products/${i.productId}`}
                                               className='text-[#007185] hover:underline'>
-                                            {i.productName ?? `Product #${i.productId}`}
+                                            {i.productName ?? t('Product #{id}', {id: i.productId})}
                                         </Link>
                                     ) : <span>{i.productName}</span>}
-                                    <p className='text-gray-500'>Qty: {i.quantity} × {money(i.price)}</p>
+                                    <p className='text-gray-500'>{t('Qty: {q} × {price}', {q: i.quantity, price: money(i.price)})}</p>
                                 </div>
                                 <span className='font-semibold shrink-0'>{money(i.totalPrice ?? i.price * i.quantity)}</span>
                             </div>
@@ -146,6 +149,7 @@ function OrderCard({order, onRefresh, refreshing, checkedAt, checkError, onCance
 }
 
 function Orders() {
+    const {t} = useLanguage();
     const {isLoggedIn, userId} = useAuth();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -196,7 +200,7 @@ function Orders() {
 
     // The person cancelling their own order. The server only allows it before the order ships.
     const cancelOrder = async id => {
-        if (!window.confirm(`Cancel order #${id}? This can't be undone.`)) return;
+        if (!window.confirm(t("Cancel order #{id}? This can't be undone.", {id}))) return;
 
         setCancellingId(id);
         setCancelErrors(prev => ({...prev, [id]: ''}));
@@ -220,10 +224,10 @@ function Orders() {
     if (!isLoggedIn)
         return wrap(
             <div className='bg-white p-6 sm:p-10 rounded text-center'>
-                <h1 className='text-2xl font-bold mb-2'>Your Orders</h1>
-                <p className='text-sm mb-4'>Sign in to see the orders you've placed.</p>
+                <h1 className='text-2xl font-bold mb-2'>{t("Your Orders")}</h1>
+                <p className='text-sm mb-4'>{t("Sign in to see the orders you've placed.")}</p>
                 <Link to='/login' className='inline-block bg-[#FFD814] hover:bg-[#F7CA00] rounded-full px-6 py-2 text-sm'>
-                    Sign in
+                    {t("Sign in")}
                 </Link>
             </div>
         );
@@ -239,10 +243,10 @@ function Orders() {
     return wrap(
         <>
             <div className='flex flex-wrap items-center justify-between gap-2 mb-4'>
-                <h1 className='text-2xl font-bold'>Your Orders</h1>
+                <h1 className='text-2xl font-bold'>{t("Your Orders")}</h1>
                 <button type='button' onClick={load} disabled={loading}
                         className='border border-[#898D8E] bg-white hover:bg-[#F6FAFB] rounded-full px-4 py-1.5 text-sm cursor-pointer disabled:opacity-50'>
-                    {loading ? 'Refreshing…' : 'Refresh all'}
+                    {loading ? t('Refreshing…') : t('Refresh all')}
                 </button>
             </div>
 
@@ -251,28 +255,28 @@ function Orders() {
                     <button key={f} type='button' onClick={() => setFilter(f)}
                             className={`rounded-full px-4 py-1 text-sm border cursor-pointer
                                 ${filter === f ? 'bg-[#232F3E] text-white border-[#232F3E]' : 'bg-white border-[#D5D9D9] hover:bg-[#F6FAFB]'}`}>
-                        {f}
+                        {t(f)}
                     </button>
                 ))}
             </div>
 
             {error && (
                 <div className='bg-white border border-[#D32F2F] text-[#D32F2F] rounded p-3 text-sm mb-4'>
-                    {error}
+                    {t(error)}
                 </div>
             )}
 
             {loading && orders.length === 0 ? (
-                <p className='bg-white rounded p-6 text-sm text-gray-600'>Loading your orders…</p>
+                <p className='bg-white rounded p-6 text-sm text-gray-600'>{t("Loading your orders…")}</p>
             ) : orders.length === 0 && !error ? (
                 <div className='bg-white rounded p-6 sm:p-10 text-center'>
-                    <h2 className='text-xl font-bold mb-2'>You haven't placed any orders yet</h2>
+                    <h2 className='text-xl font-bold mb-2'>{t("You haven't placed any orders yet")}</h2>
                     <Link to='/products' className='inline-block bg-[#FFD814] hover:bg-[#F7CA00] rounded-full px-6 py-2 text-sm mt-2'>
-                        Start shopping
+                        {t("Start shopping")}
                     </Link>
                 </div>
             ) : visible.length === 0 ? (
-                <p className='bg-white rounded p-6 text-sm text-gray-600'>No orders match this filter.</p>
+                <p className='bg-white rounded p-6 text-sm text-gray-600'>{t("No orders match this filter.")}</p>
             ) : (
                 <div className='space-y-4'>
                     {visible.map(o => (

@@ -11,6 +11,7 @@ import useAdminResource from '../hooks/useAdminResource.js';
 import { RESOURCE_SCHEMAS, RESOURCE_ORDER } from '../admin/schemas.js';
 import { categoriesApi } from '../api/categoriesApi.js';
 import { manufacturersApi } from '../api/manufacturersApi.js';
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 const RESOURCE_NAV = RESOURCE_ORDER.map((key) => ({ key, label: RESOURCE_SCHEMAS[key].label }));
 
@@ -132,6 +133,7 @@ function ResourceWorkspace({ resourceKey }) {
 // Admins and moderators both get the content editor plus the Users section. The one difference is
 // inside the Users section: only admins can make someone a moderator or remove a moderator (see UsersPanel).
 function AdminDashboard({ isAdmin }) {
+    const {t} = useLanguage();
     const { logout } = useAuth();
     const navigate = useNavigate();
     const [view, setView] = useState('resources');
@@ -153,7 +155,7 @@ function AdminDashboard({ isAdmin }) {
                 <div>
                     <h1 className='text-[18px] font-bold'>{isAdmin ? 'IPAY Admin' : 'IPAY Moderation'}</h1>
                     <p className='text-[12px] text-[#CCCCCC]'>
-                        Content playground — products, categories, media, orders & users
+                        {t("Content playground — products, categories, media, orders & users")}
                     </p>
                 </div>
                 <button
@@ -161,7 +163,7 @@ function AdminDashboard({ isAdmin }) {
                     onClick={handleSignOut}
                     className='text-[13px] border border-transparent hover:border-white rounded px-3 py-1 cursor-pointer'
                 >
-                    Sign out
+                    {t("Sign out")}
                 </button>
             </div>
 
@@ -188,7 +190,7 @@ function AdminDashboard({ isAdmin }) {
                                 onClick={() => setView('orders')}
                                 className={navButtonClass(view === 'orders')}
                             >
-                                Orders
+                                {t("Orders")}
                             </button>
                         </li>
                         <li>
@@ -197,7 +199,7 @@ function AdminDashboard({ isAdmin }) {
                                 onClick={() => setView('requests')}
                                 className={navButtonClass(view === 'requests')}
                             >
-                                Seller requests
+                                {t("Seller requests")}
                             </button>
                         </li>
                         <li>
@@ -206,7 +208,7 @@ function AdminDashboard({ isAdmin }) {
                                 onClick={() => setView('users')}
                                 className={navButtonClass(view === 'users')}
                             >
-                                Users
+                                {t("Users")}
                             </button>
                         </li>
                     </ul>

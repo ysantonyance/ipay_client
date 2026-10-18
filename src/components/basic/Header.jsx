@@ -39,21 +39,21 @@ function Header() {
                                 <>
                                     <Link
                                         to='/profile'
-                                        className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px]'
+                                        className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px] whitespace-nowrap shrink-0'
                                     >
-                                        Profile
+                                        {t("Profile")}
                                     </Link>
                                     <button
                                         type='button'
                                         onClick={handleSignOut}
-                                        className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px] cursor-pointer'
+                                        className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px] cursor-pointer whitespace-nowrap shrink-0'
                                     >
-                                        Sign out
+                                        {t("Sign out")}
                                     </button>
                                 </>
                             ) : (
-                                <Link to='/login' className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px]'>
-                                    Sign in ›
+                                <Link to='/login' className='text-white px-2 py-1 border border-transparent hover:border-white text-[11px] whitespace-nowrap shrink-0'>
+                                    {t("Sign in ›")}
                                 </Link>
                             )}
 
@@ -75,7 +75,7 @@ function Header() {
                     </div>
 
                     <div className='hidden sm:flex items-center gap-2 shrink-0'>
-                        <label className='h-[50px] border border-transparent hover:border-white px-2 flex items-center gap-1 cursor-pointer' aria-label='Choose language'>
+                        <label className='h-[50px] shrink-0 border border-transparent hover:border-white px-2 flex items-center gap-1 cursor-pointer' aria-label='Choose language'>
                             <span aria-hidden='true'>{languages.find(item => item.code === language)?.flag}</span>
                             <select value={language} onChange={event => changeLanguage(event.target.value)} aria-label='Choose language' className='bg-transparent text-white cursor-pointer outline-none w-[100px]'>
                                 {languages.map(item => <option key={item.code} value={item.code} className='text-black'>{item.label}</option>)}
@@ -86,44 +86,44 @@ function Header() {
                             <>
                                 <Link
                                     to='/profile'
-                                    className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
-                                    <p>{t("Hello,")} {userName}</p>
-                                    <b>{t("Your profile")}</b>
+                                    className='h-[50px] w-[130px] shrink-0 border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left whitespace-nowrap'>
+                                    <p className='truncate'>{t("Hello,")} {userName}</p>
+                                    <b className='truncate'>{t("Your profile")}</b>
                                 </Link>
                                 <button
                                     type='button'
                                     onClick={handleSignOut}
-                                    className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left'>
-                                    <p className='text-[#CCCCCC]'>{t("Not you?")}</p>
-                                    <b>{t("Sign out")}</b>
+                                    className='h-[50px] w-[90px] shrink-0 border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer text-left whitespace-nowrap'>
+                                    <p className='text-[#CCCCCC] truncate'>{t("Not you?")}</p>
+                                    <b className='truncate'>{t("Sign out")}</b>
                                 </button>
                             </>
                         ) : (
                             <Link
                                 to='/login'
-                                className='h-[50px] border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer'>
-                                <p>{t("Hello, sign in")}</p>
-                                <b>{t("Accounts & Lists")}</b>
+                                className='h-[50px] w-[130px] shrink-0 border border-transparent hover:border-white px-2 flex flex-col justify-center cursor-pointer whitespace-nowrap'>
+                                <p className='truncate'>{t("Hello, sign in")}</p>
+                                <b className='truncate'>{t("Accounts & Lists")}</b>
                             </Link>
                         )}
 
                         <Link
                             to='/orders'
-                            className='hidden lg:flex h-[50px] border border-transparent hover:border-white px-2 flex-col justify-center cursor-pointer'>
-                            <p className='text-[#CCCCCC]'>{t("Returns")}</p>
-                            <b>{t("& Orders")}</b>
+                            className='hidden lg:flex h-[50px] w-[96px] shrink-0 border border-transparent hover:border-white px-2 flex-col justify-center cursor-pointer whitespace-nowrap'>
+                            <p className='text-[#CCCCCC] truncate'>{t("Returns")}</p>
+                            <b className='truncate'>{t("& Orders")}</b>
                         </Link>
 
                         <Link
                             to='/cart'
-                            className='h-[50px] border border-transparent hover:border-white px-2 flex items-center cursor-pointer'
+                            className='h-[50px] w-[84px] shrink-0 border border-transparent hover:border-white px-2 flex items-center cursor-pointer whitespace-nowrap'
                         >
                             <div className='flex flex-col justify-center items-center'>
                                 <span className='text-[#F08804] font-bold leading-none translate-y-1.5'>{cartCount}</span>
                                 <img className='w-[30px] h-[30px]' src="https://img.icons8.com/?size=100&id=ySRi3OLgoOJX&format=png&color=FFFFFF" alt=""/>
                             </div>
 
-                            <b className='ml-1'>{t("Cart")}</b>
+                            <b className='ml-1 truncate min-w-0'>{t("Cart")}</b>
                         </Link>
                     </div>
                 </div>
@@ -134,31 +134,31 @@ function Header() {
                     <NavMenu />
 
                     <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
+                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0 w-[92px] text-center whitespace-nowrap truncate'
                         to='/products'
                     >
-                        Products
+                        {t("Products")}
                     </Link>
 
                     <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
+                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0 w-[92px] text-center whitespace-nowrap truncate'
                         to='/movies'
                     >
-                        Pay Video
+                        {t("Pay Video")}
                     </Link>
 
                     <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
+                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0 w-[92px] text-center whitespace-nowrap truncate'
                         to='/orders'
                     >
-                        Orders
+                        {t("Orders")}
                     </Link>
 
                     <Link
-                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0'
+                        className='border border-transparent hover:border-white cursor-pointer py-2 px-1 shrink-0 w-[92px] text-center whitespace-nowrap truncate'
                         to='/sell'
                     >
-                        Sell
+                        {t("Sell")}
                     </Link>
                 </div>
             </div>

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { imagesApi } from '../../api/imagesApi.js';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 function emptyValues(fields) {
     return Object.fromEntries(fields.map((f) => [f.key, '']));
 }
 
 function ResourceForm({ schema, editingItem, categories, manufacturers = [], onCancelEdit, onSave, saving }) {
+    const {t} = useLanguage();
     const [values, setValues] = useState(() => emptyValues(schema.fields));
     const [uploading, setUploading] = useState(false);
     const [formError, setFormError] = useState('');
@@ -60,7 +62,7 @@ function ResourceForm({ schema, editingItem, categories, manufacturers = [], onC
                     key={field.key}
                     className={field.type === 'textarea' ? 'sm:col-span-2 flex flex-col gap-1' : 'flex flex-col gap-1'}
                 >
-                    <label className='text-[13px] font-bold text-[#0F1111]'>{field.label}</label>
+                    <label className='text-[13px] font-bold text-[#0F1111]'>{t(field.label)}</label>
 
                     {field.type === 'textarea' ? (
                         <textarea
@@ -77,7 +79,7 @@ function ResourceForm({ schema, editingItem, categories, manufacturers = [], onC
                             required={field.required}
                             className='w-full p-2 text-[14px] border border-[#a6a6a6] rounded-lg outline-none focus:ring-2 focus:ring-[#888C8D] bg-white'
                         >
-                            <option value=''>Select a category</option>
+                            <option value=''>{t("Select a category")}</option>
                             {categories.map((c) => (
                                 <option key={c.id} value={c.id}>
                                     {c.name} (#{c.id})
@@ -91,7 +93,7 @@ function ResourceForm({ schema, editingItem, categories, manufacturers = [], onC
                             required={field.required}
                             className='w-full p-2 text-[14px] border border-[#a6a6a6] rounded-lg outline-none focus:ring-2 focus:ring-[#888C8D] bg-white'
                         >
-                            <option value=''>Select a manufacturer</option>
+                            <option value=''>{t("Select a manufacturer")}</option>
                             {manufacturers.map((name) => (
                                 <option key={name} value={name}>
                                     {name}
@@ -126,9 +128,9 @@ function ResourceForm({ schema, editingItem, categories, manufacturers = [], onC
                                 disabled={uploading}
                                 className='text-[13px] text-[#0F1111] border border-[#a6a6a6] rounded-lg px-3 py-1.5 hover:bg-[#F0F2F2] disabled:opacity-60 cursor-pointer'
                             >
-                                Choose file
+                                {t("Choose file")}
                             </button>
-                            {uploading && <span className='text-[12px] text-[#565959]'>Uploading…</span>}
+                            {uploading && <span className='text-[12px] text-[#565959]'>{t("Uploading…")}</span>}
                             {values[field.key] && (
                                 <img
                                     src={imagesApi.resolveUrl(values[field.key])}
@@ -147,7 +149,7 @@ function ResourceForm({ schema, editingItem, categories, manufacturers = [], onC
                     disabled={saving || uploading}
                     className='bg-[#FFD814] hover:bg-[#F7CA00] disabled:opacity-60 text-[#0F1111] text-[14px] rounded-full px-6 py-2 cursor-pointer'
                 >
-                    {saving ? 'Saving…' : editingItem ? 'Save changes' : `Add ${schema.singular}`}
+                    {saving ? 'Saving…' : editingItem ? 'Save changes' : t(`Add ${schema.singular}`)}
                 </button>
 
                 {editingItem && (
@@ -156,7 +158,7 @@ function ResourceForm({ schema, editingItem, categories, manufacturers = [], onC
                         onClick={onCancelEdit}
                         className='text-[14px] text-[#565959] hover:text-[#0F1111] cursor-pointer'
                     >
-                        Cancel
+                        {t("Cancel")}
                     </button>
                 )}
 

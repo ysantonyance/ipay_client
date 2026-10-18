@@ -5,8 +5,10 @@ import { getErrorMessage } from '../api/api.js';
 import { getGoogleIdToken, getFirebaseErrorMessage, sendVerificationEmail } from '../api/firebaseAuth.js';
 import TwoFactorStep from '../components/basic/TwoFactorStep.jsx';
 import ForgotPasswordStep from '../components/basic/ForgotPasswordStep.jsx';
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 function Login() {
+    const {t} = useLanguage();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -102,8 +104,8 @@ function Login() {
             setNeedsVerification(false);
             setNotice(
                 alreadyVerified
-                    ? 'Your email is already verified. Try signing in again.'
-                    : `Verification email sent to ${formState.email.trim()}. Click the link in it, then sign in.`
+                    ? t('Your email is already verified. Try signing in again.')
+                    : t('Verification email sent to {email}. Click the link in it, then sign in.', { email: formState.email.trim() })
             );
         } catch (err) {
             setErrors({ server: getFirebaseErrorMessage(err, 'Could not send the verification email. Please try again.') });
@@ -171,17 +173,17 @@ function Login() {
                 />
             </Link>
             <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm mt-8'>
-                <h1 className='text-[28px] font-normal mb-4'>Sign in</h1>
+                <h1 className='text-[28px] font-normal mb-4'>{t("Sign in")}</h1>
 
                 {notice && (
                     <div className='p-2 mb-3 bg-[#f0f9f0] border border-[#2e7d32] rounded-lg text-[#1b5e20] text-[13px]'>
-                        {notice}
+                        {t(notice)}
                     </div>
                 )}
 
                 {errors.server && (
                     <div className='p-2 mb-3 bg-[#fdf2f2] border border-[#d32f2f] rounded-lg text-[#d32f2f] text-[13px]'>
-                        {errors.server}
+                        {t(errors.server)}
                     </div>
                 )}
 
@@ -192,14 +194,14 @@ function Login() {
                         disabled={busy}
                         className='w-full py-1.5 mb-3 bg-white hover:bg-[#F7FAFA] border border-[#D5D9D9] rounded-xl text-[13px] text-[#111] cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        {resending ? 'Sending...' : 'Resend verification email'}
+                        {resending ? t('Sending...') : t('Resend verification email')}
                     </button>
                 )}
 
                 <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
                     <div className='flex flex-col'>
                         <label htmlFor='email' className='text-[13px] font-bold mb-1'>
-                            Email address
+                            {t("Email address")}
                         </label>
                         <input
                             type='text'
@@ -215,7 +217,7 @@ function Login() {
                         />
                         {errors.email && (
                             <span className='text-[#d32f2f] text-[12px] mt-1'>
-                                {errors.email}
+                                {t(errors.email)}
                             </span>
                         )}
                     </div>
@@ -223,14 +225,14 @@ function Login() {
                     <div className='flex flex-col'>
                         <div className='flex justify-between items-center mb-1'>
                             <label htmlFor='password' className='text-[13px] font-bold'>
-                                Password
+                                {t("Password")}
                             </label>
                             <button
                                 type='button'
                                 onClick={() => setForgotOpen(true)}
                                 className='text-[12px] text-[#2162A1] hover:underline cursor-pointer'
                             >
-                                Forgot password?
+                                {t("Forgot password?")}
                             </button>
                         </div>
                         <input
@@ -247,7 +249,7 @@ function Login() {
                         />
                         {errors.password && (
                             <span className='text-[#d32f2f] text-[12px] mt-1'>
-                                {errors.password}
+                                {t(errors.password)}
                             </span>
                         )}
                     </div>
@@ -257,13 +259,13 @@ function Login() {
                         disabled={busy}
                         className='w-full py-1.5 mt-2 bg-[#FFD814] hover:bg-[#FFCE12] border border-[#FCD200] rounded-xl text-[13px] cursor-pointer font-medium active:bg-[#F0B800] disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        {loading ? 'Signing in...' : 'Sign in'}
+                        {loading ? t('Signing in...') : t('Sign in')}
                     </button>
                 </form>
 
                 <div className='flex items-center gap-2 my-3'>
                     <hr className='flex-1 border-[#D5D9D9]' />
-                    <span className='text-[12px] text-[#767676]'>or</span>
+                    <span className='text-[12px] text-[#767676]'>{t("or")}</span>
                     <hr className='flex-1 border-[#D5D9D9]' />
                 </div>
 
@@ -283,27 +285,27 @@ function Login() {
                 </button>
 
                 <p className='text-[12px] text-[#111] mt-4 leading-normal'>
-                    By continuing, you agree to Ipay's{' '}
+                    {t("By continuing, you agree to Ipay's")}{' '}
                     <a href='#' className='text-[#2162A1] hover:underline'>
-                        Conditions of Use
+                        {t("Conditions of Use")}
                     </a>{' '}
-                    and{' '}
+                    {t('and')}{' '}
                     <a href='#' className='text-[#2162A1] hover:underline'>
-                        Privacy Notice
+                        {t("Privacy Notice")}
                     </a>
                     .
                 </p>
 
                 <div className='mt-4 pt-4 border-t border-[#D5D9D9]'>
                     <a href='#' className='text-[13px] text-[#2162A1] hover:underline flex items-center gap-1'>
-                        ▸ Need help?
+                        {t("▸ Need help?")}
                     </a>
                 </div>
             </div>
 
             <div className='w-full max-w-[350px] flex items-center gap-2 mb-4'>
                 <hr className='flex-1 border-[#D5D9D9]' />
-                <span className='text-[12px] text-[#767676]'>New to Ipay?</span>
+                <span className='text-[12px] text-[#767676]'>{t("New to Ipay?")}</span>
                 <hr className='flex-1 border-[#D5D9D9]' />
             </div>
 
@@ -311,7 +313,7 @@ function Login() {
                 to='/register'
                 className='block w-full max-w-[350px] text-center py-1.5 bg-white hover:bg-[#F7FAFA] border border-[#D5D9D9] rounded-xl text-[13px] text-[#111] cursor-pointer shadow-sm mb-8'
             >
-                Create your Ipay account
+                {t("Create your Ipay account")}
             </Link>
         </div>
     );

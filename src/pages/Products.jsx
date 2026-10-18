@@ -7,6 +7,7 @@ import { manufacturersApi } from '../api/manufacturersApi.js';
 import Pagination from '../components/basic/Pagination.jsx';
 import {useCart} from "../context/CartContext.jsx";
 import RatingStars from '../components/shop/RatingStars.jsx';
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 const PAGE_SIZE = 12;
 
@@ -29,6 +30,7 @@ function formatPrice(value) {
 }
 
 function RatingFilter({ value, onChange }) {
+    const {t} = useLanguage();
     return (
         <div className='space-y-1'>
             {RATING_TIERS.map((stars) => (
@@ -42,7 +44,7 @@ function RatingFilter({ value, onChange }) {
                 >
                     <span className='text-[#FFA41C]'>{'★'.repeat(stars)}</span>
                     <span className='text-[#CCCCCC]'>{'★'.repeat(5 - stars)}</span>
-                    <span className='ml-1 text-[#007185]'>& Up</span>
+                    <span className='ml-1 text-[#007185]'>{t("& Up")}</span>
                 </button>
             ))}
         </div>
@@ -50,6 +52,7 @@ function RatingFilter({ value, onChange }) {
 }
 
 function ProductCard({ product }) {
+    const {t} = useLanguage();
     const finalPrice = getFinalPrice(product);
     const hasDiscount = finalPrice < product.price;
     const { add } = useCart();
@@ -66,7 +69,7 @@ function ProductCard({ product }) {
                     />
                 ) : (
                     <div className='w-full h-full bg-[#F3F3F3] flex items-center justify-center text-[#999999] text-[12px]'>
-                        No image
+                        {t("No image")}
                     </div>
                 )}
             </Link>
@@ -79,7 +82,7 @@ function ProductCard({ product }) {
             </Link>
 
             {product.manufacturer && (
-                <p className='text-[12px] text-[#565959] mt-1'>by {product.manufacturer}</p>
+                <p className='text-[12px] text-[#565959] mt-1'>{t('by {name}', { name: product.manufacturer })}</p>
             )}
 
             <div className='mt-1'>
@@ -108,7 +111,7 @@ function ProductCard({ product }) {
                     className='w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
                     onClick={() => add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice})}
                 >
-                    Add to Cart
+                    {t("Add to Cart")}
                 </button>
             </div>
         </div>
@@ -128,6 +131,7 @@ function SkeletonCard() {
 }
 
 function Products() {
+    const {t} = useLanguage();
     const { products, loading, error, reload } = useProducts();
     // The search term and category live in the URL (?q=...&category=...) so the header search bar can set them.
     const [searchParams, setSearchParams] = useSearchParams();
@@ -261,12 +265,12 @@ function Products() {
         <div className='bg-[#EAEDED] min-h-screen'>
             <div className='bg-white border-b border-[#DDDDDD] px-6 py-3 flex flex-wrap items-center justify-between gap-3'>
                 <div>
-                    <h1 className='text-[20px] font-bold text-[#0F1111]'>Products</h1>
+                    <h1 className='text-[20px] font-bold text-[#0F1111]'>{t("Products")}</h1>
                     {!loading && !error && (
                         <p className='text-[13px] text-[#565959]'>
-                            {visibleProducts.length} result{visibleProducts.length === 1 ? '' : 's'}
+                            {t('Results: {n}', { n: visibleProducts.length })}
                             {visibleProducts.length > PAGE_SIZE &&
-                                ` · showing ${pageStart + 1}–${Math.min(pageStart + PAGE_SIZE, visibleProducts.length)}`}
+                                ` · ${t('showing {a}–{b}', { a: pageStart + 1, b: Math.min(pageStart + PAGE_SIZE, visibleProducts.length) })}`}
                         </p>
                     )}
                 </div>
@@ -275,13 +279,13 @@ function Products() {
                     <input
                         className='w-[260px] h-[36px] bg-white border border-[#888C8C] rounded-lg px-3 focus:outline-none focus:border-[#E77600]'
                         type='text'
-                        placeholder='Filter products'
+                        placeholder={t('Filter products')}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
 
                     <label className='flex items-center gap-2 bg-[#F0F2F2] border border-[#D5D9D9] rounded-lg px-2 h-[36px] shadow-sm'>
-                        <span className='text-[#565959]'>Sort by:</span>
+                        <span className='text-[#565959]'>{t("Sort by:")}</span>
                         <select
                             className='bg-transparent focus:outline-none cursor-pointer'
                             value={sort}
@@ -289,7 +293,7 @@ function Products() {
                         >
                             {SORT_OPTIONS.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
-                                    {opt.label}
+                                    {t(opt.label)}
                                 </option>
                             ))}
                         </select>
@@ -300,26 +304,26 @@ function Products() {
             <div className='max-w-[1500px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 items-start'>
                 <aside className='bg-white border border-[#DDDDDD] rounded p-4 space-y-6'>
                     <div className='flex items-center justify-between'>
-                        <h2 className='text-[15px] font-bold text-[#0F1111]'>Filters</h2>
+                        <h2 className='text-[15px] font-bold text-[#0F1111]'>{t("Filters")}</h2>
                         {hasActiveFilters && (
                             <button
                                 type='button'
                                 onClick={clearFilters}
                                 className='text-[12px] text-[#007185] hover:underline cursor-pointer'
                             >
-                                Clear all
+                                {t("Clear all")}
                             </button>
                         )}
                     </div>
 
                     <div>
-                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>Category</h3>
+                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>{t("Category")}</h3>
                         <select
                             className='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 bg-white cursor-pointer'
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
                         >
-                            <option value=''>All categories</option>
+                            <option value=''>{t("All categories")}</option>
                             {categories.map((c) => (
                                 <option key={c.id} value={c.id}>
                                     {c.name}
@@ -329,13 +333,13 @@ function Products() {
                     </div>
 
                     <div>
-                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>Manufacturer</h3>
+                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>{t("Manufacturer")}</h3>
                         <select
                             className='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 bg-white cursor-pointer'
                             value={manufacturer}
                             onChange={(e) => setManufacturer(e.target.value)}
                         >
-                            <option value=''>All manufacturers</option>
+                            <option value=''>{t("All manufacturers")}</option>
                             {manufacturerOptions.map((m) => (
                                 <option key={m.id} value={m.name}>
                                     {m.name}
@@ -345,18 +349,18 @@ function Products() {
                     </div>
 
                     <div>
-                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>Customer Review</h3>
+                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>{t("Customer Review")}</h3>
                         <RatingFilter value={minRating} onChange={setMinRating} />
                     </div>
 
                     <div>
-                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>Price</h3>
+                        <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>{t("Price")}</h3>
                         <div className='flex items-center gap-2'>
                             <input
                                 type='number'
                                 min='0'
                                 step='0.01'
-                                placeholder='Min'
+                                placeholder={t('Min')}
                                 value={priceMin}
                                 onChange={(e) => setPriceMin(e.target.value)}
                                 className='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 outline-none focus:border-[#E77600]'
@@ -366,7 +370,7 @@ function Products() {
                                 type='number'
                                 min='0'
                                 step='0.01'
-                                placeholder='Max'
+                                placeholder={t('Max')}
                                 value={priceMax}
                                 onChange={(e) => setPriceMax(e.target.value)}
                                 className='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 outline-none focus:border-[#E77600]'
@@ -386,20 +390,20 @@ function Products() {
 
                     {!loading && error && (
                         <div className='bg-white border border-[#DDDDDD] rounded p-8 text-center'>
-                            <p className='text-[#B12704] mb-4'>{error}</p>
+                            <p className='text-[#B12704] mb-4'>{t(error)}</p>
                             <button
                                 type='button'
                                 className='bg-[#FFD814] hover:bg-[#F7CA00] text-[14px] rounded-full px-6 py-2 cursor-pointer'
                                 onClick={reload}
                             >
-                                Try again
+                                {t("Try again")}
                             </button>
                         </div>
                     )}
 
                     {!loading && !error && visibleProducts.length === 0 && (
                         <div className='bg-white border border-[#DDDDDD] rounded p-8 text-center text-[#565959]'>
-                            No products found.
+                            {t("No products found.")}
                         </div>
                     )}
 

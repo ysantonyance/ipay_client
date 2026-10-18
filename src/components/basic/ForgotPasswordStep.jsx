@@ -7,6 +7,7 @@ import {
     getIdTokenForNewPassword,
     sendPasswordResetLink,
 } from '../../api/firebaseAuth.js';
+import {useLanguage, translate} from "../../context/LanguageContext.jsx";
 
 // The address we are waiting on is remembered, so a page reload between "I sent the email" and
 // "I set the new password" does not lose the second step.
@@ -48,6 +49,7 @@ function Field({ id, label, type = 'text', value, onChange, autoComplete, disabl
  * onDone(message) is called when the password was changed; onCancel goes back to the sign-in form.
  */
 function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
+    const {t} = useLanguage();
     const [email, setEmail] = useState(initialEmail);
     const [pendingEmail, setPendingEmail] = useState(() => localStorage.getItem(PENDING_RESET_KEY) || '');
     const [newPassword, setNewPassword] = useState('');
@@ -71,7 +73,7 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
 
         const address = email.trim().toLowerCase();
         if (!address) {
-            setError('Enter your email address.');
+            setError(translate('Enter your email address.'));
             return;
         }
 
@@ -89,7 +91,7 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
             localStorage.setItem(PENDING_RESET_KEY, address);
             setPendingEmail(address);
         } catch (err) {
-            setError(describeError(err, 'We could not send the reset email. Please try again.'));
+            setError(describeError(err, translate('We could not send the reset email. Please try again.')));
         } finally {
             setBusy(false);
         }
@@ -101,11 +103,11 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
         setError('');
 
         if (!newPassword) {
-            setError('Enter the new password you set through the link.');
+            setError(translate('Enter the new password you set through the link.'));
             return;
         }
         if (newPassword !== confirmPassword) {
-            setError('The new passwords do not match.');
+            setError(translate('The new passwords do not match.'));
             return;
         }
 
@@ -115,9 +117,9 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
             await authApi.forgotPasswordConfirm({ idToken, newPassword });
 
             localStorage.removeItem(PENDING_RESET_KEY);
-            onDone('Your password was updated. Sign in with the new password.');
+            onDone(translate('Your password was updated. Sign in with the new password.'));
         } catch (err) {
-            setError(describeError(err, 'We could not confirm your new password. Please try again.'));
+            setError(describeError(err, translate('We could not confirm your new password. Please try again.')));
         } finally {
             setBusy(false);
         }
@@ -141,7 +143,7 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
             </Link>
 
             <div className='w-full max-w-[350px] p-6 border border-[#D5D9D9] rounded-xl mb-6 shadow-sm mt-8'>
-                <h1 className='text-[28px] font-normal mb-4'>Reset password</h1>
+                <h1 className='text-[28px] font-normal mb-4'>{t("Reset password")}</h1>
 
                 {error && (
                     <div
@@ -156,9 +158,7 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
                     {waiting ? (
                         <>
                             <p className='text-[13px]'>
-                                If <strong className='break-all'>{pendingEmail}</strong> has an account, we sent a
-                                reset link to it. Open it and choose your new password there, then come back and
-                                enter that same password below.
+                                {t("If")} <strong className='break-all'>{pendingEmail}</strong> {t("has an account, we sent a reset link to it. Open it and choose your new password there, then come back and enter that same password below.")}
                             </p>
                             <Field
                                 id='forgotNewPassword'
@@ -179,15 +179,13 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
                                 disabled={busy}
                             />
                             <p className='text-[12px] text-[#565959]'>
-                                Finish within 30 minutes of opening the link. At least 8 characters, with an
-                                uppercase letter, a lowercase letter, a digit and a special character.
+                                {t("Finish within 30 minutes of opening the link. At least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.")}
                             </p>
                         </>
                     ) : (
                         <>
                             <p className='text-[13px]'>
-                                Enter the email address of your account and we will send you a link to choose a new
-                                password.
+                                {t("Enter the email address of your account and we will send you a link to choose a new password.")}
                             </p>
                             <Field
                                 id='forgotEmail'
@@ -206,7 +204,7 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
                         disabled={busy}
                         className='w-full py-1.5 mt-2 bg-[#FFD814] hover:bg-[#FFCE12] border border-[#FCD200] rounded-xl text-[13px] cursor-pointer font-medium active:bg-[#F0B800] disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        {busy ? 'Please wait...' : waiting ? 'I have set the new password' : 'Send reset email'}
+                        {busy ? t('Please wait...') : waiting ? t('I have set the new password') : t('Send reset email')}
                     </button>
                 </form>
 
@@ -218,7 +216,7 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
                             disabled={busy}
                             className='text-[12px] text-[#2162A1] hover:underline cursor-pointer'
                         >
-                            Send a new link
+                            {t("Send a new link")}
                         </button>
                     )}
                     <button
@@ -227,7 +225,7 @@ function ForgotPasswordStep({ initialEmail = '', onDone, onCancel }) {
                         disabled={busy}
                         className='text-[12px] text-[#2162A1] hover:underline cursor-pointer'
                     >
-                        Back to sign in
+                        {t("Back to sign in")}
                     </button>
                 </div>
             </div>

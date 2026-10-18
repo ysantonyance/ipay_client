@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { productsApi } from '../../api/productsApi.js';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 // PUT /products/{id} expects the full UpdateAdminProductDto shape, so renaming
 // or clearing a manufacturer means re-sending each matching product wholesale
@@ -19,6 +20,7 @@ function buildPayload(product, manufacturer) {
 }
 
 function ManufacturersView({ products, onChanged }) {
+    const {t} = useLanguage();
     const [busyName, setBusyName] = useState(null);
     const [error, setError] = useState('');
 
@@ -74,13 +76,13 @@ function ManufacturersView({ products, onChanged }) {
             {error && <p className='text-[#B12704] text-[14px]'>{error}</p>}
 
             {manufacturers.length === 0 ? (
-                <p className='text-[#565959] text-[14px]'>No manufacturers set on any product yet.</p>
+                <p className='text-[#565959] text-[14px]'>{t("No manufacturers set on any product yet.")}</p>
             ) : (
                 <table className='w-full text-[13px] border-collapse'>
                     <thead>
                         <tr className='border-b border-[#DDDDDD] text-left text-[#565959]'>
-                            <th className='py-2 pr-3'>Manufacturer</th>
-                            <th className='py-2 pr-3'>Products</th>
+                            <th className='py-2 pr-3'>{t("Manufacturer")}</th>
+                            <th className='py-2 pr-3'>{t("Products")}</th>
                             <th className='py-2'></th>
                         </tr>
                     </thead>
@@ -104,7 +106,7 @@ function ManufacturersView({ products, onChanged }) {
                                         onClick={() => handleClear(name, count)}
                                         className='text-[#B12704] hover:underline cursor-pointer disabled:opacity-50'
                                     >
-                                        Clear
+                                        {t("Clear")}
                                     </button>
                                 </td>
                             </tr>

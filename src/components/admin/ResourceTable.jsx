@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { imagesApi } from '../../api/imagesApi.js';
 import Pagination from '../basic/Pagination.jsx';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const PAGE_SIZE = 30;
 
@@ -12,6 +13,7 @@ function formatCell(field, value) {
 }
 
 function ResourceTable({ schema, items, loading, error, categoryLookup, onEdit, onDelete, deletingId }) {
+    const {t} = useLanguage();
     const [page, setPage] = useState(1);
 
     // Switching resource tabs (Products -> Categories, etc.) starts back at page 1.
@@ -53,11 +55,11 @@ function ResourceTable({ schema, items, loading, error, categoryLookup, onEdit, 
                 <table className='w-full text-[13px] border-collapse'>
                     <thead>
                         <tr className='border-b border-[#DDDDDD] text-left text-[#565959]'>
-                            <th className='py-2 pr-3'>ID</th>
+                            <th className='py-2 pr-3'>{t("ID")}</th>
                             {imageField && <th className='py-2 pr-3'></th>}
                             {textFields.map((f) => (
                                 <th key={f.key} className='py-2 pr-3'>
-                                    {f.label}
+                                    {t(f.label)}
                                 </th>
                             ))}
                             <th className='py-2'></th>
@@ -96,7 +98,7 @@ function ResourceTable({ schema, items, loading, error, categoryLookup, onEdit, 
                                         onClick={() => onEdit(item)}
                                         className='text-[#007185] hover:underline mr-3 cursor-pointer'
                                     >
-                                        Edit
+                                        {t("Edit")}
                                     </button>
                                     <button
                                         type='button'

@@ -94,7 +94,7 @@ function NavMenu() {
                     }`}
                 >
                     <div className='bg-[#232F3E] text-white px-5 py-3 text-[18px] font-bold shrink-0'>
-                        Hello, {isLoggedIn ? (userName || 'there') : 'sign in'}
+                        {t("Hello,")} {isLoggedIn ? (userName || t("there")) : t("sign in")}
                     </div>
 
                     <nav className='flex-1 overflow-y-auto py-2'>
@@ -113,7 +113,7 @@ function NavMenu() {
 
                         <div className='border-t border-[#D5D9D9] mt-2 pt-2'>
                             <Link to='/products' onClick={pick} className={rowCls}>
-                                All products
+                                {t("All products")}
                             </Link>
                         </div>
                     </nav>
@@ -125,7 +125,7 @@ function NavMenu() {
                                 onClick={close}
                                 className='block w-full text-center bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 text-[14px]'
                             >
-                                Your profile
+                                {t("Your profile")}
                             </Link>
                         ) : (
                             <Link
@@ -133,7 +133,7 @@ function NavMenu() {
                                 onClick={close}
                                 className='block w-full text-center bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 text-[14px]'
                             >
-                                Sign in
+                                {t("Sign in")}
                             </Link>
                         )}
                     </div>

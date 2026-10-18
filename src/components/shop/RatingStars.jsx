@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProductRating } from '../../context/RatingsContext.jsx';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 /**
  * Star rating for one product, used on the product cards and the product page.
@@ -11,6 +12,7 @@ import { useProductRating } from '../../context/RatingsContext.jsx';
  *    this too; this is just what the UI offers.)
  */
 function RatingStars({ product, large = false }) {
+    const {t} = useLanguage();
     const { rating, ratingCount, myRating, registered, isOwn, canRate, rate } = useProductRating(product);
     const [hover, setHover] = useState(0);
     const [busy, setBusy] = useState(false);
@@ -22,8 +24,7 @@ function RatingStars({ product, large = false }) {
 
     const submit = async (stars) => {
         if (!interactive) return;
-        const label = `${stars} star${stars === 1 ? '' : 's'}`;
-        if (!window.confirm(`Rate this product ${label}? You can't change your rating afterwards.`)) return;
+        if (!window.confirm(t("Rate this product {n} of 5? You can't change your rating afterwards.", { n: stars }))) return;
 
         setBusy(true);
         setError('');
@@ -38,25 +39,25 @@ function RatingStars({ product, large = false }) {
             ? `${rating.toFixed(1)} (${ratingCount})`
             : rating > 0
                 ? rating.toFixed(1)
-                : 'No ratings yet';
+                : t('No ratings yet');
 
     let hint;
-    if (myRating) hint = `You rated this ${myRating} ★`;
-    else if (isOwn) hint = "You can't rate your own product";
+    if (myRating) hint = t('You rated this {n} ★', { n: myRating });
+    else if (isOwn) hint = t("You can't rate your own product");
     else if (!registered)
         hint = (
             <Link to='/login' className='text-[#007185] hover:underline'>
-                Sign in to rate
+                {t("Sign in to rate")}
             </Link>
         );
-    else hint = 'Click a star to rate';
+    else hint = t('Click a star to rate');
 
     return (
         <div>
             <div
                 className='flex items-center'
                 onMouseLeave={() => setHover(0)}
-                aria-label={`${rating.toFixed(1)} out of 5 stars`}
+                aria-label={t('{n} out of 5 stars', { n: rating.toFixed(1) })}
             >
                 {[1, 2, 3, 4, 5].map((n) => {
                     const color = n <= filled ? 'text-[#FFA41C]' : 'text-[#CCCCCC]';
@@ -68,7 +69,7 @@ function RatingStars({ product, large = false }) {
                             onFocus={() => setHover(n)}
                             onBlur={() => setHover(0)}
                             onClick={() => submit(n)}
-                            aria-label={`Rate ${n} star${n === 1 ? '' : 's'}`}
+                            aria-label={t('Rate {n} of 5', { n })}
                             className={`${starSize} ${color} leading-none px-[1px] cursor-pointer`}
                         >
                             ★
@@ -85,10 +86,10 @@ function RatingStars({ product, large = false }) {
                 <span className={`ml-2 text-[#007185] ${large ? 'text-[14px]' : 'text-[12px]'}`}>{summary}</span>
             </div>
 
-            <p className='text-[11px] text-[#565959] mt-0.5'>{busy ? 'Saving your rating…' : hint}</p>
+            <p className='text-[11px] text-[#565959] mt-0.5'>{busy ? t('Saving your rating…') : hint}</p>
             {error && (
                 <p role='alert' className='text-[11px] text-[#B12704] mt-0.5'>
-                    {error}
+                    {t(error)}
                 </p>
             )}
         </div>

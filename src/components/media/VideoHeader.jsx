@@ -2,6 +2,7 @@ import {Link, useSearchParams} from "react-router-dom";
 import {useEffect, useState, useRef} from "react";
 import {genresApi} from "../../api/genresApi.js";
 import SearchModal from "./SearchModal.jsx";
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const tabs = [
     {label: 'Home', to: '/movies', type: null},
@@ -10,6 +11,7 @@ const tabs = [
 ];
 
 function VideoHeader() {
+    const {t} = useLanguage();
     const [scrolled, setScrolled] = useState(false);
     const [params] = useSearchParams();
     const type = params.get('type');
@@ -49,7 +51,7 @@ function VideoHeader() {
                     className='order-1 block p-3 flex items-center'
                     to='/movies'
                 >
-                    <b style={{fontFamily: "'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive"}}>pay video</b>
+                    <b style={{fontFamily: "'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive"}}>{t("pay video")}</b>
                 </Link>
 
                 <div className='order-3 sm:order-2 w-full sm:w-auto sm:ml-2 sm:mr-auto flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
@@ -102,7 +104,7 @@ function VideoHeader() {
                             }`}>
                                 <div className='rounded-xl bg-[#141921]/80 backdrop-blur-xl p-3 shadow-xl border border-white/10'>
                                     <div className='text-xs font-bold text-gray-400 uppercase tracking-wider px-3 pb-2'>
-                                        Genres
+                                        {t("Genres")}
                                     </div>
                                     <div
                                         className='grid grid-flow-col auto-cols-[10rem] p-1'

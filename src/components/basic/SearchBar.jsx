@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSearch } from '../../context/SearchContext.jsx';
 import { productsApi } from '../../api/productsApi.js';
 import { categoriesApi } from '../../api/categoriesApi.js';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const MAX_PRODUCTS = 8;
 const MAX_CATEGORIES = 3;
@@ -39,6 +40,7 @@ function Highlighted({ text, query }) {
 }
 
 function SearchBar() {
+    const {t} = useLanguage();
     const { search, setSearch } = useSearch();
     const navigate = useNavigate();
     const boxRef = useRef(null);
@@ -149,7 +151,7 @@ function SearchBar() {
             <input
                 className='w-full h-[40px] bg-white rounded-xl text-black pl-3 pr-10 text-[14px] outline-none'
                 type='text'
-                placeholder='Search...'
+                placeholder={t('Search...')}
                 value={search}
                 autoComplete='off'
                 onFocus={() => { loadData(); setOpen(true); }}
@@ -159,7 +161,7 @@ function SearchBar() {
 
             <button
                 type='button'
-                aria-label='Search'
+                aria-label={t('Search')}
                 onClick={() => submitText(search)}
                 className='absolute right-0 top-0 h-[40px] w-10 flex items-center justify-center text-[#131921] cursor-pointer bg-[#FEBD69] hover:bg-[#F2A847] rounded-sm'
             >
@@ -186,7 +188,7 @@ function SearchBar() {
                                         <span className='truncate'>
                                             <Highlighted text={item.category.name || ''} query={q} />
                                         </span>
-                                        <span className='text-[12px] text-[#007185] shrink-0'>Category</span>
+                                        <span className='text-[12px] text-[#007185] shrink-0'>{t("Category")}</span>
                                     </>
                                 ) : (
                                     <>

@@ -3,8 +3,10 @@ import Carousel from "../components/shop/Carousel.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import {useSearch} from "../context/SearchContext.jsx";
 import TodaysDeal from "./TodaysDeal.jsx";
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 function Home() {
+    const {t} = useLanguage();
     const {setSearch: setSearchText} = useSearch();
     const navigate = useNavigate();
     // Every card on this page calls setSearch(term): fill the header search box and open /products filtered by that term.
@@ -49,7 +51,7 @@ function Home() {
                                     className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/51l7ZOsRo7L._AC_AIweblab1431263,T1_FMavif_SF1282.5,2052_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>Shop kitchen must-haves</h1>
+                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Shop kitchen must-haves")}</h1>
                         </div>
 
                         <div className='relative '>
@@ -60,7 +62,7 @@ function Home() {
                                     className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/61Ld77LHXQL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>Shop all things beauty</h1>
+                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Shop all things beauty")}</h1>
                         </div>
 
                         <div className='relative '>
@@ -71,7 +73,7 @@ function Home() {
                                     className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/61R7G24e7dL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>Start looking sharp</h1>
+                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Start looking sharp")}</h1>
                         </div>
 
                         <div className='relative '>
@@ -82,7 +84,7 @@ function Home() {
                                     className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/61upHi2gzaL._AC_AIweblab1431263,T1_FMavif_SF1282.5,2052_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>Toys for little ones</h1>
+                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Toys for little ones")}</h1>
                         </div>
 
                         <div className='relative '>
@@ -93,7 +95,7 @@ function Home() {
                                     className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/714RPvHc4LL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>Level up your PC here</h1>
+                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Level up your PC here")}</h1>
                         </div>
 
                         <div className='relative '>
@@ -104,7 +106,7 @@ function Home() {
                                     className='block rounded-2xl w-full aspect-[302/484] object-cover shadow-xl'
                                     src="https://m.media-amazon.com/images/I/613fnGHLTYL._AC_AIweblab1431263,T1_FMavif_SF1282.5,1981.5_QL54_.jpg?aicid=homepage-single-creative-card" alt=""/>
                             </a>
-                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>Discover books you can't put down</h1>
+                            <h1 className='font-bold text-[18px] sm:text-[20px] xl:text-[26px] absolute top-2 left-0 right-0 px-3 leading-tight pointer-events-none'>{t("Discover books you can't put down")}</h1>
                         </div>
 
                     </Carousel>
@@ -113,13 +115,13 @@ function Home() {
                 <div className='bg-white px-4 py-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6'>
 
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('electronics'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Plug in with our electronics
+                                {t("Plug in with our electronics")}
                             </a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
@@ -133,7 +135,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('headphones'); }}
-                                    href=''>Headphones</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Headphones")}</a>
                             </div>
 
                             <div>
@@ -146,8 +148,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('electronic tablets'); }}
-                                    href="">
-                                    Tablets
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Tablets")}
                                 </a>
                             </div>
 
@@ -161,7 +163,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('gaming equipment'); }}
-                                    href="">Gaming</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Gaming")}</a>
                             </div>
 
                             <div>
@@ -174,17 +176,17 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
-                                    href="">Speakers</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Speakers")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('computers'); }}
                                 href=''
                                 className='tracking-tight'>
-                                Score the top PCs & Accessories
+                                {t("Score the top PCs & Accessories")}
                             </a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
@@ -198,7 +200,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('desktop computers'); }}
-                                    href=''>Desktops</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Desktops")}</a>
                             </div>
 
                             <div>
@@ -211,8 +213,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
-                                    href="">
-                                    Laptops
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Laptops")}
                                 </a>
                             </div>
 
@@ -226,7 +228,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
-                                    href="">Hard Drives</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Hard Drives")}</a>
                             </div>
 
                             <div>
@@ -239,18 +241,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('computer accessories'); }}
-                                    href="">PC Accessories</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("PC Accessories")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('fitness'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Gear up to get fit</a>
+                                {t("Gear up to get fit")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -263,7 +265,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness clothing'); }}
-                                    href=''>Clothing</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Clothing")}</a>
                             </div>
 
                             <div>
@@ -276,8 +278,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness trackers'); }}
-                                    href="">
-                                    Trackers
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Trackers")}
                                 </a>
                             </div>
 
@@ -291,7 +293,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness equipment'); }}
-                                    href="">Equipment</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Equipment")}</a>
                             </div>
 
                             <div>
@@ -304,18 +306,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fitness'); }}
-                                    href="">Deals</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Deals")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('Trending Fashion'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Apparel under $25</a>
+                                {t("Apparel under $25")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -328,7 +330,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Women Clothing'); }}
-                                    href=''>Women</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women")}</a>
                             </div>
 
                             <div>
@@ -341,8 +343,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Men Clothing'); }}
-                                    href="">
-                                    Men
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Men")}
                                 </a>
                             </div>
 
@@ -356,7 +358,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Girls Fashion'); }}
-                                    href="">Girl</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Girl")}</a>
                             </div>
 
                             <div>
@@ -369,18 +371,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Boys Fashion'); }}
-                                    href="">Boys</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Boys")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Fantastic Finds for Home</a>
+                                {t("Fantastic Finds for Home")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -393,7 +395,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
-                                    href=''>Kitchen</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Kitchen")}</a>
                             </div>
 
                             <div>
@@ -406,8 +408,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                    href="">
-                                    Home Decor
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Home Decor")}
                                 </a>
                             </div>
 
@@ -421,7 +423,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
-                                    href="">Dining</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Dining")}</a>
                             </div>
 
                             <div>
@@ -434,18 +436,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('smart home'); }}
-                                    href="">Smart Home</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Smart Home")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Shine brighter with your fashion faves</a>
+                                {t("Shine brighter with your fashion faves")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -458,7 +460,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('jewelry'); }}
-                                    href=''>Jewelry</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Jewelry")}</a>
                             </div>
 
                             <div>
@@ -471,8 +473,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('handbags'); }}
-                                    href="">
-                                    Handbags
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Handbags")}
                                 </a>
                             </div>
 
@@ -486,7 +488,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
-                                    href="">Footwear</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Footwear")}</a>
                             </div>
 
                             <div>
@@ -499,18 +501,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
-                                    href="">Beauty</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Beauty")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Unveil your radiance</a>
+                                {t("Unveil your radiance")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -523,7 +525,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('hair care'); }}
-                                    href=''>Hair Care</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Hair Care")}</a>
                             </div>
 
                             <div>
@@ -536,8 +538,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fragrances'); }}
-                                    href="">
-                                    Fragrances
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Fragrances")}
                                 </a>
                             </div>
 
@@ -551,7 +553,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Make up'); }}
-                                    href="">Make-up</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Make-up")}</a>
                             </div>
 
                             <div>
@@ -564,18 +566,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('skin care'); }}
-                                    href="">Skin Care</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Skin Care")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('computers'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Level up your PC here</a>
+                                {t("Level up your PC here")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -588,7 +590,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('laptops'); }}
-                                    href=''>Laptops</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Laptops")}</a>
                             </div>
 
                             <div>
@@ -601,8 +603,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('desktop PCs'); }}
-                                    href="">
-                                    PCs
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("PCs")}
                                 </a>
                             </div>
 
@@ -616,7 +618,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('hard drives'); }}
-                                    href="">Hard Drives</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Hard Drives")}</a>
                             </div>
 
                             <div>
@@ -629,18 +631,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('computer monitors'); }}
-                                    href="">Monitors</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Monitors")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('shoes'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Fashion trends in Shoes</a>
+                                {t("Fashion trends in Shoes")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -653,7 +655,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Women Shoes'); }}
-                                    href=''>Women's</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women's")}</a>
                             </div>
 
                             <div>
@@ -666,8 +668,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Men Shoes'); }}
-                                    href="">
-                                    Men's
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Men's")}
                                 </a>
                             </div>
 
@@ -681,7 +683,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Kid Shoes'); }}
-                                    href="">Kid's</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Kid's")}</a>
                             </div>
 
                             <div>
@@ -694,18 +696,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Shoes'); }}
-                                    href="">All Shoes</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("All Shoes")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('kitchen'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Home harmony</a>
+                                {t("Home harmony")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -718,7 +720,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('kitchen essentials'); }}
-                                    href=''>Kitchen essentials</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Kitchen essentials")}</a>
                             </div>
 
                             <div>
@@ -731,8 +733,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('sofa'); }}
-                                    href="">
-                                    Home comfort
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Home comfort")}
                                 </a>
                             </div>
 
@@ -746,7 +748,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('home decor'); }}
-                                    href="">Decorate with elegance</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Decorate with elegance")}</a>
                             </div>
 
                             <div>
@@ -759,18 +761,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Home decor'); }}
-                                    href="">Light it Right</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Light it Right")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('Shoes'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Shoes under $50</a>
+                                {t("Shoes under $50")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -783,7 +785,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('women footwear'); }}
-                                    href=''>Women's</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women's")}</a>
                             </div>
 
                             <div>
@@ -796,8 +798,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('men footwear'); }}
-                                    href="">
-                                    Men's
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Men's")}
                                 </a>
                             </div>
 
@@ -811,7 +813,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('girls footwear'); }}
-                                    href="">Girl's</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Girl's")}</a>
                             </div>
 
                             <div>
@@ -824,18 +826,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('boys footwear'); }}
-                                    href="">Boy's</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Boy's")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={goPets}
                                 href=''
                                 className='tracking-tight'
                             >
-                                What you need for furry friends</a>
+                                {t("What you need for furry friends")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -848,7 +850,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={goPets}
-                                    href=''>Dogs</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Dogs")}</a>
                             </div>
 
                             <div>
@@ -861,8 +863,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={goPets}
-                                    href="">
-                                    Cats
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Cats")}
                                 </a>
                             </div>
 
@@ -876,7 +878,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={goPets}
-                                    href="">Small pets</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Small pets")}</a>
                             </div>
 
                             <div>
@@ -888,18 +890,18 @@ function Home() {
                                         src="https://m.media-amazon.com/images/I/4172LJHm7gL._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/products?category=pets' onClick={() => setSearchText('')}
-                                      href="">Deals</Link>
+                                      href="">{t("Deals")}</Link>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('games'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Video games & accessories</a>
+                                {t("Video games & accessories")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -912,7 +914,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('xbox controller'); }}
-                                    href=''>Xbox controllers</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Xbox controllers")}</a>
                             </div>
 
                             <div>
@@ -925,8 +927,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Nintendo'); }}
-                                    href="">
-                                    Nintendo
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Nintendo")}
                                 </a>
                             </div>
 
@@ -940,7 +942,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('vr headset'); }}
-                                    href="">VR headsets</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("VR headsets")}</a>
                             </div>
 
                             <div>
@@ -953,18 +955,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('PS5 accessories'); }}
-                                    href="">PS5 accessories</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("PS5 accessories")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('toys'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Have more fun with the family</a>
+                                {t("Have more fun with the family")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -977,7 +979,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('outdoor'); }}
-                                    href=''>Outdoor Play Sets</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Outdoor Play Sets")}</a>
                             </div>
 
                             <div>
@@ -990,8 +992,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('learning toys'); }}
-                                    href="">
-                                    Learning Toys
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Learning Toys")}
                                 </a>
                             </div>
 
@@ -1005,7 +1007,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('action figures'); }}
-                                    href="">Action Figures</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Action Figures")}</a>
                             </div>
 
                             <div>
@@ -1018,18 +1020,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('pretend play'); }}
-                                    href="">Pretend Play Toys</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Pretend Play Toys")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('home bedding'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Finds in Home</a>
+                                {t("Finds in Home")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1042,7 +1044,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Bedsheets'); }}
-                                    href=''>Bedsheets</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Bedsheets")}</a>
                             </div>
 
                             <div>
@@ -1055,8 +1057,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Pillows'); }}
-                                    href="">
-                                    Pillows
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Pillows")}
                                 </a>
                             </div>
 
@@ -1070,7 +1072,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('duvet covers'); }}
-                                    href="">Duvet Covers</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Duvet Covers")}</a>
                             </div>
 
                             <div>
@@ -1083,17 +1085,17 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Throws'); }}
-                                    href="">Throws</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Throws")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                   href=''
                                   className='tracking-tight'
                             >
-                                Deals on top categories</Link>
+                                {t("Deals on top categories")}</Link>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1104,7 +1106,7 @@ function Home() {
                                         src="https://m.media-amazon.com/images/I/41GibUzBeXL._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href=''>Books</Link>
+                                      href=''>{t("Books")}</Link>
                             </div>
 
                             <div>
@@ -1116,7 +1118,7 @@ function Home() {
                                 </Link>
                                 <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                       href="">
-                                    Fashion
+                                    {t("Fashion")}
                                 </Link>
                             </div>
 
@@ -1128,7 +1130,7 @@ function Home() {
                                         src="https://m.media-amazon.com/images/I/41qG08jk3ML._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">PC</Link>
+                                      href="">{t("PC")}</Link>
                             </div>
 
                             <div>
@@ -1139,18 +1141,18 @@ function Home() {
                                         src="https://m.media-amazon.com/images/I/41QFxGoW7IL._SR210,210_.jpg" alt=""/>
                                 </Link>
                                 <Link to='/products?rating=4' onClick={() => setSearchText('')}
-                                      href="">Beauty</Link>
+                                      href="">{t("Beauty")}</Link>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('home'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                New home arrivals under $50</a>
+                                {t("New home arrivals under $50")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1163,7 +1165,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('dining'); }}
-                                    href=''>Kitchen & dining</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Kitchen & dining")}</a>
                             </div>
 
                             <div>
@@ -1176,8 +1178,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('home improvement'); }}
-                                    href="">
-                                    Home improvement
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Home improvement")}
                                 </a>
                             </div>
 
@@ -1191,7 +1193,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('home decor '); }}
-                                    href="">Décor</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Décor")}</a>
                             </div>
 
                             <div>
@@ -1204,17 +1206,17 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('bath'); }}
-                                    href="">Bedding & bath</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Bedding & bath")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <Link to='/products?rating=4' onClick={() => setSearchText('')}
                                   href=''
                                   className='tracking-tight'
                             >
-                                Discover the latest arrivals</Link>
+                                {t("Discover the latest arrivals")}</Link>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1227,7 +1229,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={goTopRated}
-                                    href=''>Electronics</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Electronics")}</a>
                             </div>
 
                             <div>
@@ -1240,8 +1242,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={goTopRated}
-                                    href="">
-                                    Home
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Home")}
                                 </a>
                             </div>
 
@@ -1255,7 +1257,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={goTopRated}
-                                    href="">Beauty</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Beauty")}</a>
                             </div>
 
                             <div>
@@ -1268,18 +1270,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={goTopRated}
-                                    href="">Fashion</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Fashion")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('accessories'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Accessorize your life</a>
+                                {t("Accessorize your life")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1292,7 +1294,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('fashion accessories'); }}
-                                    href=''>Fashion accessories</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Fashion accessories")}</a>
                             </div>
 
                             <div>
@@ -1305,8 +1307,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('men accessories'); }}
-                                    href="">
-                                    Men's accessories
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Men's accessories")}
                                 </a>
                             </div>
 
@@ -1320,7 +1322,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('health'); }}
-                                    href="">Health and beauty</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Health and beauty")}</a>
                             </div>
 
                             <div>
@@ -1333,18 +1335,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Sports'); }}
-                                    href="">Sports</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Sports")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('apparel'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Step into style</a>
+                                {t("Step into style")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1357,7 +1359,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
-                                    href=''>Women's clothing</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Women's clothing")}</a>
                             </div>
 
                             <div>
@@ -1370,8 +1372,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Women shoes'); }}
-                                    href="">
-                                    Women's shoes
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Women's shoes")}
                                 </a>
                             </div>
 
@@ -1385,7 +1387,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Men apparel    '); }}
-                                    href="">Men's clothing</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Men's clothing")}</a>
                             </div>
 
                             <div>
@@ -1398,18 +1400,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Men shoes'); }}
-                                    href="">Men's shoes</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Men's shoes")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('beauty'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Level up your beauty routine</a>
+                                {t("Level up your beauty routine")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1422,7 +1424,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup'); }}
-                                    href=''>Makeup</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Makeup")}</a>
                             </div>
 
                             <div>
@@ -1435,8 +1437,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup brushes'); }}
-                                    href="">
-                                    Brushes
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Brushes")}
                                 </a>
                             </div>
 
@@ -1450,7 +1452,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup sponge'); }}
-                                    href="">Sponges</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Sponges")}</a>
                             </div>
 
                             <div>
@@ -1463,18 +1465,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('makeup mirror'); }}
-                                    href="">Mirrors</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Mirrors")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('home theater'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Handpicked home theater</a>
+                                {t("Handpicked home theater")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1487,7 +1489,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('television'); }}
-                                    href=''>Televisions</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Televisions")}</a>
                             </div>
 
                             <div>
@@ -1500,8 +1502,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('speakers'); }}
-                                    href="">
-                                    Speakers
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Speakers")}
                                 </a>
                             </div>
 
@@ -1515,7 +1517,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('soundbars'); }}
-                                    href="">Soundbars</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Soundbars")}</a>
                             </div>
 
                             <div>
@@ -1528,18 +1530,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('projectors'); }}
-                                    href="">Projectors</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Projectors")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch(''); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Curate your space</a>
+                                {t("Curate your space")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1552,7 +1554,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('Candles'); }}
-                                    href=''>Candles</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("Candles")}</a>
                             </div>
 
                             <div>
@@ -1565,8 +1567,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('stylish pillows'); }}
-                                    href="">
-                                    Stylish pillows
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("Stylish pillows")}
                                 </a>
                             </div>
 
@@ -1580,7 +1582,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('indoor gardening'); }}
-                                    href="">Indoor gardening</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Indoor gardening")}</a>
                             </div>
 
                             <div>
@@ -1593,18 +1595,18 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('storage'); }}
-                                    href="">Storage organization</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("Storage organization")}</a>
                             </div>
                         </div>
                     </div>
                     <div className='relative rounded-xl border border-[#D5D9D9] p-3 space-y-2'>
-                        <div className='flex justify-between font-bold text-[1.5rem]'>
+                        <div className='flex justify-between font-bold text-[1.5rem] leading-8 min-h-16'>
                             <a
                                 onClick={(e) => { e.preventDefault(); setSearch('apparel'); }}
                                 href=''
                                 className='tracking-tight'
                             >
-                                Look your best this season</a>
+                                {t("Look your best this season")}</a>
                         </div>
                         <div className='grid grid-cols-2 gap-x-3 gap-y-10'>
                             <div>
@@ -1617,7 +1619,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('women apparel'); }}
-                                    href=''>For Her</a>
+                                    href='' className='block leading-tight min-h-[2.5rem]'>{t("For Her")}</a>
                             </div>
 
                             <div>
@@ -1630,8 +1632,8 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('men apparel'); }}
-                                    href="">
-                                    For Him
+                                    href="" className='block leading-tight min-h-[2.5rem]'>
+                                    {t("For Him")}
                                 </a>
                             </div>
 
@@ -1645,7 +1647,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('teen apparel'); }}
-                                    href="">For Teens</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("For Teens")}</a>
                             </div>
 
                             <div>
@@ -1658,7 +1660,7 @@ function Home() {
                                 </a>
                                 <a
                                     onClick={(e) => { e.preventDefault(); setSearch('kids apparel'); }}
-                                    href="">For Kids</a>
+                                    href="" className='block leading-tight min-h-[2.5rem]'>{t("For Kids")}</a>
                             </div>
                         </div>
                     </div>

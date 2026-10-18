@@ -1,8 +1,10 @@
 import {Link, useSearchParams} from "react-router-dom";
 import VideoHeader from "../components/media/VideoHeader.jsx";
 import useVideos from "../hooks/useFilms.js";
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 function VideoCategories() {
+    const {t} = useLanguage();
     const {genres} = useVideos();
     const [searchParams] = useSearchParams();
     const type = searchParams.get('type');
@@ -12,10 +14,10 @@ function VideoCategories() {
         <div className='bg-[#00050D] text-white min-h-screen pb-20'>
             <VideoHeader/>
             <div className='mx-4 sm:mx-13 mt-6'>
-                <h1 className='text-2xl sm:text-3xl font-bold mb-6'>Categories</h1>
+                <h1 className='text-2xl sm:text-3xl font-bold mb-6'>{t("Categories")}</h1>
 
                 {genres.length === 0 ? (
-                    <p className='text-gray-400'>Loading categories...</p>
+                    <p className='text-gray-400'>{t("Loading categories...")}</p>
                 ) : (
                     <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4'>
                         {genres.map(g => (

@@ -3,6 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {useCart} from "../context/CartContext.jsx";
 import {useAuth} from "../context/AuthContext.jsx";
 import {ordersApi} from "../api/ordersApi.js";
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 const FREE_SHIPPING_OVER = 50;   // placeholder fee rules, change to your own
 const SHIPPING_FEE = 5.99;
@@ -11,7 +12,10 @@ const TAX_RATE = 0.1;
 const money = v => `$${Number(v).toFixed(2)}`;
 const inputCls = 'w-full border border-gray-400 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#E77600]';
 
-const Err = ({msg}) => msg ? <span className='text-[#D32F2F] text-xs mt-1 block'>{msg}</span> : null;
+const Err = ({msg}) => {
+    const {t} = useLanguage();
+    return msg ? <span className='text-[#D32F2F] text-xs mt-1 block'>{t(msg)}</span> : null;
+};
 
 const nameRe = /^[\p{L}\s'.-]+$/u;
 
@@ -71,6 +75,7 @@ function validateCard(f) {
 }
 
 function Modal({title, onClose, className = 'max-w-md', children}) {
+    const {t} = useLanguage();
     useEffect(() => {
         const prev = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
@@ -82,7 +87,7 @@ function Modal({title, onClose, className = 'max-w-md', children}) {
             <div className='flex min-h-full items-center justify-center p-4' onClick={onClose}>
                 <div className={`bg-white rounded p-6 w-full ${className}`} onClick={e => e.stopPropagation()}>
                     <div className='flex justify-between items-center mb-4'>
-                        <h2 className='text-lg font-bold'>{title}</h2>
+                        <h2 className='text-lg font-bold'>{t(title)}</h2>
                         <button type='button' onClick={onClose} className='text-xl cursor-pointer'>×</button>
                     </div>
                     {children}
@@ -93,6 +98,7 @@ function Modal({title, onClose, className = 'max-w-md', children}) {
 }
 
 function AddressModal({initial, onSave, onClose}) {
+    const {t} = useLanguage();
     const [f, setF] = useState(initial ?? {
         country: '', fullName: '', streetNumber: '', streetName: '',
         city: '', state: '', zip: '', phone: ''
@@ -115,64 +121,65 @@ function AddressModal({initial, onSave, onClose}) {
         <Modal title='Add a new address' onClose={onClose} className='max-w-[610px] min-h-[700px]'>
             <form noValidate onSubmit={submit} className='space-y-3'>
                 <div>
-                    <label className={label}>Country/Region</label>
+                    <label className={label}>{t("Country/Region")}</label>
                     <input className={inputCls} value={f.country} onChange={set('country')} />
                     <Err msg={errors.country} />
                 </div>
 
                 <div>
-                    <label className={label}>Full name (First and Last name)</label>
+                    <label className={label}>{t("Full name (First and Last name)")}</label>
                     <input className={inputCls} value={f.fullName} onChange={set('fullName')} />
                     <Err msg={errors.fullName} />
                 </div>
 
                 <div>
-                    <label className={label}>Street address</label>
+                    <label className={label}>{t("Street address")}</label>
                     <div className='space-y-2'>
                         <div>
-                            <input className={inputCls} placeholder='Street number' value={f.streetNumber} onChange={set('streetNumber')} />
+                            <input className={inputCls} placeholder={t('Street number')} value={f.streetNumber} onChange={set('streetNumber')} />
                             <Err msg={errors.streetNumber} />
                         </div>
                         <div>
-                            <input className={inputCls} placeholder='Street name' value={f.streetName} onChange={set('streetName')} />
+                            <input className={inputCls} placeholder={t('Street name')} value={f.streetName} onChange={set('streetName')} />
                             <Err msg={errors.streetName} />
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label className={label}>City</label>
+                    <label className={label}>{t("City")}</label>
                     <input className={inputCls} value={f.city} onChange={set('city')} />
                     <Err msg={errors.city} />
                 </div>
 
                 <div className='flex gap-3'>
                     <div className='flex-1'>
-                        <label className={label}>State/Province/Region</label>
+                        <label className={label}>{t("State/Province/Region")}</label>
                         <input className={inputCls} value={f.state} onChange={set('state')} />
                         <Err msg={errors.state} />
                     </div>
                     <div className='flex-1'>
-                        <label className={label}>Zip Code</label>
+                        <label className={label}>{t("Zip Code")}</label>
                         <input className={inputCls} value={f.zip} onChange={set('zip')} />
                         <Err msg={errors.zip} />
                     </div>
                 </div>
 
                 <div>
-                    <label className={label}>Phone number</label>
+                    <label className={label}>{t("Phone number")}</label>
                     <input type='tel' className={inputCls} value={f.phone} onChange={set('phone')} />
                     <Err msg={errors.phone} />
-                    <p className='text-xs text-gray-500 mt-1'>May be used to assist delivery</p>
+                    <p className='text-xs text-gray-500 mt-1'>{t("May be used to assist delivery")}</p>
                 </div>
 
-                <button className='w-full bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 cursor-pointer'>Use this address</button>
+                <button className='w-full bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 cursor-pointer'>{t("Use this address")}</button>
             </form>
         </Modal>
     );
 }
 
 function CardModal({onSave, onClose}) {
+    const {t} = useLanguage();
     const [f, setF] = useState({name: '', number: '', expiry: '', cvv: ''});
     const [errors, setErrors] = useState({});
     const text = k => e => {
@@ -195,17 +202,17 @@ function CardModal({onSave, onClose}) {
         <Modal title='Add a card' onClose={onClose}>
             <form noValidate onSubmit={submit} className='space-y-3'>
                 <div>
-                    <input className={inputCls} placeholder='Name on card' value={f.name} onChange={text('name')} />
+                    <input className={inputCls} placeholder={t('Name on card')} value={f.name} onChange={text('name')} />
                     <Err msg={errors.name} />
                 </div>
                 <div>
-                    <input className={inputCls} placeholder='Card number' inputMode='numeric' maxLength={16}
+                    <input className={inputCls} placeholder={t('Card number')} inputMode='numeric' maxLength={16}
                            value={f.number} onChange={digits('number')} />
                     <Err msg={errors.number} />
                 </div>
                 <div className='flex gap-3'>
                     <div className='flex-1'>
-                        <input className={inputCls} placeholder='MM/YY' maxLength={5}
+                        <input className={inputCls} placeholder={t('MM/YY')} maxLength={5}
                                value={f.expiry} onChange={text('expiry')} />
                         <Err msg={errors.expiry} />
                     </div>
@@ -215,13 +222,14 @@ function CardModal({onSave, onClose}) {
                         <Err msg={errors.cvv} />
                     </div>
                 </div>
-                <button className='w-full bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 cursor-pointer'>Add your card</button>
+                <button className='w-full bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 cursor-pointer'>{t("Add your card")}</button>
             </form>
         </Modal>
     );
 }
 
 function OrderProcess() {
+    const {t} = useLanguage();
     const {items, total, clear} = useCart();
     const {isLoggedIn} = useAuth();
     const navigate = useNavigate();
@@ -240,14 +248,14 @@ function OrderProcess() {
         return (
             <div className='bg-[#EAEDED] lg:px-20 p-10'>
                 <div className='bg-white rounded p-10 text-center'>
-                    <h1 className='text-2xl font-bold text-[#067D62] mb-2'>Order placed, thank you!</h1>
-                    <p className='text-sm mb-6'>Your order was successful.</p>
+                    <h1 className='text-2xl font-bold text-[#067D62] mb-2'>{t("Order placed, thank you!")}</h1>
+                    <p className='text-sm mb-6'>{t("Your order was successful.")}</p>
                     <div className='flex flex-wrap justify-center gap-3'>
                         <Link to='/orders' className='bg-[#FFD814] hover:bg-[#F7CA00] rounded-full px-6 py-2 text-sm'>
-                            View your orders
+                            {t("View your orders")}
                         </Link>
                         <Link to='/products' className='border border-[#898D8E] hover:bg-[#F6FAFB] rounded-full px-6 py-2 text-sm'>
-                            Continue shopping
+                            {t("Continue shopping")}
                         </Link>
                     </div>
                 </div>
@@ -266,12 +274,12 @@ function OrderProcess() {
                         />
                         <div>
                             <div>
-                                <h1 className='text-[26px] font-bold'>Your IPAY Cart is empty</h1>
+                                <h1 className='text-[26px] font-bold'>{t("Your IPAY Cart is empty")}</h1>
                                 <Link
                                     className='text-[#20639F] hover:underline hover:text-[#083251]'
                                     to='/products'
                                 >
-                                    Shop today's deals
+                                    {t("Shop today's deals")}
                                 </Link>
                             </div>
                             {!isLoggedIn && (
@@ -280,13 +288,13 @@ function OrderProcess() {
                                         className='block bg-[#FFD814] hover:bg-[#FFCE12] rounded-2xl px-2 py-1'
                                         to='/login'
                                     >
-                                        Sign in to your account
+                                        {t("Sign in to your account")}
                                     </Link>
                                     <Link
                                         className='block border border-[#898D8E] hover:bg-[#F6FAFB] rounded-2xl px-2 py-1'
                                         to='/register'
                                     >
-                                        Sign up now
+                                        {t("Sign up now")}
                                     </Link>
                                 </div>
                             )}
@@ -323,7 +331,7 @@ function OrderProcess() {
             <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 items-start p-10'>
                 <div className='lg:col-span-3 space-y-6'>
                     <div className='bg-white p-5 rounded'>
-                        <h2 className='text-xl font-bold mb-3'>1. Select a delivery address</h2>
+                        <h2 className='text-xl font-bold mb-3'>{t("1. Select a delivery address")}</h2>
                         {address ? (
                             <div className='flex justify-between items-start text-sm'>
                                 <div>
@@ -331,28 +339,28 @@ function OrderProcess() {
                                     <p>{address.streetName} {address.city}, {address.state} {address.zip} {address.country}</p>
                                     <p>{address.phone}</p>
                                 </div>
-                                <button onClick={() => setModal('address')} className='text-[#007185] hover:underline cursor-pointer'>Change</button>
+                                <button onClick={() => setModal('address')} className='text-[#007185] hover:underline cursor-pointer'>{t("Change")}</button>
                             </div>
                         ) : (
                             <button onClick={() => setModal('address')}
                                     className='text-[#1F649F] hover:underline hover:text-[#0D3253] px-4 py-2 text-sm cursor-pointer'>
-                                Add a new address
+                                {t("Add a new address")}
                             </button>
                         )}
                     </div>
 
                     <div className={`bg-white p-5 rounded ${address ? '' : 'opacity-50 pointer-events-none'}`}>
-                        <h2 className='text-xl font-bold mb-3'>2. Payment method</h2>
+                        <h2 className='text-xl font-bold mb-3'>{t("2. Payment method")}</h2>
                         {!address ? (
-                            <p className='text-sm text-gray-500'>Add a delivery address first.</p>
+                            <p className='text-sm text-gray-500'>{t("Add a delivery address first.")}</p>
                         ) : card ? (
                             <div className='flex justify-between items-center text-sm'>
-                                <p>Card ending in <b>{card.number.slice(-4)}</b> · {card.name}</p>
-                                <button onClick={() => setModal('card')} className='text-[#007185] hover:underline cursor-pointer'>Change</button>
+                                <p>{t("Card ending in")} <b>{card.number.slice(-4)}</b> · {card.name}</p>
+                                <button onClick={() => setModal('card')} className='text-[#007185] hover:underline cursor-pointer'>{t("Change")}</button>
                             </div>
                         ) : (
                             <button onClick={() => setModal('card')} className='border border-gray-400 rounded-lg px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer'>
-                                + Add a card
+                                {t("+ Add a card")}
                             </button>
                         )}
                     </div>
@@ -364,17 +372,17 @@ function OrderProcess() {
                         onClick={placeOrder}
                         className='w-full bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        Use this payment method
+                        {t("Use this payment method")}
                     </button>
 
-                    <h3 className='font-bold mt-4 mb-2'>Order Summary</h3>
+                    <h3 className='font-bold mt-4 mb-2'>{t("Order Summary")}</h3>
                     <div className='text-sm space-y-1'>
-                        <div className='flex justify-between'><span>Items ({count}):</span><span>{money(total)}</span></div>
-                        <div className='flex justify-between'><span>Shipping:</span><span>{shipping ? money(shipping) : 'FREE'}</span></div>
-                        <div className='flex justify-between'><span>Estimated tax:</span><span>{money(tax)}</span></div>
+                        <div className='flex justify-between'><span>{t('Items ({count}):', { count })}</span><span>{money(total)}</span></div>
+                        <div className='flex justify-between'><span>{t("Shipping:")}</span><span>{shipping ? money(shipping) : t('FREE')}</span></div>
+                        <div className='flex justify-between'><span>{t("Estimated tax:")}</span><span>{money(tax)}</span></div>
                     </div>
                     <div className='flex justify-between font-bold text-lg text-[#B12704] border-t border-gray-300 mt-3 pt-3'>
-                        <span>Order total:</span><span>{money(orderTotal)}</span>
+                        <span>{t("Order total:")}</span><span>{money(orderTotal)}</span>
                     </div>
                 </div>
             </div>

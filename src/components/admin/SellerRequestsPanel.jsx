@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sellerRequestsApi } from '../../api/sellerRequestsApi.js';
 import { getErrorMessage } from '../../api/api.js';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const STATUS_STYLES = {
     Pending: 'bg-[#FFF3E0] text-[#8A4B00]',
@@ -21,6 +22,7 @@ function formatDate(value) {
  * Admins and moderators can approve (the customer becomes a seller and has to sign in again) or reject.
  */
 function SellerRequestsPanel() {
+    const {t} = useLanguage();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState('');
@@ -81,21 +83,21 @@ function SellerRequestsPanel() {
         <section className='bg-white border border-[#DDDDDD] rounded p-6'>
             <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
                 <div>
-                    <h2 className='text-[18px] font-bold text-[#0F1111]'>Seller requests</h2>
+                    <h2 className='text-[18px] font-bold text-[#0F1111]'>{t("Seller requests")}</h2>
                     <p className='text-[13px] text-[#565959]'>
                         Customers who asked to start selling. {pendingCount} waiting for review.
                     </p>
                 </div>
 
                 <label className='flex items-center gap-2 text-[13px] text-[#565959]'>
-                    Show
+                    {t("Show")}
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         className='border border-[#a6a6a6] rounded px-2 py-1 bg-white text-[#0F1111] cursor-pointer'
                     >
-                        <option value='Pending'>Pending only</option>
-                        <option value='All'>All requests</option>
+                        <option value='Pending'>{t("Pending only")}</option>
+                        <option value='All'>{t("All requests")}</option>
                     </select>
                 </label>
             </div>
@@ -113,13 +115,13 @@ function SellerRequestsPanel() {
                 </div>
             )}
 
-            {loading && <p className='text-[13px] text-[#565959]'>Loading requests…</p>}
+            {loading && <p className='text-[13px] text-[#565959]'>{t("Loading requests…")}</p>}
 
             {loadError && !loading && (
                 <div className='text-[13px] text-[#C40000]'>
                     <p role='alert'>{loadError}</p>
                     <button type='button' onClick={load} className={`${buttonClass} mt-2`}>
-                        Try again
+                        {t("Try again")}
                     </button>
                 </div>
             )}
@@ -135,11 +137,11 @@ function SellerRequestsPanel() {
                     <table className='w-full text-[13px] text-left'>
                         <thead>
                             <tr className='border-b border-[#DDDDDD] text-[#565959]'>
-                                <th className='py-2 pr-4 font-medium'>Customer</th>
-                                <th className='py-2 pr-4 font-medium'>Message</th>
-                                <th className='py-2 pr-4 font-medium'>Requested</th>
-                                <th className='py-2 pr-4 font-medium'>Status</th>
-                                <th className='py-2 font-medium'>Actions</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Customer")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Message")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Requested")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Status")}</th>
+                                <th className='py-2 font-medium'>{t("Actions")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -181,7 +183,7 @@ function SellerRequestsPanel() {
                                                         onClick={() => review(r, 'reject')}
                                                         className={`${buttonClass} text-[#C40000]`}
                                                     >
-                                                        Reject
+                                                        {t("Reject")}
                                                     </button>
                                                 </div>
                                             ) : (

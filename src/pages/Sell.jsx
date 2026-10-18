@@ -9,6 +9,7 @@ import { getErrorMessage } from '../api/api.js';
 import ResourceForm from '../components/admin/ResourceForm.jsx';
 import ResourceTable from '../components/admin/ResourceTable.jsx';
 import useAdminResource from '../hooks/useAdminResource.js';
+import {useLanguage, translate} from "../context/LanguageContext.jsx";
 
 // The seller's own catalogue, in the same schema shape the admin page uses so the same form and table work.
 // (Declared once at module level: useAdminResource reloads whenever the schema object changes.)
@@ -38,8 +39,8 @@ function PageShell({ title, subtitle, children }) {
     return (
         <div className='bg-[#EAEDED] min-h-[70vh]'>
             <div className='bg-white border-b border-[#DDDDDD] px-6 py-3'>
-                <h1 className='text-[20px] font-bold text-[#0F1111]'>{title}</h1>
-                {subtitle && <p className='text-[13px] text-[#565959]'>{subtitle}</p>}
+                <h1 className='text-[20px] font-bold text-[#0F1111]'>{translate(title)}</h1>
+                {subtitle && <p className='text-[13px] text-[#565959]'>{translate(subtitle)}</p>}
             </div>
             <div className='max-w-[1100px] mx-auto p-6 space-y-6'>{children}</div>
         </div>
@@ -49,7 +50,7 @@ function PageShell({ title, subtitle, children }) {
 function Card({ title, children }) {
     return (
         <section className='bg-white border border-[#DDDDDD] rounded p-6'>
-            {title && <h2 className='text-[18px] font-bold text-[#0F1111] mb-4'>{title}</h2>}
+            {title && <h2 className='text-[18px] font-bold text-[#0F1111] mb-4'>{translate(title)}</h2>}
             {children}
         </section>
     );
@@ -61,21 +62,22 @@ const primaryButton =
 /* ---------- logged out / guests ---------- */
 
 function SignInPrompt() {
+    const {t} = useLanguage();
     return (
         <PageShell title='Sell on IPAY' subtitle='Reach customers with your own products'>
             <Card>
                 <p className='text-[14px] text-[#0F1111] mb-4'>
-                    Create an account (or sign in) to ask for a seller account.
+                    {t("Create an account (or sign in) to ask for a seller account.")}
                 </p>
                 <div className='flex flex-wrap gap-3'>
                     <Link to='/login' className={primaryButton}>
-                        Sign in
+                        {t("Sign in")}
                     </Link>
                     <Link
                         to='/register'
                         className='text-[14px] text-[#0F1111] border border-[#a6a6a6] rounded-full px-6 py-2 hover:bg-[#F0F2F2]'
                     >
-                        Create account
+                        {t("Create account")}
                     </Link>
                 </div>
             </Card>
@@ -92,6 +94,7 @@ const REQUEST_STATUS_STYLES = {
 };
 
 function BecomeSeller() {
+    const {t} = useLanguage();
     const [request, setRequest] = useState(undefined); // undefined = loading, null = never asked
     const [loadError, setLoadError] = useState('');
     const [message, setMessage] = useState('');
@@ -134,7 +137,7 @@ function BecomeSeller() {
 
     return (
         <PageShell title='Sell on IPAY' subtitle='Become a seller to list and manage your own products'>
-            {request === undefined && <p className='text-[14px] text-[#565959]'>Loading…</p>}
+            {request === undefined && <p className='text-[14px] text-[#565959]'>{t("Loading…")}</p>}
 
             {loadError && (
                 <p role='alert' className='text-[13px] text-[#C40000]'>
@@ -150,10 +153,10 @@ function BecomeSeller() {
                                 REQUEST_STATUS_STYLES[request.status] || REQUEST_STATUS_STYLES.Pending
                             }`}
                         >
-                            {request.status}
+                            {translate(request.status)}
                         </span>
                         <span className='text-[13px] text-[#565959]'>
-                            Sent {new Date(request.createdAt).toLocaleString()}
+                            {translate('Sent {date}', { date: new Date(request.createdAt).toLocaleString() })}
                         </span>
                     </div>
 
@@ -165,11 +168,11 @@ function BecomeSeller() {
 
                     <p className='text-[14px] text-[#0F1111] mt-3'>
                         {request.status === 'Pending' &&
-                            'An admin or moderator will review your request. Check back here to see the result.'}
+                            translate('An admin or moderator will review your request. Check back here to see the result.')}
                         {request.status === 'Approved' &&
-                            'Your request was approved! Sign in again and this page will turn into your seller dashboard.'}
+                            translate('Your request was approved! Sign in again and this page will turn into your seller dashboard.')}
                         {request.status === 'Rejected' &&
-                            'Your request was rejected. You can send a new one below.'}
+                            translate('Your request was rejected. You can send a new one below.')}
                     </p>
                 </Card>
             )}
@@ -179,7 +182,7 @@ function BecomeSeller() {
                     <form onSubmit={submit} className='space-y-4'>
                         <div className='flex flex-col gap-1'>
                             <label htmlFor='seller-message' className='text-[13px] font-bold text-[#0F1111]'>
-                                What would you like to sell? <span className='font-normal text-[#565959]'>(optional)</span>
+                                {t("What would you like to sell?")} <span className='font-normal text-[#565959]'>{t("(optional)")}</span>
                             </label>
                             <textarea
                                 id='seller-message'
@@ -254,7 +257,7 @@ function SellerWorkspace() {
     };
 
     const handleDelete = async (item) => {
-        if (!window.confirm(`Delete "${item.name}" (#${item.id})? This can't be undone.`)) return;
+        if (!window.confirm(translate('Delete "{name}" (#{id})? This can\'t be undone.', { name: item.name, id: item.id }))) return;
         setDeletingId(item.id);
         setDeleteError('');
         const result = await remove(item.id);
@@ -265,7 +268,7 @@ function SellerWorkspace() {
 
     return (
         <PageShell title='Your products' subtitle='List new products and edit or delete the ones you created'>
-            <Card title={editingItem ? `Edit ${editingItem.name}` : 'Add a product'}>
+            <Card title={editingItem ? translate('Edit {name}', { name: editingItem.name }) : translate('Add a product')}>
                 <ResourceForm
                     schema={MY_PRODUCTS_SCHEMA}
                     editingItem={editingItem}
@@ -279,7 +282,7 @@ function SellerWorkspace() {
 
             <section className='bg-white border border-[#DDDDDD] rounded p-6'>
                 <div className='flex items-center justify-between mb-4'>
-                    <h2 className='text-[18px] font-bold text-[#0F1111]'>Products you&apos;re selling</h2>
+                    <h2 className='text-[18px] font-bold text-[#0F1111]'>{t("Products you're selling")}</h2>
                     <span className='text-[13px] text-[#565959]'>{items.length} total</span>
                 </div>
 

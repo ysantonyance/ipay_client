@@ -3,6 +3,7 @@
 function getPageItems(current, total) {
     if (total <= 7) {
         return Array.from({ length: total }, (_, i) => i + 1);
+import {useLanguage} from "../../context/LanguageContext.jsx";
     }
 
     const pages = new Set([1, total, current - 1, current, current + 1]);
@@ -20,6 +21,7 @@ function getPageItems(current, total) {
 }
 
 function Pagination({ page, totalPages, onPageChange }) {
+    const {t} = useLanguage();
     if (totalPages <= 1) return null;
 
     const items = getPageItems(page, totalPages);
@@ -38,7 +40,7 @@ function Pagination({ page, totalPages, onPageChange }) {
                 onClick={() => onPageChange(page - 1)}
                 disabled={page === 1}
             >
-                ‹ Previous
+                {t("‹ Previous")}
             </button>
 
             {items.map((item, index) =>
@@ -53,7 +55,7 @@ function Pagination({ page, totalPages, onPageChange }) {
                         className={`${baseButton} ${item === page ? activeButton : idleButton}`}
                         onClick={() => onPageChange(item)}
                         aria-current={item === page ? 'page' : undefined}
-                        aria-label={`Page ${item}`}
+                        aria-label={t('Page {n}', { n: item })}
                     >
                         {item}
                     </button>
@@ -66,7 +68,7 @@ function Pagination({ page, totalPages, onPageChange }) {
                 onClick={() => onPageChange(page + 1)}
                 disabled={page === totalPages}
             >
-                Next ›
+                {t("Next ›")}
             </button>
         </nav>
     );

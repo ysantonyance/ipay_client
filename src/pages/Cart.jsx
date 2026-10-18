@@ -2,8 +2,10 @@ import {Link, useNavigate} from "react-router-dom";
 import {useCart} from "../context/CartContext.jsx";
 import {useAuth} from "../context/AuthContext.jsx";
 import {imagesApi} from "../api/imagesApi.js";
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 function Cart() {
+    const {t} = useLanguage();
     const {items, setQty, remove, total} = useCart();
     const {isLoggedIn} = useAuth();
     const count = items.reduce((n, i) => n + i.qty, 0);
@@ -21,12 +23,12 @@ function Cart() {
                         />
                         <div>
                             <div>
-                                <h1 className='text-[26px] font-bold'>Your IPAY Cart is empty</h1>
+                                <h1 className='text-[26px] font-bold'>{t("Your IPAY Cart is empty")}</h1>
                                 <Link
                                     className='text-[#20639F] hover:underline hover:text-[#083251]'
                                     to='/products'
                                 >
-                                    Shop today's deals
+                                    {t("Shop today's deals")}
                                 </Link>
                             </div>
                             {!isLoggedIn && (
@@ -35,13 +37,13 @@ function Cart() {
                                         className='block bg-[#FFD814] hover:bg-[#FFCE12] rounded-2xl px-2 py-1'
                                         to='/login'
                                     >
-                                        Sign in to your account
+                                        {t("Sign in to your account")}
                                     </Link>
                                     <Link
                                         className='block border border-[#898D8E] hover:bg-[#F6FAFB] rounded-2xl px-2 py-1'
                                         to='/register'
                                     >
-                                        Sign up now
+                                        {t("Sign up now")}
                                     </Link>
                                 </div>
                             )}
@@ -56,10 +58,10 @@ function Cart() {
         <div className='bg-[#EAEDED] lg:px-20'>
             <div className='grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 items-start p-3 sm:p-10'>
                 <div className='bg-white p-3 sm:p-5 lg:col-span-3'>
-                    <h1 className='text-2xl font-bold mb-2'>Shopping Cart</h1>
+                    <h1 className='text-2xl font-bold mb-2'>{t("Shopping Cart")}</h1>
 
                     <div className='hidden sm:flex justify-end border-b border-[#E7E7E7] pb-1 text-sm text-gray-500'>
-                        <span>Price</span>
+                        <span>{t("Price")}</span>
                     </div>
 
                     {items.map(i => (
@@ -98,7 +100,7 @@ function Cart() {
                                             +
                                         </button>
                                     </div>
-                                    <button onClick={() => remove(i.id)} className='text-[#2162A1] hover:underline text-sm cursor-pointer py-2'>Remove</button>
+                                    <button onClick={() => remove(i.id)} className='text-[#2162A1] hover:underline text-sm cursor-pointer py-2'>{t("Remove")}</button>
                                 </div>
                             </div>
 
@@ -110,12 +112,12 @@ function Cart() {
 
                 <div className='order-first lg:order-none bg-white lg:col-span-1 rounded p-3 sm:p-4'>
                     <p className='text-lg'>
-                        Subtotal ({count} item{count === 1 ? '' : 's'}): <span className='font-bold'>${total.toFixed(2)}</span>
+                        {t('Subtotal ({count}):', { count })} <span className='font-bold'>${total.toFixed(2)}</span>
                     </p>
                     <button
                         onClick={() => navigate('/order')}
                         className='w-full mt-4 bg-[#FFD814] hover:bg-[#F7CA00] rounded-full py-3 sm:py-2 cursor-pointer'>
-                        Proceed to checkout
+                        {t("Proceed to checkout")}
                     </button>
                 </div>
             </div>

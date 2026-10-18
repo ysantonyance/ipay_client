@@ -16,7 +16,7 @@ function Footer() {
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className='bg-[#37475A] text-white text-[14px] flex justify-center hover:bg-[#48576A] cursor-pointer p-3'>
                 <button className='cursor-pointer'>
-                    Back to top
+                    {t("Back to top")}
                 </button>
             </div>
 
@@ -34,7 +34,7 @@ function Footer() {
                 <div className='max-w-6xl mx-auto mb-8'>
                     <h3 className='text-center text-[16px] font-bold mb-1'>{t("Meet the team behind Ipay")}</h3>
                     <p className='text-center text-[12px] text-[#999999] mb-6'>
-                        Built as a team project with React, ASP.NET Core and Firestore
+                        {t("Built as a team project with React, ASP.NET Core and Firestore")}
                     </p>
 
                     <div className='flex flex-wrap justify-center gap-x-10 gap-y-6'>
@@ -54,7 +54,7 @@ function Footer() {
                     </div>
                 </div>
 
-                <p className='text-center text-[12px] text-[#999999]'>© 1996-2026, Ipay.com, Inc. or its affiliates</p>
+                <p className='text-center text-[12px] text-[#999999]'>{t("© 1996-2026, Ipay.com, Inc. or its affiliates")}</p>
             </div>
         </>
     )

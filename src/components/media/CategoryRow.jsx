@@ -1,8 +1,10 @@
 import {useRef} from "react";
 import {Link} from "react-router-dom";
 import VideoCard from "./VideoCard.jsx";
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 function CategoryRow({title, to, items}) {
+    const {t} = useLanguage();
     const ref = useRef(null);
     const scroll = dir => ref.current.scrollBy({left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth'});
     // Arrow height matches vertical poster proportions (~210px height on desktop)
@@ -14,7 +16,7 @@ function CategoryRow({title, to, items}) {
         <section className='group/row mb-6'>
             <div className='relative z-[5] flex items-baseline justify-between mb-3'>
                 <h2 className='text-xl font-bold'>{title}</h2>
-                {to && <Link to={to} className='text-sm text-gray-300 hover:text-white hover:underline'>See more ›</Link>}
+                {to && <Link to={to} className='text-sm text-gray-300 hover:text-white hover:underline'>{t("See more ›")}</Link>}
             </div>
 
             <div className='relative'>

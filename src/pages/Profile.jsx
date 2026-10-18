@@ -10,6 +10,7 @@ import {
     sendEmailChangeLink,
     sendPasswordResetLink,
 } from '../api/firebaseAuth.js';
+import {useLanguage, translate} from "../context/LanguageContext.jsx";
 
 // Email changes take two steps with a click in an email in between, so the address we are
 // waiting on is remembered here. That way a page reload does not lose the second step.
@@ -32,7 +33,7 @@ function Field({ id, label, type = 'text', value, onChange, placeholder, autoCom
     return (
         <div className='flex flex-col'>
             <label htmlFor={id} className='text-[13px] font-bold mb-1'>
-                {label}
+                {translate(label)}
             </label>
             <input
                 id={id}
@@ -71,15 +72,15 @@ function SettingRow({
         <div className={`py-4 ${last ? '' : 'border-b border-[#D5D9D9]'}`}>
             <div className='flex items-start justify-between gap-4'>
                 <div className='min-w-0'>
-                    <p className='text-[14px] font-bold'>{title}</p>
+                    <p className='text-[14px] font-bold'>{translate(title)}</p>
                     <p className='text-[14px] text-[#565959] break-words'>{value}</p>
                     {success && !isOpen && (
                         <p role='status' className='text-[13px] text-[#007600] mt-1'>
-                            {success}
+                            {translate(success)}
                         </p>
                     )}
                     {disabledReason && (
-                        <p className='text-[12px] text-[#767676] mt-1'>{disabledReason}</p>
+                        <p className='text-[12px] text-[#767676] mt-1'>{translate(disabledReason)}</p>
                     )}
                 </div>
                 <button
@@ -88,7 +89,7 @@ function SettingRow({
                     disabled={Boolean(disabledReason)}
                     className='shrink-0 px-6 py-1 bg-white hover:bg-[#F7FAFA] border border-[#D5D9D9] rounded-xl text-[13px] text-[#111] cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
                 >
-                    {isOpen ? 'Cancel' : actionLabel}
+                    {translate(isOpen ? 'Cancel' : actionLabel)}
                 </button>
             </div>
 
@@ -102,14 +103,14 @@ function SettingRow({
                 >
                     {children}
 
-                    {note && <p className='text-[12px] text-[#565959]'>{note}</p>}
+                    {note && <p className='text-[12px] text-[#565959]'>{translate(note)}</p>}
 
                     {error && (
                         <div
                             role='alert'
                             className='text-[13px] text-[#C40000] bg-[#FDF0F0] border border-[#C40000] rounded-xl px-3 py-2'
                         >
-                            {error}
+                            {translate(error)}
                         </div>
                     )}
 
@@ -119,7 +120,7 @@ function SettingRow({
                             disabled={busy}
                             className='px-4 py-1.5 bg-[#FFD814] hover:bg-[#FFCE12] border border-[#FCD200] rounded-xl text-[13px] cursor-pointer font-medium active:bg-[#F0B800] disabled:opacity-60 disabled:cursor-not-allowed'
                         >
-                            {busy ? 'Please wait…' : submitLabel}
+                            {translate(busy ? 'Please wait…' : submitLabel)}
                         </button>
                     </div>
                 </form>
@@ -248,7 +249,7 @@ function PhoneSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) 
     return (
         <SettingRow
             title='Mobile phone number'
-            value={profile.phone || 'Not added yet'}
+            value={profile.phone || translate('Not added yet')}
             isOpen={isOpen}
             onToggle={onToggle}
             onSubmit={submit}
@@ -281,6 +282,7 @@ function PhoneSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) 
 }
 
 function EmailSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) {
+    const {t} = useLanguage();
     const [newEmail, setNewEmail] = useState('');
     const [password, setPassword] = useState('');
     const [pendingEmail, setPendingEmail] = useState(() => localStorage.getItem(PENDING_EMAIL_KEY) || '');
@@ -394,8 +396,7 @@ function EmailSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) 
             {waiting ? (
                 <>
                     <p className='text-[13px]'>
-                        We sent a link to <strong className='break-all'>{pendingEmail}</strong>. Open it, then come
-                        back here and confirm with your password.
+                        {t("We sent a link to")} <strong className='break-all'>{pendingEmail}</strong>{t(". Open it, then come back here and confirm with your password.")}
                     </p>
                     <Field
                         id='confirmEmailPassword'
@@ -410,7 +411,7 @@ function EmailSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) 
                         onClick={forgetPending}
                         className='self-start text-[12px] text-[#2162A1] hover:underline cursor-pointer'
                     >
-                        Use a different address
+                        {t("Use a different address")}
                     </button>
                 </>
             ) : (
@@ -438,6 +439,7 @@ function EmailSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) 
 }
 
 function PasswordSection({ profile, isOpen, onToggle, onClose, onProfileChanged }) {
+    const {t} = useLanguage();
     // Google-only accounts have no password yet: they can create one through the emailed-link flow.
     const creating = !profile.hasPassword;
     const [currentPassword, setCurrentPassword] = useState('');
@@ -573,7 +575,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose, onProfileChanged 
     return (
         <SettingRow
             title='Password'
-            value={creating ? 'Not set' : '••••••••'}
+            value={creating ? translate('Not set') : '••••••••'}
             actionLabel={creating ? 'Create password' : 'Edit'}
             isOpen={isOpen}
             onToggle={onToggle}
@@ -619,7 +621,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose, onProfileChanged 
                                 : 'bg-transparent border-[#D5D9D9] text-[#565959] hover:bg-white'
                         }`}
                     >
-                        {label}
+                        {translate(label)}
                     </button>
                 ))}
             </div>
@@ -657,8 +659,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose, onProfileChanged 
             {activeMode === 'email' && waiting && (
                 <>
                     <p className='text-[13px]'>
-                        We sent a reset link to <strong className='break-all'>{profile.email}</strong>. Open it and
-                        choose your new password there, then come back and enter that same password below.
+                        {t("We sent a reset link to")} <strong className='break-all'>{profile.email}</strong>{t(". Open it and choose your new password there, then come back and enter that same password below.")}
                     </p>
                     <Field
                         id='resetNewPassword'
@@ -681,7 +682,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose, onProfileChanged 
                         onClick={forgetPending}
                         className='self-start text-[12px] text-[#2162A1] hover:underline cursor-pointer'
                     >
-                        Send a new link
+                        {t("Send a new link")}
                     </button>
                 </>
             )}
@@ -690,6 +691,7 @@ function PasswordSection({ profile, isOpen, onToggle, onClose, onProfileChanged 
 }
 
 function Profile() {
+    const {t} = useLanguage();
     const { isLoggedIn, userName } = useAuth();
     const [openSection, setOpenSection] = useState(null);
     const [profile, setProfile] = useState(null);
@@ -731,13 +733,13 @@ function Profile() {
                 {/* Breadcrumb */}
                 <div className='text-[13px] text-[#565959] mb-3'>
                     <Link to='/' className='text-[#2162A1] hover:underline'>
-                        Home
+                        {t("Home page")}
                     </Link>
                     <span className='mx-1'>›</span>
-                    <span>Your profile</span>
+                    <span>{t("Your profile")}</span>
                 </div>
 
-                <h1 className='text-[28px] font-normal mb-4'>Your profile</h1>
+                <h1 className='text-[28px] font-normal mb-4'>{t("Your profile")}</h1>
 
                 {/* Summary card */}
                 <div className='flex items-center gap-4 p-5 border border-[#D5D9D9] rounded-xl shadow-sm mb-6'>
@@ -746,14 +748,14 @@ function Profile() {
                     </div>
                     <div className='min-w-0'>
                         <p className='text-[20px] font-bold break-words'>{displayName}</p>
-                        <p className='text-[13px] text-[#565959]'>IPAY member</p>
+                        <p className='text-[13px] text-[#565959]'>{t("IPAY member")}</p>
                     </div>
                 </div>
 
                 {/* Login & security */}
                 <div className='border border-[#D5D9D9] rounded-xl shadow-sm px-5 mb-6'>
                     <h2 className='text-[20px] font-normal pt-4 pb-2 border-b border-[#D5D9D9]'>
-                        Login &amp; security
+                        {t("Login & security")}
                     </h2>
 
                     {loadError && (
@@ -763,7 +765,7 @@ function Profile() {
                     )}
 
                     {!profile && !loadError && (
-                        <p className='py-4 text-[13px] text-[#565959]'>Loading your profile…</p>
+                        <p className='py-4 text-[13px] text-[#565959]'>{t("Loading your profile…")}</p>
                     )}
 
                     {profile && (
@@ -804,7 +806,7 @@ function Profile() {
                     to='/'
                     className='inline-block py-1.5 px-6 bg-white hover:bg-[#F7FAFA] border border-[#D5D9D9] rounded-xl text-[13px] text-[#111] cursor-pointer shadow-sm'
                 >
-                    Done
+                    {t("Done")}
                 </Link>
             </div>
         </div>

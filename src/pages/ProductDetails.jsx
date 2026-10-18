@@ -5,6 +5,7 @@ import { imagesApi } from '../api/imagesApi.js';
 import {useCart} from "../context/CartContext.jsx";
 import { useRatings } from '../context/RatingsContext.jsx';
 import RatingStars from '../components/shop/RatingStars.jsx';
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 const SIMILAR_LIMIT = 8;
 
@@ -73,12 +74,13 @@ function computeStats(product, categoryProducts) {
 /* ---------- small UI pieces ---------- */
 
 function Card({ title, subtitle, children, className = '' }) {
+    const {t} = useLanguage();
     return (
         <section className={`bg-white border border-[#DDDDDD] rounded p-6 ${className}`}>
             {title && (
                 <div className='mb-4'>
-                    <h2 className='text-[20px] font-bold text-[#0F1111]'>{title}</h2>
-                    {subtitle && <p className='text-[13px] text-[#565959]'>{subtitle}</p>}
+                    <h2 className='text-[20px] font-bold text-[#0F1111]'>{t(title)}</h2>
+                    {subtitle && <p className='text-[13px] text-[#565959]'>{t(subtitle)}</p>}
                 </div>
             )}
             {children}
@@ -87,22 +89,24 @@ function Card({ title, subtitle, children, className = '' }) {
 }
 
 function StatCard({ label, value, valueClass = 'text-[#0F1111]', hint }) {
+    const {t} = useLanguage();
     return (
         <div className='border border-[#D5D9D9] rounded-lg p-4 bg-white'>
-            <p className='text-[12px] uppercase tracking-wide text-[#565959]'>{label}</p>
+            <p className='text-[12px] uppercase tracking-wide text-[#565959]'>{t(label)}</p>
             <p className={`text-[26px] leading-tight mt-1 ${valueClass}`}>{value}</p>
-            {hint && <p className='text-[13px] text-[#565959] mt-1'>{hint}</p>}
+            {hint && <p className='text-[13px] text-[#565959] mt-1'>{t(hint)}</p>}
         </div>
     );
 }
 
 function ProductImage({ product, className }) {
+    const {t} = useLanguage();
     if (!product.imageUrl) {
         return (
             <div
                 className={`bg-[#F3F3F3] flex items-center justify-center text-[#999999] text-[12px] ${className}`}
             >
-                No image
+                {t("No image")}
             </div>
         );
     }
@@ -119,10 +123,11 @@ function ProductImage({ product, className }) {
 /* ---------- sections ---------- */
 
 function Breadcrumb({ product, category }) {
+    const {t} = useLanguage();
     return (
         <div className='bg-white border-b border-[#DDDDDD] px-6 py-3 text-[13px] text-[#565959] flex flex-wrap items-center gap-x-2'>
             <Link to='/products' className='hover:text-[#C7511F] hover:underline'>
-                Products
+                {t("Products")}
             </Link>
             {category?.name && (
                 <>
@@ -141,6 +146,7 @@ function Breadcrumb({ product, category }) {
 }
 
 function ProductHero({ product, category, stats }) {
+    const {t} = useLanguage();
     const finalPrice = getFinalPrice(product);
     const hasDiscount = finalPrice < product.price;
     const discountPercent = product.discountPercent > 0
@@ -158,14 +164,14 @@ function ProductHero({ product, category, stats }) {
                 <h1 className='text-[24px] leading-8 text-[#0F1111]'>{product.name}</h1>
 
                 {product.manufacturer && (
-                    <p className='text-[14px] text-[#007185] mt-1'>Brand: {product.manufacturer}</p>
+                    <p className='text-[14px] text-[#007185] mt-1'>{t('Brand:')} {product.manufacturer}</p>
                 )}
 
                 <div className='mt-2 pb-3 border-b border-[#DDDDDD]'>
                     <RatingStars product={product} large />
                     {stats?.hasPeers && (
                         <p className='text-[13px] text-[#565959] mt-1'>
-                            #{stats.ratingRank} of {stats.count} in {category?.name || 'this category'} by rating
+                            {t('#{rank} of {count} in {cat} by rating', { rank: stats.ratingRank, count: stats.count, cat: category?.name || t('this category') })}
                         </p>
                     )}
                 </div>
@@ -179,20 +185,20 @@ function ProductHero({ product, category, stats }) {
 
                 {hasDiscount && (
                     <p className='text-[13px] text-[#565959]'>
-                        List Price: <span className='line-through'>{formatPrice(product.price)}</span>
+                        {t("List Price:")} <span className='line-through'>{formatPrice(product.price)}</span>
                     </p>
                 )}
 
                 <dl className='mt-5 text-[14px] grid grid-cols-[120px_1fr] gap-y-1'>
                     {category?.name && (
                         <>
-                            <dt className='text-[#565959]'>Category</dt>
+                            <dt className='text-[#565959]'>{t("Category")}</dt>
                             <dd className='text-[#0F1111]'>{category.name}</dd>
                         </>
                     )}
                     {product.manufacturer && (
                         <>
-                            <dt className='text-[#565959]'>Manufacturer</dt>
+                            <dt className='text-[#565959]'>{t("Manufacturer")}</dt>
                             <dd className='text-[#0F1111]'>{product.manufacturer}</dd>
                         </>
                     )}
@@ -203,7 +209,7 @@ function ProductHero({ product, category, stats }) {
                 <div className='text-[28px] text-[#0F1111]'>{formatPrice(finalPrice)}</div>
                 {hasDiscount && (
                     <p className='text-[13px] text-[#565959]'>
-                        You save {formatPrice(product.price - finalPrice)}
+                        {t('You save')} {formatPrice(product.price - finalPrice)}
                     </p>
                 )}
 
@@ -213,18 +219,18 @@ function ProductHero({ product, category, stats }) {
                         className='w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
                         onClick={() => add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice})}
                     >
-                        Add to Cart
+                        {t("Add to Cart")}
                     </button>
                     <button
                         type='button'
                         className='w-full bg-[#FFA41C] hover:bg-[#FA8900] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
                     >
-                        Buy Now
+                        {t("Buy Now")}
                     </button>
                 </div>
 
                 {product.manufacturer && (
-                    <p className='text-[12px] text-[#565959] mt-4'>Ships from and sold by {product.manufacturer}</p>
+                    <p className='text-[12px] text-[#565959] mt-4'>{t('Ships from and sold by {name}', { name: product.manufacturer })}</p>
                 )}
             </aside>
         </section>
@@ -232,28 +238,29 @@ function ProductHero({ product, category, stats }) {
 }
 
 function PricePositionBar({ stats }) {
+    const {t} = useLanguage();
     // Keep the marker fully inside the track so it never clips at the edges.
     const clamp = (n) => Math.min(97, Math.max(3, n));
 
     return (
         <div className='mt-6'>
-            <p className='text-[14px] text-[#0F1111] mb-8'>Where this price sits in the category</p>
+            <p className='text-[14px] text-[#0F1111] mb-8'>{t("Where this price sits in the category")}</p>
 
             <div className='relative h-2 bg-[#E3E6E6] rounded-full mx-2'>
                 <div
                     className='absolute top-1/2 -translate-y-1/2 w-[2px] h-5 bg-[#565959]'
                     style={{ left: `${clamp(stats.avgPosition)}%` }}
-                    title={`Category average ${formatPrice(stats.avgPrice)}`}
+                    title={t('Category average {avg}', { avg: formatPrice(stats.avgPrice) })}
                 >
                     <span className='absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] text-[#565959]'>
-                        avg {formatPrice(stats.avgPrice)}
+                        {t('avg {avg}', { avg: formatPrice(stats.avgPrice) })}
                     </span>
                 </div>
 
                 <div
                     className='absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#FFA41C] border-2 border-white shadow'
                     style={{ left: `${clamp(stats.pricePosition)}%` }}
-                    title={`This product ${formatPrice(stats.finalPrice)}`}
+                    title={t('This product {price}', { price: formatPrice(stats.finalPrice) })}
                 />
             </div>
 
@@ -266,7 +273,8 @@ function PricePositionBar({ stats }) {
 }
 
 function StatsSection({ product, category, stats, loading, failed }) {
-    const categoryName = category?.name || 'this category';
+    const {t} = useLanguage();
+    const categoryName = category?.name || t('this category');
 
     if (loading) {
         return (
@@ -285,8 +293,8 @@ function StatsSection({ product, category, stats, loading, failed }) {
             <Card title='Product statistics'>
                 <p className='text-[#565959] text-[14px]'>
                     {failed
-                        ? 'Could not load category data to compare this product.'
-                        : 'This product is not assigned to a category yet, so there is nothing to compare it with.'}
+                        ? t('Could not load category data to compare this product.')
+                        : t('This product is not assigned to a category yet, so there is nothing to compare it with.')}
                 </p>
             </Card>
         );
@@ -307,8 +315,8 @@ function StatsSection({ product, category, stats, loading, failed }) {
             title='Product statistics'
             subtitle={
                 stats.hasPeers
-                    ? `Compared with ${stats.count - 1} other product${stats.count - 1 === 1 ? '' : 's'} in ${categoryName}`
-                    : `No other products in ${categoryName} to compare with yet`
+                    ? t('Compared with other products in {cat}: {n}', { cat: categoryName, n: stats.count - 1 })
+                    : t('No other products in {cat} to compare with yet', { cat: categoryName })
             }
         >
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -318,7 +326,7 @@ function StatsSection({ product, category, stats, loading, failed }) {
                     valueClass='text-[#0F1111]'
                     hint={
                         stats.hasPeers
-                            ? `#${stats.ratingRank} of ${stats.count} · category avg ${stats.avgRating.toFixed(1)}`
+                            ? t('#{rank} of {count} · category avg {avg}', { rank: stats.ratingRank, count: stats.count, avg: stats.avgRating.toFixed(1) })
                             : undefined
                     }
                 />
@@ -333,7 +341,7 @@ function StatsSection({ product, category, stats, loading, failed }) {
                     valueClass={stats.hasPeers ? diffClass : 'text-[#565959]'}
                     hint={
                         stats.hasPeers
-                            ? `${cheaper ? 'Cheaper' : 'More expensive'} than the ${formatPrice(stats.avgPrice)} average`
+                            ? t(cheaper ? 'Cheaper than the {avg} average' : 'More expensive than the {avg} average', { avg: formatPrice(stats.avgPrice) })
                             : 'Not enough data'
                     }
                 />
@@ -343,7 +351,7 @@ function StatsSection({ product, category, stats, loading, failed }) {
                     value={stats.hasPeers ? `#${stats.priceRank}` : '—'}
                     hint={
                         stats.hasPeers
-                            ? `${stats.priceRank === 1 ? 'Lowest price' : `${stats.priceRank - 1} cheaper`} of ${stats.count} products`
+                            ? (stats.priceRank === 1 ? t('Lowest price of {count} products', { count: stats.count }) : t('{n} cheaper of {count} products', { n: stats.priceRank - 1, count: stats.count }))
                             : 'Not enough data'
                     }
                 />
@@ -354,7 +362,7 @@ function StatsSection({ product, category, stats, loading, failed }) {
                     valueClass={stats.savings > 0 ? 'text-[#B12704]' : 'text-[#0F1111]'}
                     hint={
                         stats.savings > 0
-                            ? `${Math.round(stats.discountPercent)}% off the list price`
+                            ? t('{pct}% off the list price', { pct: Math.round(stats.discountPercent) })
                             : 'No active discount'
                     }
                 />
@@ -362,15 +370,15 @@ function StatsSection({ product, category, stats, loading, failed }) {
                 <StatCard
                     label='Products in category'
                     value={stats.count}
-                    hint={`${stats.discountedCount} currently discounted`}
+                    hint={t('{n} currently discounted', { n: stats.discountedCount })}
                 />
 
                 <StatCard
-                    label={product.manufacturer ? `More from ${product.manufacturer}` : 'Manufacturer'}
+                    label={product.manufacturer ? t('More from {name}', { name: product.manufacturer }) : 'Manufacturer'}
                     value={product.manufacturer ? stats.sameManufacturerCount : '—'}
                     hint={
                         product.manufacturer
-                            ? `other product${stats.sameManufacturerCount === 1 ? '' : 's'} in this category`
+                            ? 'other products in this category'
                             : 'Not specified'
                     }
                 />
@@ -380,11 +388,11 @@ function StatsSection({ product, category, stats, loading, failed }) {
 
             {stats.hasPeers && Math.abs(ratingDelta) >= 0.05 && (
                 <p className='text-[13px] text-[#565959] mt-6'>
-                    Rated{' '}
+                    {t('Rated')}{' '}
                     <span className={ratingDelta > 0 ? 'text-[#007600]' : 'text-[#B12704]'}>
-                        {Math.abs(ratingDelta).toFixed(1)} {ratingDelta > 0 ? 'higher' : 'lower'}
+                        {t(ratingDelta > 0 ? '{n} higher' : '{n} lower', { n: Math.abs(ratingDelta).toFixed(1) })}
                     </span>{' '}
-                    than the average product in {categoryName}.
+                    {t('than the average product in {cat}.', { cat: categoryName })}
                 </p>
             )}
         </Card>
@@ -392,6 +400,7 @@ function StatsSection({ product, category, stats, loading, failed }) {
 }
 
 function SimilarProductCard({ product, currentPrice }) {
+    const {t} = useLanguage();
     const finalPrice = getFinalPrice(product);
     const hasDiscount = finalPrice < product.price;
     const diff = finalPrice - currentPrice;
@@ -444,7 +453,7 @@ function SimilarProductCard({ product, currentPrice }) {
                     to={`/products/${product.id}`}
                     className='block text-center w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] text-[14px] rounded-full py-2'
                 >
-                    View product
+                    {t("View product")}
                 </Link>
             </div>
         </div>
@@ -464,12 +473,13 @@ function SkeletonCard() {
 }
 
 function SimilarSection({ product, category, similar, loading, failed }) {
+    const {t} = useLanguage();
     const categoryName = category?.name;
 
     return (
         <Card
             title='Similar products'
-            subtitle={categoryName ? `More from ${categoryName}` : 'More from the same category'}
+            subtitle={categoryName ? t('More from {cat}', { cat: categoryName }) : 'More from the same category'}
         >
             {loading && (
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
@@ -480,11 +490,11 @@ function SimilarSection({ product, category, similar, loading, failed }) {
             )}
 
             {!loading && failed && (
-                <p className='text-[#B12704] text-[14px]'>Could not load similar products.</p>
+                <p className='text-[#B12704] text-[14px]'>{t("Could not load similar products.")}</p>
             )}
 
             {!loading && !failed && similar.length === 0 && (
-                <p className='text-[#565959] text-[14px]'>No other products in this category yet.</p>
+                <p className='text-[#565959] text-[14px]'>{t("No other products in this category yet.")}</p>
             )}
 
             {!loading && !failed && similar.length > 0 && (
@@ -516,6 +526,7 @@ function HeroSkeleton() {
 /* ---------- page ---------- */
 
 function ProductDetails() {
+    const {t} = useLanguage();
     const { id } = useParams();
     const {
         product: rawProduct,
@@ -563,28 +574,28 @@ function ProductDetails() {
 
                 {!loading && notFound && (
                     <div className='bg-white border border-[#DDDDDD] rounded p-8 text-center'>
-                        <h1 className='text-[20px] font-bold text-[#0F1111] mb-2'>Product not found</h1>
+                        <h1 className='text-[20px] font-bold text-[#0F1111] mb-2'>{t("Product not found")}</h1>
                         <p className='text-[#565959] mb-4'>
-                            This product doesn&apos;t exist or is no longer available.
+                            {t("This product doesn't exist or is no longer available.")}
                         </p>
                         <Link
                             to='/products'
                             className='inline-block bg-[#FFD814] hover:bg-[#F7CA00] text-[14px] rounded-full px-6 py-2'
                         >
-                            Back to products
+                            {t("Back to products")}
                         </Link>
                     </div>
                 )}
 
                 {!loading && error && (
                     <div className='bg-white border border-[#DDDDDD] rounded p-8 text-center'>
-                        <p className='text-[#B12704] mb-4'>{error}</p>
+                        <p className='text-[#B12704] mb-4'>{t(error)}</p>
                         <button
                             type='button'
                             className='bg-[#FFD814] hover:bg-[#F7CA00] text-[14px] rounded-full px-6 py-2 cursor-pointer'
                             onClick={reload}
                         >
-                            Try again
+                            {t("Try again")}
                         </button>
                     </div>
                 )}

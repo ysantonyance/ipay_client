@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 function AdminLogin() {
+    const {t} = useLanguage();
     const { unlock } = useAdminAuth();
     const [passcode, setPasscode] = useState('');
     const [error, setError] = useState('');
@@ -16,14 +18,14 @@ function AdminLogin() {
     return (
         <div className='min-h-screen bg-[#EAEDED] flex items-center justify-center p-4'>
             <div className='w-full max-w-[360px] bg-white border border-[#D5D9D9] rounded-xl p-6 shadow-sm'>
-                <h1 className='text-[22px] text-[#0F1111] mb-1'>Admin sign in</h1>
+                <h1 className='text-[22px] text-[#0F1111] mb-1'>{t("Admin sign in")}</h1>
                 <p className='text-[13px] text-[#565959] mb-5'>
-                    Temporary passcode gate — there's no admin account system yet.
+                    {t("Temporary passcode gate — there's no admin account system yet.")}
                 </p>
 
                 <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
                     <label className='flex flex-col gap-1'>
-                        <span className='text-[13px] font-bold text-[#0F1111]'>Passcode</span>
+                        <span className='text-[13px] font-bold text-[#0F1111]'>{t("Passcode")}</span>
                         <input
                             type='password'
                             autoFocus
@@ -44,7 +46,7 @@ function AdminLogin() {
                         type='submit'
                         className='w-full py-2 mt-1 bg-[#FFD814] hover:bg-[#F7CA00] rounded-full text-[14px] font-medium cursor-pointer'
                     >
-                        Enter
+                        {t("Enter")}
                     </button>
                 </form>
             </div>

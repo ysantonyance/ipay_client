@@ -3,6 +3,7 @@ import { ordersApi } from '../../api/ordersApi.js';
 import { adminApi } from '../../api/adminApi.js';
 import { getErrorMessage } from '../../api/api.js';
 import { STATUS_NAMES, normalizeStatus, statusToNumber } from '../../utils/orderStatus.js';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const STATUS_STYLES = {
     Pending: 'bg-[#FFF3E0] text-[#8A4B00]',
@@ -29,6 +30,7 @@ function formatDate(value) {
  * dropdown and a Cancel order button on each row. Shown to admins and moderators (the Admin page already blocks everyone else).
  */
 function OrdersPanel() {
+    const {t} = useLanguage();
     const [orders, setOrders] = useState([]);
     const [userLookup, setUserLookup] = useState({});
     const [loading, setLoading] = useState(true);
@@ -119,7 +121,7 @@ function OrdersPanel() {
         <section className='bg-white border border-[#DDDDDD] rounded p-6'>
             <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
                 <div>
-                    <h2 className='text-[18px] font-bold text-[#0F1111]'>Orders</h2>
+                    <h2 className='text-[18px] font-bold text-[#0F1111]'>{t("Orders")}</h2>
                     <p className='text-[13px] text-[#565959]'>
                         {orders.length} total, {pendingCount} pending, {counts.Cancelled} cancelled.
                     </p>
@@ -169,13 +171,13 @@ function OrdersPanel() {
                 </div>
             )}
 
-            {loading && orders.length === 0 && <p className='text-[13px] text-[#565959]'>Loading orders…</p>}
+            {loading && orders.length === 0 && <p className='text-[13px] text-[#565959]'>{t("Loading orders…")}</p>}
 
             {loadError && !loading && (
                 <div className='text-[13px] text-[#C40000]'>
                     <p role='alert'>{loadError}</p>
                     <button type='button' onClick={load} className={`${buttonClass} mt-2`}>
-                        Try again
+                        {t("Try again")}
                     </button>
                 </div>
             )}
@@ -197,12 +199,12 @@ function OrdersPanel() {
                     <table className='w-full text-[13px] text-left'>
                         <thead>
                             <tr className='border-b border-[#DDDDDD] text-[#565959]'>
-                                <th className='py-2 pr-4 font-medium'>Order</th>
-                                <th className='py-2 pr-4 font-medium'>Customer</th>
-                                <th className='py-2 pr-4 font-medium'>Placed</th>
-                                <th className='py-2 pr-4 font-medium'>Total</th>
-                                <th className='py-2 pr-4 font-medium'>Status</th>
-                                <th className='py-2 font-medium'>Change status</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Order")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Customer")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Placed")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Total")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Status")}</th>
+                                <th className='py-2 font-medium'>{t("Change status")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -257,17 +259,17 @@ function OrdersPanel() {
                                                         onClick={() => changeStatus(o, 'Cancelled')}
                                                         className={`${buttonClass} ml-2 text-[#C40000]`}
                                                     >
-                                                        Cancel order
+                                                        {t("Cancel order")}
                                                     </button>
                                                 )}
-                                                {busy && <span className='ml-2 text-[12px] text-[#565959]'>Saving…</span>}
+                                                {busy && <span className='ml-2 text-[12px] text-[#565959]'>{t("Saving…")}</span>}
                                             </td>
                                         </tr>
                                         {open && (
                                             <tr className='border-b border-[#EEEEEE] bg-[#FAFAFA]'>
                                                 <td colSpan={6} className='py-2 px-3'>
                                                     {items.length === 0 ? (
-                                                        <span className='text-[#565959]'>No item details.</span>
+                                                        <span className='text-[#565959]'>{t("No item details.")}</span>
                                                     ) : (
                                                         <ul className='space-y-1'>
                                                             {items.map((i) => (

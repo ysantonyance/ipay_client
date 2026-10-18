@@ -5,6 +5,7 @@ import CategoryRow from "../components/media/CategoryRow.jsx";
 import useVideos from "../hooks/useFilms.js";
 import {useOmdb} from "../hooks/useOmdb.js";
 import {seriesApi} from "../api/seriesApi.js";
+import {useLanguage, translate} from "../context/LanguageContext.jsx";
 
 const ROW_LIMIT = 12; // titles shown per genre row
 
@@ -12,13 +13,14 @@ function Fact({label, children}) {
     if (!children) return null;
     return (
         <>
-            <dt className='text-gray-400'>{label}</dt>
+            <dt className='text-gray-400'>{translate(label)}</dt>
             <dd>{children}</dd>
         </>
     );
 }
 
 function VideoDetails() {
+    const {t} = useLanguage();
     const {id} = useParams();
     const {series, genres, kindOf} = useVideos();
     const [item, setItem] = useState(null);
@@ -67,7 +69,7 @@ function VideoDetails() {
             .filter(r => r.items.length > 0);
     }, [item, genreList, series, movie, kindOf]);
 
-    const meta = [film.year, film.ageRating, movie ? 'Movie' : 'TV show'].filter(Boolean).join(' · ');
+    const meta = [film.year, film.ageRating, movie ? t('Movie') : t('TV show')].filter(Boolean).join(' · ');
 
     return (
         <div className='bg-[#00050D] text-white min-h-screen pb-20'>
@@ -75,7 +77,7 @@ function VideoDetails() {
 
             <div className='mx-13 mt-6'>
                 <Link to={movie ? '/movies?type=movie' : '/movies?type=tv'} className='text-sm text-gray-300 hover:text-white hover:underline'>
-                    ‹ Back to {movie ? 'movies' : 'TV shows'}
+                    ‹ {t('Back to {kind}', { kind: movie ? t('movies') : t('TV shows') })}
                 </Link>
 
                 {status === 'loading' && (
@@ -84,17 +86,17 @@ function VideoDetails() {
 
                 {status === 'notFound' && (
                     <div className='mt-4 rounded-xl bg-[#141921] p-10 text-center'>
-                        <h1 className='text-2xl font-bold mb-2'>Title not found</h1>
-                        <p className='text-gray-300 mb-4'>This title doesn't exist or is no longer available.</p>
+                        <h1 className='text-2xl font-bold mb-2'>{t("Title not found")}</h1>
+                        <p className='text-gray-300 mb-4'>{t("This title doesn't exist or is no longer available.")}</p>
                         <Link to='/movies' className='inline-block rounded-full bg-white text-black font-bold px-6 py-2'>
-                            Browse Pay Video
+                            {t("Browse Pay Video")}
                         </Link>
                     </div>
                 )}
 
                 {status === 'error' && (
                     <div className='mt-4 rounded-xl bg-[#141921] p-10 text-center'>
-                        <p className='text-gray-300'>Could not load this title. Please try again.</p>
+                        <p className='text-gray-300'>{t("Could not load this title. Please try again.")}</p>
                     </div>
                 )}
 
@@ -131,13 +133,13 @@ function VideoDetails() {
                                     {film.rating && (
                                         <p className='mt-4 flex items-baseline gap-2'>
                                             <span className='text-3xl text-[#FFC107]'>★ {film.rating}</span>
-                                            <span className='text-sm text-gray-300'>/ 10 IMDb rating</span>
+                                            <span className='text-sm text-gray-300'>{t("/ 10 IMDb rating")}</span>
                                         </p>
                                     )}
 
-                                    <h2 className='mt-6 text-lg font-bold'>Description</h2>
+                                    <h2 className='mt-6 text-lg font-bold'>{t("Description")}</h2>
                                     <p className='mt-1 text-[15px] leading-relaxed text-gray-100'>
-                                        {film.description || 'No description available.'}
+                                        {film.description || t('No description available.')}
                                     </p>
 
                                     <dl className='mt-6 grid grid-cols-[110px_1fr] gap-y-2 text-sm'>
@@ -169,13 +171,13 @@ function VideoDetails() {
                             {rows.map(r => (
                                 <CategoryRow
                                     key={r.genre.id}
-                                    title={`More ${movie ? 'movies' : 'TV shows'} in ${r.genre.name}`}
+                                    title={t('More {kind} in {genre}', { kind: movie ? t('movies') : t('TV shows'), genre: r.genre.name })}
                                     to={`/movies/categories/${r.genre.id}?type=${movie ? 'movie' : 'tv'}`}
                                     items={r.items}
                                 />
                             ))}
                             {rows.length === 0 && (
-                                <p className='text-gray-400'>No other {movie ? 'movies' : 'TV shows'} in this genre yet.</p>
+                                <p className='text-gray-400'>{t('No other {kind} in this genre yet.', { kind: movie ? t('movies') : t('TV shows') })}</p>
                             )}
                         </div>
                     </>

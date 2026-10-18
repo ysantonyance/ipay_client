@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import useVideos from "../../hooks/useFilms.js";
 import {useOmdb} from "../../hooks/useOmdb.js";
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 // Result tile: the name comes from our database, poster and year from OMDb.
 function SearchTile({s, onPick}) {
@@ -18,6 +19,7 @@ function SearchTile({s, onPick}) {
 }
 
 function SearchModal({onClose}) {
+    const {t} = useLanguage();
     const {series, genres} = useVideos();
     const [q, setQ] = useState('');
 
@@ -55,7 +57,7 @@ function SearchModal({onClose}) {
 
                     {!term && (
                         <>
-                            <p className='mt-4 text-sm text-gray-400'>Start typing to search, or pick a genre.</p>
+                            <p className='mt-4 text-sm text-gray-400'>{t("Start typing to search, or pick a genre.")}</p>
                             {genres.length > 0 && (
                                 <div className='mt-3 flex flex-wrap gap-2'>
                                     {genres.map(g => (
@@ -71,7 +73,7 @@ function SearchModal({onClose}) {
                             )}
                         </>
                     )}
-                    {term && matches.length === 0 && <p className='mt-4 text-sm text-gray-400'>No results for "{q}".</p>}
+                    {term && matches.length === 0 && <p className='mt-4 text-sm text-gray-400'>{t('No results for "{q}".', { q })}</p>}
 
                     {matches.length > 0 && (
                         <>

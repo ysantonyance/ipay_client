@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { adminApi } from '../../api/adminApi.js';
 import { getErrorMessage } from '../../api/api.js';
+import {useLanguage} from "../../context/LanguageContext.jsx";
 
 const ROLE_STYLES = {
     Admin: 'bg-[#232F3E] text-white',
@@ -31,6 +32,7 @@ const buttonClass =
  * The backend enforces every rule; hiding buttons below is only convenience.
  */
 function UsersPanel({ isAdmin }) {
+    const {t} = useLanguage();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState('');
@@ -141,7 +143,7 @@ function UsersPanel({ isAdmin }) {
         <section className='bg-white border border-[#DDDDDD] rounded p-6'>
             <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
                 <div>
-                    <h2 className='text-[18px] font-bold text-[#0F1111]'>Users</h2>
+                    <h2 className='text-[18px] font-bold text-[#0F1111]'>{t("Users")}</h2>
                     <p className='text-[13px] text-[#565959]'>
                         {isAdmin
                             ? 'Change roles (seller, moderator, or back to customer) and ban or unban users.'
@@ -173,13 +175,13 @@ function UsersPanel({ isAdmin }) {
                 </div>
             )}
 
-            {loading && <p className='text-[13px] text-[#565959]'>Loading users…</p>}
+            {loading && <p className='text-[13px] text-[#565959]'>{t("Loading users…")}</p>}
 
             {loadError && !loading && (
                 <div className='text-[13px] text-[#C40000]'>
                     <p role='alert'>{loadError}</p>
                     <button type='button' onClick={load} className={`${buttonClass} mt-2`}>
-                        Try again
+                        {t("Try again")}
                     </button>
                 </div>
             )}
@@ -195,11 +197,11 @@ function UsersPanel({ isAdmin }) {
                     <table className='w-full text-[13px] text-left'>
                         <thead>
                             <tr className='border-b border-[#DDDDDD] text-[#565959]'>
-                                <th className='py-2 pr-4 font-medium'>Name</th>
-                                <th className='py-2 pr-4 font-medium'>Email</th>
-                                <th className='py-2 pr-4 font-medium'>Role</th>
-                                <th className='py-2 pr-4 font-medium'>Status</th>
-                                <th className='py-2 font-medium'>Actions</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Name")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Email")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Role")}</th>
+                                <th className='py-2 pr-4 font-medium'>{t("Status")}</th>
+                                <th className='py-2 font-medium'>{t("Actions")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -214,9 +216,9 @@ function UsersPanel({ isAdmin }) {
                                         </td>
                                         <td className='py-2 pr-4'>
                                             {u.isBanned ? (
-                                                <span className='text-[#C40000]'>Banned</span>
+                                                <span className='text-[#C40000]'>{t("Banned")}</span>
                                             ) : (
-                                                <span className='text-[#565959]'>Active</span>
+                                                <span className='text-[#565959]'>{t("Active")}</span>
                                             )}
                                         </td>
                                         <td className='py-2'>
