@@ -15,7 +15,7 @@ function CategoryRow({title, to, items}) {
     return (
         <section className='group/row mb-6'>
             <div className='relative z-[5] flex items-baseline justify-between mb-3'>
-                <h2 className='text-xl font-bold'>{title}</h2>
+                <h2 className='text-xl font-bold'>{t(title)}</h2>
                 {to && <Link to={to} className='text-sm text-gray-300 hover:text-white hover:underline'>{t("See more ›")}</Link>}
             </div>
 

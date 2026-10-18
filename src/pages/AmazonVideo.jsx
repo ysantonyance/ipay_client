@@ -3,9 +3,11 @@ import HeroCarousel from "../components/media/HeroCarousel.jsx";
 import CategoryRow from "../components/media/CategoryRow.jsx";
 import useVideos from "../hooks/useFilms.js";
 import {useSearchParams} from "react-router-dom";
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 // Pay Video's home. "Home" shows everything; the Movies and TV shows tabs (?type=movie / ?type=tv) show one kind each.
 function AmazonVideo() {
+    const {t} = useLanguage();
     const {series: all, genres, kindOf, kindsLoading} = useVideos();
     const type = useSearchParams()[0].get('type');
     const kind = type === 'movie' ? 'movie' : type === 'tv' ? 'tv' : null;
@@ -22,15 +24,15 @@ function AmazonVideo() {
                 {kind && series.length === 0 && (
                     <p className='mt-10 text-gray-400'>
                         {kindsLoading
-                            ? `Sorting titles into movies and TV shows…`
-                            : `No ${kind === 'movie' ? 'movies' : 'TV shows'} yet.`}
+                            ? t('Sorting titles into movies and TV shows…')
+                            : t('No {kind} yet.', { kind: kind === 'movie' ? t('movies') : t('tv shows') })}
                     </p>
                 )}
 
                 <HeroCarousel items={featured}/>
 
                 <div className='mt-10'>
-                    <CategoryRow title={kind === 'movie' ? 'Top rated movies' : kind === 'tv' ? 'Top rated TV shows' : 'Top rated'} items={topRated}/>
+                    <CategoryRow title={t(kind === 'movie' ? 'Top rated movies' : kind === 'tv' ? 'Top rated TV shows' : 'Top rated')} items={topRated}/>
                     {genres.map(g => (
                         <CategoryRow
                             key={g.id}

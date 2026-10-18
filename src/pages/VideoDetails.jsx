@@ -77,7 +77,7 @@ function VideoDetails() {
 
             <div className='mx-13 mt-6'>
                 <Link to={movie ? '/movies?type=movie' : '/movies?type=tv'} className='text-sm text-gray-300 hover:text-white hover:underline'>
-                    ‹ {t('Back to {kind}', { kind: movie ? t('movies') : t('TV shows') })}
+                    ‹ {t('Back to {kind}', { kind: movie ? t('movies') : t('tv shows') })}
                 </Link>
 
                 {status === 'loading' && (
@@ -171,13 +171,13 @@ function VideoDetails() {
                             {rows.map(r => (
                                 <CategoryRow
                                     key={r.genre.id}
-                                    title={t('More {kind} in {genre}', { kind: movie ? t('movies') : t('TV shows'), genre: r.genre.name })}
+                                    title={t('More {kind} in {genre}', { kind: movie ? t('movies') : t('tv shows'), genre: r.genre.name })}
                                     to={`/movies/categories/${r.genre.id}?type=${movie ? 'movie' : 'tv'}`}
                                     items={r.items}
                                 />
                             ))}
                             {rows.length === 0 && (
-                                <p className='text-gray-400'>{t('No other {kind} in this genre yet.', { kind: movie ? t('movies') : t('TV shows') })}</p>
+                                <p className='text-gray-400'>{t('No other {kind} in this genre yet.', { kind: movie ? t('movies') : t('tv shows') })}</p>
                             )}
                         </div>
                     </>

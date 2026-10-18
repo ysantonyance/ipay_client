@@ -3,8 +3,10 @@ import VideoHeader from "../components/media/VideoHeader.jsx";
 import VideoCard from "../components/media/VideoCard.jsx";
 import useVideos from "../hooks/useFilms.js";
 import useInfiniteList from "../hooks/useInfiniteList.js";
+import {useLanguage} from "../context/LanguageContext.jsx";
 
 function VideoCategory() {
+    const {t} = useLanguage();
     const {genreId} = useParams();
     const [searchParams] = useSearchParams();
     const type = searchParams.get('type');
@@ -14,19 +16,19 @@ function VideoCategory() {
     const items = series.filter(s =>
         s.genreIds?.map(String).includes(genreId) && (!kind || kindOf(s) === kind));
     const {visible, hasMore, sentinelRef} = useInfiniteList(items, `${genreId}:${kind ?? ''}`);
-    const kindLabel = kind === 'movie' ? 'movies' : kind === 'tv' ? 'TV shows' : null;
+    const kindLabel = kind === 'movie' ? t('movies') : kind === 'tv' ? t('tv shows') : null;
 
     return (
         <div className='bg-[#00050D] text-white min-h-screen'>
             <VideoHeader/>
             <div className='mx-4 sm:mx-13 mt-6'>
                 <h1 className='text-3xl font-bold mb-6'>
-                    {genre?.name ?? 'Category'}
+                    {genre?.name ?? t('Category')}
                     {kindLabel && <span className='text-xl font-normal text-gray-400'> · {kindLabel}</span>}
                 </h1>
                 {items.length === 0 && (
                     <p className='text-gray-400'>
-                        {kind && kindsLoading ? 'Sorting titles into movies and TV shows…' : 'Nothing here yet.'}
+                        {kind && kindsLoading ? t('Sorting titles into movies and TV shows…') : t('Nothing here yet.')}
                     </p>
                 )}
 
