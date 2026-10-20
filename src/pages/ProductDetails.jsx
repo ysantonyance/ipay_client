@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails.js';
 import { imagesApi } from '../api/imagesApi.js';
@@ -153,6 +153,12 @@ function ProductHero({ product, category, stats }) {
         ? product.discountPercent
         : ((product.price - finalPrice) / product.price) * 100;
     const { add } = useCart();
+    const [added, setAdded] = useState(false);
+    const handleAdd = () => {
+        add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice });
+        setAdded(true);
+        setTimeout(() => setAdded(false), 1500);
+    };
 
     return (
         <section className='bg-white border border-[#DDDDDD] rounded p-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_280px] gap-8'>
@@ -216,10 +222,12 @@ function ProductHero({ product, category, stats }) {
                 <div className='mt-4 space-y-2'>
                     <button
                         type='button'
-                        className='w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
-                        onClick={() => add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice})}
+                        className={`w-full text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer transition-all duration-200 active:scale-95 ${
+                            added ? 'bg-[#B7E4C7] scale-105' : 'bg-[#FFD814] hover:bg-[#F7CA00]'
+                        }`}
+                        onClick={handleAdd}
                     >
-                        {t("Add to Cart")}
+                        {added ? `${t("Added")}` : t("Add to Cart")}
                     </button>
                 </div>
 

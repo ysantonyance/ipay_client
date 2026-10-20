@@ -56,6 +56,12 @@ function ProductCard({ product }) {
     const finalPrice = getFinalPrice(product);
     const hasDiscount = finalPrice < product.price;
     const { add } = useCart();
+    const [added, setAdded] = useState(false);
+    const handleAdd = () => {
+        add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice });
+        setAdded(true);
+        setTimeout(() => setAdded(false), 1500);
+    };
 
     return (
         <div className='bg-white border border-[#DDDDDD] rounded p-4 flex flex-col hover:shadow-lg transition-shadow'>
@@ -108,10 +114,12 @@ function ProductCard({ product }) {
             <div className='mt-auto pt-3'>
                 <button
                     type='button'
-                    className='w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
-                    onClick={() => add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice})}
+                    className={`w-full text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer transition-all duration-200 active:scale-95 ${
+                        added ? 'bg-[#B7E4C7] scale-105' : 'bg-[#FFD814] hover:bg-[#F7CA00]'
+                    }`}
+                    onClick={handleAdd}
                 >
-                    {t("Add to Cart")}
+                    {added ? `${t("Added")}` : t("Add to Cart")}
                 </button>
             </div>
         </div>
