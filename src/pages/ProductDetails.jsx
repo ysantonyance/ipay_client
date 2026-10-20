@@ -221,12 +221,6 @@ function ProductHero({ product, category, stats }) {
                     >
                         {t("Add to Cart")}
                     </button>
-                    <button
-                        type='button'
-                        className='w-full bg-[#FFA41C] hover:bg-[#FA8900] text-[#0F1111] text-[14px] rounded-full py-2 cursor-pointer'
-                    >
-                        {t("Buy Now")}
-                    </button>
                 </div>
 
                 {product.manufacturer && (

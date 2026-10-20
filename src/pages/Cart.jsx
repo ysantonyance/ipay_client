@@ -3,6 +3,7 @@ import {useCart} from "../context/CartContext.jsx";
 import {useAuth} from "../context/AuthContext.jsx";
 import {imagesApi} from "../api/imagesApi.js";
 import {useLanguage} from "../context/LanguageContext.jsx";
+import {useState} from "react";
 
 function Cart() {
     const {t} = useLanguage();
@@ -10,6 +11,8 @@ function Cart() {
     const {isLoggedIn} = useAuth();
     const count = items.reduce((n, i) => n + i.qty, 0);
     const navigate = useNavigate();
+    const [pendingId, setPendingId] = useState(null);
+    const confirmRemove = (id) => setPendingId(id);
 
     if (items.length === 0)
         return (
@@ -65,8 +68,8 @@ function Cart() {
                     </div>
 
                     {items.map(i => (
-                        <div key={i.id} className='flex gap-3 sm:gap-4 border-b border-[#E7E7E7] py-4'>
-                            <Link to={`/products/${i.id}`} className='w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] shrink-0 flex items-center justify-center'>
+                        <div key={i.id} className='flex gap-3 sm:gap-4 border-b border-[#E7E7E7] py-3'>
+                            <Link to={`/products/${i.id}`} className='w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] shrink-0 flex items-center justify-center'>
                                 {i.imageUrl && (
                                     <img
                                         src={imagesApi.resolveUrl(i.imageUrl)}
@@ -80,10 +83,10 @@ function Cart() {
                                 <p className='font-semibold'>{i.name}</p>
                                 <p className='font-bold mt-1 sm:hidden'>${(i.price).toFixed(2)}</p>
 
-                                <div className='flex items-center gap-3 mt-3'>
+                                <div className='flex items-center gap-3 mt-2'>
                                     <div className='flex items-center border-3 border-[#FFD814] rounded-2xl overflow-hidden'>
                                         <button
-                                            onClick={() => setQty(i.id, i.qty - 1)}
+                                            onClick={() => i.qty === 1 ? confirmRemove(i.id) : setQty(i.id, i.qty - 1)}
                                             className='w-9 h-9 sm:w-[16px] sm:h-[16px] sm:mx-2 sm:my-1 cursor-pointer flex items-center justify-center'
                                         >
                                             {i.qty === 1 ? (
@@ -100,7 +103,7 @@ function Cart() {
                                             +
                                         </button>
                                     </div>
-                                    <button onClick={() => remove(i.id)} className='text-[#2162A1] hover:underline text-sm cursor-pointer py-2'>{t("Remove")}</button>
+                                    <button onClick={() => confirmRemove(i.id)} className='text-[#2162A1] hover:underline text-sm cursor-pointer py-2'>{t("Remove")}</button>
                                 </div>
                             </div>
 
@@ -108,6 +111,37 @@ function Cart() {
                         </div>
                     ))}
                 </div>
+
+                {pendingId !== null && (
+                    <div
+                        className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'
+                        onClick={() => setPendingId(null)}
+                    >
+                        <div
+                            className='bg-white rounded-lg p-5 w-full max-w-sm'
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <h2 className='text-lg font-bold'>{t("Remove this item from your cart?")}</h2>
+                            <p className='text-sm text-gray-600 mt-1'>
+                                {items.find(i => i.id === pendingId)?.name}
+                            </p>
+                            <div className='flex justify-end gap-2 mt-5'>
+                                <button
+                                    onClick={() => setPendingId(null)}
+                                    className='border border-[#898D8E] hover:bg-[#F6FAFB] rounded-full px-4 py-1 cursor-pointer'
+                                >
+                                    {t("Cancel")}
+                                </button>
+                                <button
+                                    onClick={() => { remove(pendingId); setPendingId(null); }}
+                                    className='bg-[#FFD814] hover:bg-[#F7CA00] rounded-full px-4 py-1 cursor-pointer'
+                                >
+                                    {t("Remove")}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
 
                 <div className='order-first lg:order-none bg-white lg:col-span-1 rounded p-3 sm:p-4'>
