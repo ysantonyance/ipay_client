@@ -4,9 +4,63 @@ import NavMenu from "./NavMenu.jsx";
 import {useAuth} from "../../context/AuthContext.jsx";
 import {useCart} from "../../context/CartContext.jsx";
 import {useLanguage, languages} from "../../context/LanguageContext.jsx";
+import {useEffect, useRef, useState} from "react";
+
+function LanguageDropdown({className = '', compact = false}) {
+    const {language, changeLanguage} = useLanguage();
+    const [open, setOpen] = useState(false);
+    const ref = useRef(null);
+    const current = languages.find(item => item.code === language);
+
+    useEffect(() => {
+        const onClick = (e) => {
+            if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+        };
+        document.addEventListener('mousedown', onClick);
+        return () => document.removeEventListener('mousedown', onClick);
+    }, []);
+
+    return (
+        <div ref={ref} className='relative shrink-0'>
+            <button
+                type='button'
+                onClick={() => setOpen(o => !o)}
+                aria-label='Choose language'
+                aria-haspopup='listbox'
+                aria-expanded={open}
+                className={`${className} border border-transparent hover:border-white px-2 flex items-center gap-1 cursor-pointer`}
+            >
+                <span aria-hidden='true'>{current?.flag}</span>
+                {!compact && <span>{current?.label}</span>}
+                <span className={`text-[8px] transition-transform ${open ? 'rotate-180' : ''}`}>▼</span>
+            </button>
+
+            {open && (
+                <ul
+                    role='listbox'
+                    className='absolute right-0 top-full mt-1 z-50 min-w-[160px] bg-[#232F3E] text-white text-[13px] rounded-lg shadow-lg border border-[#37475A] py-1 overflow-hidden'
+                >
+                    {languages.map(item => (
+                        <li key={item.code} role='option' aria-selected={item.code === language}>
+                            <button
+                                type='button'
+                                onClick={() => { changeLanguage(item.code); setOpen(false); }}
+                                className={`w-full flex items-center gap-2 px-3 py-2 text-left cursor-pointer hover:bg-[#37475A] ${
+                                    item.code === language ? 'font-bold bg-[#37475A]' : ''
+                                }`}
+                            >
+                                <span>{item.flag}</span>
+                                <span className='flex-1'>{item.label}</span>
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
 
 function Header() {
-    const { language, changeLanguage, t } = useLanguage();
     const { isLoggedIn, userName, logout } = useAuth();
     const navigate = useNavigate();
     const { items } = useCart();
@@ -29,12 +83,8 @@ function Header() {
                         </Link>
 
                         <div className='flex items-center gap-1 sm:hidden'>
-                            <label className='h-[40px] border border-transparent hover:border-white px-2 flex items-center gap-1 cursor-pointer' aria-label='Choose language'>
-                                <span aria-hidden='true'>{languages.find(item => item.code === language)?.flag}</span>
-                                <select value={language} onChange={event => changeLanguage(event.target.value)} aria-label='Choose language' className='bg-transparent text-white cursor-pointer outline-none w-[100px]'>
-                                    {languages.map(item => <option key={item.code} value={item.code} className='text-black'>{item.label}</option>)}
-                                </select>
-                            </label>
+                            <LanguageDropdown className='h-[50px]' />
+
                             {isLoggedIn ? (
                                 <>
                                     <Link
@@ -75,12 +125,7 @@ function Header() {
                     </div>
 
                     <div className='hidden sm:flex items-center gap-2 shrink-0'>
-                        <label className='h-[50px] shrink-0 border border-transparent hover:border-white px-2 flex items-center gap-1 cursor-pointer' aria-label='Choose language'>
-                            <span aria-hidden='true'>{languages.find(item => item.code === language)?.flag}</span>
-                            <select value={language} onChange={event => changeLanguage(event.target.value)} aria-label='Choose language' className='bg-transparent text-white cursor-pointer outline-none w-[100px]'>
-                                {languages.map(item => <option key={item.code} value={item.code} className='text-black'>{item.label}</option>)}
-                            </select>
-                        </label>
+                        <LanguageDropdown className='h-[40px]' compact />
 
                         {isLoggedIn ? (
                             <>

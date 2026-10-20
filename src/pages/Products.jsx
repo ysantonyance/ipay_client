@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import useProducts from '../hooks/useProducts.js';
 import { imagesApi } from '../api/imagesApi.js';
@@ -47,6 +47,66 @@ function RatingFilter({ value, onChange }) {
                     <span className='ml-1 text-[#007185]'>{t("& Up")}</span>
                 </button>
             ))}
+        </div>
+    );
+}
+
+function Dropdown({ value, onChange, options, prefix, buttonClassName = '', align = 'left' }) {
+    const [open, setOpen] = useState(false);
+    const ref = useRef(null);
+    const current = options.find((o) => String(o.value) === String(value));
+
+    useEffect(() => {
+        const onClick = (e) => {
+            if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+        };
+        document.addEventListener('mousedown', onClick);
+        return () => document.removeEventListener('mousedown', onClick);
+    }, []);
+
+    return (
+        <div ref={ref} className='relative'>
+            <button
+                type='button'
+                onClick={() => setOpen((o) => !o)}
+                aria-haspopup='listbox'
+                aria-expanded={open}
+                className={`flex items-center justify-between gap-2 cursor-pointer ${
+                    open ? 'border-[#E77600]' : ''
+                } ${buttonClassName}`}
+            >
+                <span className='truncate'>
+                    {prefix && <span className='text-[#565959]'>{prefix} </span>}
+                    {current?.label}
+                </span>
+                <span className={`text-[8px] text-[#565959] transition-transform ${open ? 'rotate-180' : ''}`}>▼</span>
+            </button>
+
+            {open && (
+                <ul
+                    role='listbox'
+                    className={`absolute top-full mt-1 z-40 min-w-full max-h-[260px] overflow-y-auto whitespace-nowrap bg-white text-[#0F1111] text-[13px] border border-[#D5D9D9] rounded-lg shadow-lg py-1 ${
+                        align === 'right' ? 'right-0' : 'left-0'
+                    }`}
+                >
+                    {options.map((o) => {
+                        const selected = String(o.value) === String(value);
+                        return (
+                            <li key={o.value} role='option' aria-selected={selected}>
+                                <button
+                                    type='button'
+                                    onClick={() => { onChange(o.value); setOpen(false); }}
+                                    className={`w-full flex items-center gap-2 px-3 py-2 text-left cursor-pointer hover:bg-[#F0F2F2] ${
+                                        selected ? 'font-bold bg-[#FFF3E0]' : ''
+                                    }`}
+                                >
+                                    <span className='flex-1'>{o.label}</span>
+                                </button>
+                            </li>
+                        );
+                    })}
+                </ul>
+            )}
         </div>
     );
 }
@@ -292,20 +352,14 @@ function Products() {
                         onChange={(e) => setQuery(e.target.value)}
                     />
 
-                    <label className='flex items-center gap-2 bg-[#F0F2F2] border border-[#D5D9D9] rounded-lg px-2 h-[36px] shadow-sm'>
-                        <span className='text-[#565959]'>{t("Sort by:")}</span>
-                        <select
-                            className='bg-transparent focus:outline-none cursor-pointer'
-                            value={sort}
-                            onChange={(e) => setSort(e.target.value)}
-                        >
-                            {SORT_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
-                                    {t(opt.label)}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                    <Dropdown
+                        prefix={t("Sort by:")}
+                        value={sort}
+                        onChange={setSort}
+                        align='right'
+                        buttonClassName='bg-[#F0F2F2] border border-[#D5D9D9] rounded-lg px-2 h-[36px] shadow-sm'
+                        options={SORT_OPTIONS.map((opt) => ({ value: opt.value, label: t(opt.label) }))}
+                    />
                 </div>
             </div>
 
@@ -326,34 +380,28 @@ function Products() {
 
                     <div>
                         <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>{t("Category")}</h3>
-                        <select
-                            className='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 bg-white cursor-pointer'
+                        <Dropdown
                             value={categoryId}
-                            onChange={(e) => setCategoryId(e.target.value)}
-                        >
-                            <option value=''>{t("All categories")}</option>
-                            {categories.map((c) => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={setCategoryId}
+                            buttonClassName='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 bg-white'
+                            options={[
+                                { value: '', label: t("All categories") },
+                                ...categories.map((c) => ({ value: String(c.id), label: c.name })),
+                            ]}
+                        />
                     </div>
 
                     <div>
                         <h3 className='text-[13px] font-bold text-[#0F1111] mb-2'>{t("Manufacturer")}</h3>
-                        <select
-                            className='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 bg-white cursor-pointer'
+                        <Dropdown
                             value={manufacturer}
-                            onChange={(e) => setManufacturer(e.target.value)}
-                        >
-                            <option value=''>{t("All manufacturers")}</option>
-                            {manufacturerOptions.map((m) => (
-                                <option key={m.id} value={m.name}>
-                                    {m.name}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={setManufacturer}
+                            buttonClassName='w-full h-[34px] text-[13px] border border-[#a6a6a6] rounded px-2 bg-white'
+                            options={[
+                                { value: '', label: t("All manufacturers") },
+                                ...manufacturerOptions.map((m) => ({ value: m.name, label: m.name })),
+                            ]}
+                        />
                     </div>
 
                     <div>
