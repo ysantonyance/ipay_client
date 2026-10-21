@@ -61,6 +61,7 @@ function LanguageDropdown({className = '', compact = false}) {
 }
 
 function Header() {
+    const {t} = useLanguage();
     const { isLoggedIn, userName, logout } = useAuth();
     const navigate = useNavigate();
     const { items } = useCart();
