@@ -191,6 +191,12 @@ function CardModal({onSave, onClose}) {
         setErrors({...errors, [k]: undefined});
     };
 
+    const expiry = e => {
+        const d = e.target.value.replace(/\D/g, '').slice(0, 4);
+        setF({...f, expiry: d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d});
+        setErrors({...errors, expiry: undefined});
+    };
+
     const submit = e => {
         e.preventDefault();
         const errs = validateCard(f);
@@ -212,8 +218,8 @@ function CardModal({onSave, onClose}) {
                 </div>
                 <div className='flex gap-3'>
                     <div className='flex-1'>
-                        <input className={inputCls} placeholder={t('MM/YY')} maxLength={5}
-                               value={f.expiry} onChange={text('expiry')} />
+                        <input className={inputCls} placeholder={t('MM/YY')} inputMode='numeric' maxLength={5}
+                               value={f.expiry} onChange={expiry} />
                         <Err msg={errors.expiry} />
                     </div>
                     <div className='flex-1'>
