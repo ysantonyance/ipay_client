@@ -1,6 +1,8 @@
 # IPAY — Amazon Clone (Frontend)
 
-React single-page application for **IPAY** ("Incredible Project Aspnet Yes"), an Amazon-style e-commerce platform built as a team course project. It is the client for the [IPAY backend](https://github.com/ThisIsEngineerGaming/IPAY_backend) and covers sign-in, the product catalog, cart and orders, ratings, a video catalog (series, episodes) and role-based administration.
+React single-page application (SPA) for **IPAY** ("Incredible Project Aspnet Yes"), an Amazon-style e-commerce platform built as a team course project. It is the client for the [IPAY backend](https://github.com/ThisIsEngineerGaming/IPAY_backend), an ASP.NET Core Web API that handles authentication, the product catalog, carts and orders, ratings, a video catalog and role-based administration.
+
+> **Status: early development.** The project scaffold, the API layer and the page structure are in place. Most pages are still empty components and most routes are not enabled yet. See [Project status](#project-status).
 
 ## Links
 
@@ -14,19 +16,19 @@ React single-page application for **IPAY** ("Incredible Project Aspnet Yes"), an
 
 ## Tech stack
 
-- **Framework:** React 19 (function components and hooks)
+- **Framework:** React 19
 - **Build tool:** Vite
 - **Routing:** React Router 7
 - **HTTP:** Axios, with a shared instance that attaches the access token to every request
 - **Styling:** Tailwind CSS 4 (via `@tailwindcss/vite`)
 - **Linting:** Oxlint
-- **Deployment:** Render
+- **Hosting:** Render
 
 ## Project structure
 
 ```
 ipay_client/
-├── index.html
+├── index.html                 # Single HTML page with <div id="root">
 ├── vite.config.js
 ├── package.json
 ├── public/                    # Static assets served as-is
@@ -35,39 +37,51 @@ ipay_client/
     ├── App.jsx                # Route table and layouts (MainLayout, CleanLayout)
     ├── api/                   # One module per backend area, all built on api.js
     │   ├── api.js             # Axios instance + request/response interceptors
-    │   ├── authApi.js         # Login, register, logout, profile
-    │   ├── productsApi.js     # Products
-    │   ├── categoriesApi.js   # Categories
-    │   ├── cartApi.js         # Cart
-    │   ├── ordersApi.js       # Orders
-    │   ├── filmsApi.js        # Films
-    │   ├── seriesApi.js       # Series
-    │   ├── episodesApi.js     # Episodes
-    │   ├── genresApi.js       # Genres
-    │   └── adminApi.js        # Administration
+    │   ├── authApi.js
+    │   ├── productsApi.js
+    │   ├── categoriesApi.js
+    │   ├── cartApi.js
+    │   ├── ordersApi.js
+    │   ├── filmsApi.js
+    │   ├── seriesApi.js
+    │   ├── episodesApi.js
+    │   ├── genresApi.js
+    │   └── adminApi.js
     ├── components/
     │   └── basic/             # Header, Footer, Button, Modal, ErrorMessage, LoadingSpinner, PaginationLoading
     ├── hooks/                 # useAuth, useCart, useProducts, useFilms, useAdmin
     └── pages/                 # One component per route
 ```
 
-## Features
+## How it talks to the backend
 
-- **Authentication:** login and registration screens, token-based sessions, automatic redirect to `/login` when a session is no longer valid
-- **Catalog:** product listing and product detail pages
-- **Cart and orders:** cart page and order history
-- **Account:** profile and customer preferences
-- **Video catalog:** video browsing and detail pages
-- **Selling:** seller page for creating and managing your own products
-- **Administration:** admin dashboard for users, roles and products
-- **Storefront pages:** today's deals, coupons, gift cards, registries, buy again, browsing history and customer service
-- **Layouts:** a main layout (header and footer) for the store, and a clean layout without them for login, registration and admin
+All requests go through the Axios instance in `src/api/api.js`:
 
-### Pages and routes
+- **Request interceptor:** reads `authToken` from `localStorage` and sends it as `Authorization: Bearer <token>`.
+- **Response interceptor:** returns `response.data`, so API modules resolve with the payload directly. On a `401` it removes the stored token and redirects to `/login`.
+- **API modules:** each file in `src/api/` groups the calls for one backend area (for example `authApi.login(credentials)`), so components and hooks never build URLs themselves.
+
+The backend login response has the shape `{ accessToken, refreshToken, expiresAt, tokenType, user }`. When emailed 2FA is enabled, login first returns `{ twoFactorRequired, challengeId, maskedEmail }` and the session is only issued after the verify-code step. The full route list is in the [API reference](https://registry.scalar.com/@default-team-wbd0w/apis/fat-api@v1#tag/admin).
+
+## Project status
+
+| Area | State |
+|---|---|
+| Vite, React, Tailwind and Router setup | Done |
+| Axios instance with token and 401 handling | Done |
+| API modules for auth, products, categories, cart, orders, films, series, episodes, genres, admin | Created |
+| Shared layouts (main with header and footer, clean without) | Done |
+| Home route (`/`) | Enabled |
+| Other pages and routes | Files exist, routes are commented out in `App.jsx` |
+| Hooks (`useAuth`, `useCart`, ...) | Files exist |
+| Refresh-token handling | Not implemented: an expired access token logs the user out |
+
+### Planned routes
+
+These pages exist as files but are commented out in `App.jsx`:
 
 | Route | Page |
 |---|---|
-| `/` | Home |
 | `/products/:id` | Product details |
 | `/video/:id`, `/amazon-video` | Video details, video catalog |
 | `/cart` | Cart |
@@ -78,22 +92,12 @@ ipay_client/
 | `/login`, `/register` | Authentication (clean layout) |
 | `/admin` | Administration (clean layout) |
 
-## How it talks to the backend
-
-All requests go through the Axios instance in `src/api/api.js`:
-
-- **Request interceptor:** reads `authToken` from `localStorage` and sends it as `Authorization: Bearer <accessToken>`.
-- **Response interceptor:** unwraps `response.data`, so API modules return the payload directly. On a `401`, it clears the stored token and redirects to `/login`.
-- **API modules:** each file in `src/api/` groups the calls for one backend area (for example `authApi.login(credentials)`), so components and hooks never build URLs themselves.
-
-The backend login response has the shape `{ accessToken, refreshToken, expiresAt, tokenType, user }`. When emailed 2FA is enabled, login first returns `{ twoFactorRequired, challengeId, maskedEmail }` and the session is only issued after the verify-code step. See the [API reference](https://registry.scalar.com/@default-team-wbd0w/apis/fat-api@v1#tag/admin) for every route.
-
 ## Getting started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 20 or newer and npm
-- The [IPAY backend](https://github.com/ThisIsEngineerGaming/IPAY_backend) (local or deployed), which needs the [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- A current LTS release of [Node.js](https://nodejs.org/) and npm
+- The [IPAY backend](https://github.com/ThisIsEngineerGaming/IPAY_backend), running locally or deployed. Locally it needs the [.NET 10 SDK](https://dotnet.microsoft.com/download)
 
 ### Install
 
@@ -103,20 +107,23 @@ cd ipay_client
 npm install
 ```
 
-### Configuration
+### Connect to the backend
 
-Environment variables live in `.env.local` (git-ignored). Do not commit secrets.
+The API base URL is set in `src/api/api.js`:
 
-| Variable | Used when | Purpose |
-|---|---|---|
-| `IPAY_BACKEND_PATH` | Local development | Path to the backend's `IPAY.WebApi` folder, so Vite can start it for you |
-| `START_BACKEND` | Local development | Set to `false` if you start the backend yourself |
-| `VITE_API_URL` | Production build | Base URL of the deployed API, for example `https://your-backend.example.com/api` |
-
-Example `.env.local`:
-
+```js
+const api = axios.create({
+    baseURL: 'backendurl', // replace with your backend's /api URL
+    timeout: 10000,
+});
 ```
-IPAY_BACKEND_PATH=C:\path\to\IPAY_backend\src\IPAY.WebApi
+
+Replace the placeholder with your backend's API URL, for example `https://localhost:7137/api` when running the backend locally.
+
+Start the backend from its repository:
+
+```bash
+dotnet run --project src/IPAY.WebApi --launch-profile https
 ```
 
 ### Run locally
@@ -125,13 +132,7 @@ IPAY_BACKEND_PATH=C:\path\to\IPAY_backend\src\IPAY.WebApi
 npm run dev
 ```
 
-Vite starts the backend (unless `START_BACKEND=false`) and proxies `/api` to `https://localhost:7137`. The client opens at the URL Vite prints, usually `http://localhost:5173`.
-
-To run the backend yourself instead:
-
-```bash
-dotnet run --project src/IPAY.WebApi --launch-profile https
-```
+Vite prints the local URL to open.
 
 ### Scripts
 
@@ -144,7 +145,7 @@ dotnet run --project src/IPAY.WebApi --launch-profile https
 
 ## Deployment
 
-The frontend is hosted on Render. Build it with `npm run build` and publish the `dist/` folder, with `VITE_API_URL` set to the deployed backend at build time. Because this is a single-page app using client-side routing, configure the host to rewrite all paths to `index.html`.
+The frontend is hosted on Render at https://ipay-client.onrender.com/. Build it with `npm run build` and publish the `dist/` folder. As with any single-page app using client-side routing, the host must serve `index.html` for unknown paths so deep links such as `/cart` work after a refresh.
 
 ## Related projects
 
