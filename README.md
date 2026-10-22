@@ -2,8 +2,6 @@
 
 React single-page application (SPA) for **IPAY** ("Incredible Project Aspnet Yes"), an Amazon-style e-commerce platform built as a team course project. It is the client for the [IPAY backend](https://github.com/ThisIsEngineerGaming/IPAY_backend), an ASP.NET Core Web API that handles authentication, the product catalog, carts and orders, ratings, a video catalog and role-based administration.
 
-> **Status: early development.** The project scaffold, the API layer and the page structure are in place. Most pages are still empty components and most routes are not enabled yet. See [Project status](#project-status).
-
 ## Links
 
 | Resource | URL |
