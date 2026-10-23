@@ -2,6 +2,10 @@
 // English is the lookup key used by t("..."); a row that is missing just falls back to the English text.
 // Use {name} placeholders for dynamic parts: t("Page {n}", { n: 3 }).
 const rows = [
+  ["Register to add items to your cart", "Зареєструйтесь, щоб додавати товари до кошика", "Зарегистрируйтесь, чтобы добавлять товары в корзину"],
+  ["You need an account to add products to your cart. Register to continue shopping.", "Для додавання товарів до кошика потрібен обліковий запис. Зареєструйтесь, щоб продовжити покупки.", "Для добавления товаров в корзину нужен аккаунт. Зарегистрируйтесь, чтобы продолжить покупки."],
+  ["Cancel", "Скасувати", "Отмена"],
+  ["Register", "Зареєструватися", "Зарегистрироваться"],
   ["Profile", "Профіль", "Профиль"],
   ["Sign out", "Вийти", "Выйти"],
   ["Sign in", "Увійти", "Войти"],

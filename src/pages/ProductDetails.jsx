@@ -154,8 +154,9 @@ function ProductHero({ product, category, stats }) {
         : ((product.price - finalPrice) / product.price) * 100;
     const { add } = useCart();
     const [added, setAdded] = useState(false);
-    const handleAdd = () => {
-        add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice });
+    const handleAdd = async () => {
+        const ok = await add({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: finalPrice });
+        if (ok === false) return; // not signed in: the register popup is showing instead
         setAdded(true);
         setTimeout(() => setAdded(false), 1500);
     };
