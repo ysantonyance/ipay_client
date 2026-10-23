@@ -38,9 +38,13 @@ function MainLayout() {
           <SearchProvider>
               <CartProvider>
               <RatingsProvider>
-                  <Header />
-                  <Outlet />
-                  <Footer />
+                  <div className='min-h-screen flex flex-col'>
+                      <Header />
+                      <div className='flex-1 bg-[#EAEDED]'>
+                          <Outlet />
+                      </div>
+                      <Footer />
+                  </div>
               </RatingsProvider>
               </CartProvider>
           </SearchProvider>
