@@ -27,7 +27,7 @@ function Pagination({ page, totalPages, onPageChange }) {
     const items = getPageItems(page, totalPages);
 
     const baseButton =
-        'min-w-[36px] h-[36px] px-3 text-[14px] border rounded cursor-pointer transition-colors';
+        'inline-flex items-center justify-center min-w-[36px] h-[36px] px-3 text-[14px] leading-none whitespace-nowrap border rounded cursor-pointer transition-colors';
     const idleButton = 'bg-white border-[#D5D9D9] text-[#0F1111] hover:bg-[#F0F2F2]';
     const activeButton = 'bg-[#FFF3E0] border-[#E77600] text-[#0F1111] font-bold';
     const disabledButton = 'bg-[#F7F7F7] border-[#E3E6E6] text-[#999999] cursor-not-allowed';
@@ -45,7 +45,7 @@ function Pagination({ page, totalPages, onPageChange }) {
 
             {items.map((item, index) =>
                 item === '…' ? (
-                    <span key={`gap-${index}`} className='px-1 text-[#565959]' aria-hidden='true'>
+                    <span key={`gap-${index}`} className='inline-flex items-center h-[36px] px-1 text-[#565959]' aria-hidden='true'>
                         …
                     </span>
                 ) : (

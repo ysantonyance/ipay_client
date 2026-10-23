@@ -364,7 +364,8 @@ function Products() {
                 </div>
             </div>
 
-            <div className='max-w-[1500px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 items-start'>
+            <div className='max-w-[1500px] mx-auto p-6'>
+            <div className='grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 items-start'>
                 <aside className='bg-white border border-[#DDDDDD] rounded p-4 space-y-6'>
                     <div className='flex items-center justify-between'>
                         <h2 className='text-[15px] font-bold text-[#0F1111]'>{t("Filters")}</h2>
@@ -471,15 +472,18 @@ function Products() {
                                     <ProductCard key={product.id} product={product} />
                                 ))}
                             </div>
-
-                            <Pagination
-                                page={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={goToPage}
-                            />
                         </>
                     )}
                 </div>
+            </div>
+
+            {!loading && !error && visibleProducts.length > 0 && (
+                <Pagination
+                    page={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={goToPage}
+                />
+            )}
             </div>
         </div>
     );
