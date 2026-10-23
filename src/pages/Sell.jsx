@@ -211,6 +211,7 @@ function BecomeSeller() {
 /* ---------- sellers: manage their own products ---------- */
 
 function SellerWorkspace() {
+    const {t} = useLanguage();
     const { items, loading, error, saving, save, remove } = useAdminResource(MY_PRODUCTS_SCHEMA);
     const [editingItem, setEditingItem] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
