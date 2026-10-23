@@ -21,7 +21,7 @@ function LanguageDropdown({className = '', compact = false}) {
     }, []);
 
     return (
-        <div ref={ref} className='relative shrink-0'>
+        <div ref={ref} className='relative shrink-0 z-[55]'>
             <button
                 type='button'
                 onClick={() => setOpen(o => !o)}
