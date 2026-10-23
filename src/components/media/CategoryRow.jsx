@@ -8,8 +8,7 @@ function CategoryRow({title, to, items}) {
     const ref = useRef(null);
     const scroll = dir => ref.current.scrollBy({left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth'});
     // Arrow height matches vertical poster proportions (~210px height on desktop)
-    const arrow = 'absolute top-0 h-[210px] w-12 z-20 bg-black/60 text-3xl opacity-0 group-hover/row:opacity-100 transition-opacity cursor-pointer flex items-center justify-center';
-
+    const arrow = 'absolute top-0 h-[210px] sm:h-[330px] w-12 z-20 bg-black/60 text-3xl opacity-0 group-hover/row:opacity-100 transition-opacity cursor-pointer flex items-center justify-center';
     if (items.length === 0) return null;
 
     return (
